@@ -21,6 +21,11 @@
                 </a>
             </div>
             <div class="flex items-center">
+                <a href="" id="btn-redirect">
+                    <x-button color="blue" data-modal-target="modal-add-tax" data-modal-toggle="modal-add-tax">
+                        <span>Point Of Sales(POS)</span>
+                    </x-button>
+                </a>
                 <div class="flex items-center ms-3">
                     {{-- Toggle user profile --}}
                     <button type="button"

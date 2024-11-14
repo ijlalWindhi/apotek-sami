@@ -23,7 +23,7 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form class="p-4 md:p-5" action="{{ route('tax.create') }}" method="POST">
+            <form class="p-4 md:p-5" id="create" method="POST">
                 @csrf
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
@@ -56,3 +56,73 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#create').submit(function(e) {
+            e.preventDefault();
+            handleCreate()
+        })
+    })
+
+    function handleCreate() {
+        let formData = $(this).serializeArray();
+        let data = {};
+
+        $.each(formData, function() {
+            data[this.name] = this.value;
+        });
+
+        $.ajax({
+            url: `/master/tax`,
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function(response) {
+                // Close modal
+                $('#modal-add-tax').removeClass('flex').addClass('hidden');
+                Swal.fire({
+                    icon: "success",
+                    title: "Data berhasil diperbarui",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            },
+            error: handleError,
+            complete: function() {
+                // Hide loading icon
+                hideLoading();
+            }
+        });
+    }
+
+    function showLoading() {
+        let loading = '<i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i>';
+        $('#create').prepend(
+            `<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90">${loading}</div>`
+        );
+    }
+
+    function hideLoading() {
+        $('#create .absolute').remove();
+    }
+
+    function handleError(xhr, status, error) {
+        hideLoading();
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Terjadi kesalahan saat memproses data! Silahkan hubungi administrator.',
+        });
+        updateTable([]);
+    }
+</script>

@@ -54,10 +54,15 @@
     // Show modal
     $('body').on('click', '#btn-edit-tax', function() {
         let post_id = $(this).data('id');
+        let loading = '<i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i>';
 
         // Reset form
         $('#modal-edit-tax form').trigger('reset');
 
+        // Show loading icon
+        $('#modal-edit-tax form').prepend(
+            `<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90">${loading}</div>`
+        );
         $.ajax({
             url: `/master/tax/${post_id}`,
             type: "GET",
@@ -80,20 +85,22 @@
                 $('#modal-edit-tax').removeClass('hidden').addClass('flex');
             },
             error: function(response) {
-                error: function(response) {
-                    // Handle validation errors
-                    let errors = response.responseJSON.errors;
-                    $.each(errors, function(key, value) {
-                        alert(value);
-                        Swal.fire({
-                            position: "center",
-                            icon: "error",
-                            title: value,
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+                // Handle validation errors
+                let errors = response.responseJSON.errors;
+                $.each(errors, function(key, value) {
+                    alert(value);
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: value,
+                        showConfirmButton: false,
+                        timer: 1500
                     });
-                }
+                });
+            },
+            complete: function() {
+                // Hide loading icon
+                $('#modal-edit-tax form .absolute').remove();
             }
         });
     });
@@ -105,11 +112,16 @@
         let tax_id = $('#tax_id').val();
         let formData = $(this).serializeArray();
         let data = {};
+        let loading = '<i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i>';
 
         $.each(formData, function() {
             data[this.name] = this.value;
         });
 
+        // Show loading icon
+        $('#modal-edit-tax form').prepend(
+            `<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90">${loading}</div>`
+        );
         $.ajax({
             url: `/master/tax/${tax_id}`,
             type: "POST",
@@ -148,6 +160,10 @@
                         timer: 1500
                     });
                 });
+            },
+            complete: function() {
+                // Hide loading icon
+                $('#modal-edit-tax form .absolute').remove();
             }
         });
     });
