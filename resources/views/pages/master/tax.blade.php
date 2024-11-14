@@ -43,6 +43,8 @@
     </div>
 
     {{-- Modals --}}
+    <span data-modal-target="modal-delete" data-modal-toggle="modal-delete" class="hidden"></span>
+    <span data-modal-target="modal-edit-tax" data-modal-toggle="modal-edit-tax" class="hidden"></span>
     <x-pages.master.tax.modal-edit />
     <x-global.modal-delete name="pajak" />
 </x-layout>
@@ -56,47 +58,8 @@
     // Constants
     const PAGINATION_DISPLAY_RANGE = 2;
     const DEBOUNCE_DELAY = 500;
-    const PER_PAGE = 5;
+    const PER_PAGE = 10;
     const TEXT_TRUNCATE_LENGTH = 40;
-
-    // Debug utility for consistent logging
-    const debug = {
-        log: (section, data) => console.log(`[${section}]:`, data),
-        error: (section, error) => console.error(`[${section} Error]:`, error)
-    };
-
-    /**
-     * URL Parameter Management
-     */
-    const urlManager = {
-        /**
-         * Retrieves current parameters from URL
-         * @returns {Object} Object containing search and page parameters
-         */
-        getParams: () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            return {
-                search: urlParams.get('search') || '',
-                page: parseInt(urlParams.get('page')) || 1
-            };
-        },
-
-        /**
-         * Updates URL parameters without page reload
-         * @param {Object} params - Parameters to update
-         */
-        updateParams: (params) => {
-            const url = new URL(window.location.href);
-            Object.entries(params).forEach(([key, value]) => {
-                if (value) {
-                    url.searchParams.set(key, value);
-                } else {
-                    url.searchParams.delete(key);
-                }
-            });
-            window.history.pushState({}, '', url);
-        }
-    };
 
     /**
      * Data Fetching and Processing
@@ -108,10 +71,6 @@
          * @param {string} search - Search term
          */
         fetchData: (page = 1, search = '') => {
-            debug.log('Fetch', {
-                page,
-                search
-            });
             uiManager.showLoading();
 
             $.ajax({
@@ -122,99 +81,103 @@
                     page,
                     per_page: PER_PAGE
                 },
-                success: (response) => {
+                success: async (response) => {
                     if (!response?.success) {
                         throw new Error('Invalid response format');
                     }
-                    uiManager.refreshUI(response);
+                    await uiManager.refreshUI(response);
+
+                    // Handle reinitialization of modals
+                    setTimeout(() => {
+                        const modalDelete = new Modal(document.getElementById(
+                            'modal-delete'));
+                        const modalEdit = new Modal(document.getElementById(
+                            'modal-edit-tax'));
+
+                        document.querySelectorAll('[data-modal-toggle="modal-delete"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalDelete.show();
+                                });
+                            });
+
+                        document.querySelectorAll('[data-modal-toggle="modal-edit-tax"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalEdit.show();
+                                });
+                            });
+                    }, 100);
                 },
                 error: (xhr, status, error) => {
-                    debug.error('Ajax', {
-                        xhr,
-                        status,
-                        error
-                    });
-                    uiManager.showError('Failed to fetch data. Please try again.');
+                    handleFetchError(xhr, status, error);
+                    uiManager.showError('Gagal mengambil data pajak. Silahkan coba lagi.');
                 },
             });
-        }
-    };
-
-    /**
-     * UI Management and Rendering
-     */
-    const uiManager = {
-        /**
-         * Refreshes all UI components
-         * @param {Object} response - Server response containing data and meta information
-         */
-        refreshUI: (response) => {
-            try {
-                console.log(response);
-                uiManager.updateTable(response.data);
-                uiManager.updatePagination(response.meta);
-                uiManager.updateInfo(response.meta);
-            } catch (error) {
-                debug.error('RefreshUI', error);
-                uiManager.showError('Error updating display');
-            }
         },
 
-        /**
-         * Updates the tax data table
-         * @param {Array} data - Array of tax objects
-         */
-        updateTable: (data) => {
-            debug.log('UpdateTable', 'Starting table update');
-            const tbody = $('#tax-table-body');
+        getDetail: (id) => {
+            $.ajax({
+                url: `/inventory/master/tax/${id}`,
+                type: "GET",
+                cache: false,
+                success: function(response) {
+                    // Fill the modal with data
+                    $('#modal-edit-tax #name').val(response.data.name);
+                    $('#modal-edit-tax #rate').val(response.data.rate);
+                    $('#modal-edit-tax #description').val(response.data.description);
 
-            if (!Array.isArray(data) || data.length === 0) {
-                tbody.html(templates.emptyTable());
-                return;
-            }
+                    // Add hidden input for form submission
+                    if (!$('#modal-edit-tax form #tax_id').length) {
+                        $('#modal-edit-tax form').append(
+                            `<input type="hidden" id="tax_id" name="tax_id" value="${id}">`
+                        );
+                    } else {
+                        $('#modal-edit-tax form #tax_id').val(id);
+                    }
 
-            tbody.html(data.map(tax => templates.tableRow(tax)).join(''));
-            debug.log('UpdateTable', 'Table updated successfully');
+                    // Show modal
+                    $('#modal-edit-tax').removeClass('hidden').addClass('flex');
+                },
+                error: function(response) {
+                    // Handle validation errors
+                    handleFetchError(xhr, status, error);
+                },
+                complete: function() {
+                    // Hide loading icon
+                    $('#modal-edit-tax form .absolute').remove();
+                }
+            });
         },
 
-        /**
-         * Updates pagination controls
-         * @param {Object} meta - Pagination metadata
-         */
-        updatePagination: (meta) => {
-            debug.log('UpdatePagination', meta);
-            const container = $('.pagination-container');
+        deleteTax: (id) => {
+            $.ajax({
+                url: `/inventory/master/tax/${id}`,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Data berhasil dihapus",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-            if (!meta || meta.last_page <= 1) {
-                container.hide();
-                return;
-            }
-
-            container.show().html(templates.pagination(meta));
-        },
-
-        /**
-         * Updates data info text
-         * @param {Object} meta - Pagination metadata
-         */
-        updateInfo: (meta) => {
-            debug.log('UpdateInfo', meta);
-            $('.data-info').html(templates.dataInfo(meta));
-        },
-
-        /**
-         * Shows loading state
-         */
-        showLoading: () => {
-            $('#tax-table-body').html(templates.loading());
-        },
-
-        /**
-         * Shows error message
-         * @param {string} message - Error message to display
-         */
-        showError: (message) => {
-            $('#tax-table-body').html(templates.error(message));
+                    // Fetch data again
+                    const params = urlManager.getParams();
+                    dataService.fetchData(params.page, params.search);
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                },
+                complete: () => {
+                    // Hide modal
+                    $('#modal-delete').removeClass('flex').addClass('hidden');
+                }
+            });
         }
     };
 
@@ -223,232 +186,39 @@
      */
     const templates = {
         tableRow: (tax) => `
-        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                ${utils.escapeHtml(tax.name || '-')}
-            </th>
-            <td class="px-6 py-4">
-                ${tax.rate || '0'}%
-            </td>
-            <td class="px-6 py-4">
-                ${utils.escapeHtml(utils.truncateText(tax.description, TEXT_TRUNCATE_LENGTH) || '-')}
-            </td>
-            <td class="px-6 py-4 flex gap-2">
-                ${templates.actionButtons(tax.id)}
-            </td>
-        </tr>
-    `,
+            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    ${utils.escapeHtml(tax.name || '-')}
+                </th>
+                <td class="px-6 py-4">
+                    ${tax.rate || '0'}%
+                </td>
+                <td class="px-6 py-4">
+                    ${utils.escapeHtml(utils.truncateText(tax.description, TEXT_TRUNCATE_LENGTH) || '-')}
+                </td>
+                <td class="px-6 py-4 flex gap-2">
+                    ${templates.actionButtons(tax.id)}
+                </td>
+            </tr>
+        `,
 
         actionButtons: (id) => `
-        <button class="edit-button font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            data-id="${id}" 
-            data-modal-target="modal-edit-tax"
-            data-modal-toggle="modal-edit-tax">
-            <i class="fa-solid fa-pencil"></i>
-        </button>
-        |
-        <button class="delete-button font-medium text-red-600 dark:text-red-500 hover:underline"
-            data-id="${id}" 
-            data-modal-target="modal-delete"
-            data-modal-toggle="modal-delete">
-            <i class="fa-solid fa-trash"></i>
-        </button>
-    `,
+            <button id="btn-edit-tax" class="edit-button font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                data-id="${id}"
+                data-modal-target="modal-edit-tax"
+                data-modal-toggle="modal-edit-tax">
+                <i class="fa-solid fa-pencil"></i>
+            </button>
+            |
+            <button id="btn-delete-tax" class="delete-button font-medium text-red-600 dark:text-red-500 hover:underline"
+                data-id="${id}"
+                data-modal-target="modal-delete"
+                data-modal-toggle="modal-delete">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        `,
 
-        emptyTable: () => `
-        <tr>
-            <td colspan="4" class="px-6 py-4 text-center">
-                Tidak ada data
-            </td>
-        </tr>
-    `,
-
-        loading: () => `
-        <tr>
-            <td colspan="4" class="px-6 py-4 text-center">
-                <div class="flex justify-center items-center">
-                    <i class="fa-solid fa-spinner fa-spin mr-2"></i>
-                    Loading...
-                </div>
-            </td>
-        </tr>
-    `,
-
-        error: (message) => `
-        <tr>
-            <td colspan="4" class="px-6 py-4 text-center text-red-600">
-                <i class="fa-solid fa-triangle-exclamation mr-2"></i>
-                ${utils.escapeHtml(message)}
-            </td>
-        </tr>
-    `,
-
-        dataInfo: (meta) => `
-        Menampilkan ${meta.from || 0} ke ${meta.to || 0} dari ${meta.total || 0} total data
-    `,
-
-        pagination: (meta) => {
-            const currentPage = meta.current_page;
-            const lastPage = meta.last_page;
-
-            return `
-            <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">
-                <div class="flex-1 sm:flex sm:items-center sm:justify-end">
-                    <div>
-                        <span class="relative z-0 inline-flex shadow-sm rounded-md">
-                            ${templates.paginationPrevButton(currentPage)}
-                            ${templates.paginationItems(currentPage, lastPage)}
-                            ${templates.paginationNextButton(currentPage, lastPage)}
-                        </span>
-                    </div>
-                </div>
-            </nav>
-        `;
-        },
-
-        paginationItems: (currentPage, lastPage) => {
-            const items = [];
-            const displayRange = 2;
-            const currentSearch = document.querySelector('#search-name')?.value || '';
-
-            // Tentukan range halaman yang akan ditampilkan
-            let startPage = Math.max(1, currentPage - displayRange);
-            let endPage = Math.min(lastPage, currentPage + displayRange);
-
-            // Tambahkan halaman pertama jika tidak termasuk dalam range
-            if (startPage > 1) {
-                items.push(templates.paginationLink(1));
-                if (startPage > 2) {
-                    items.push(templates.paginationDots());
-                }
-            }
-
-            // Generate halaman dalam range
-            for (let i = startPage; i <= endPage; i++) {
-                if (i === currentPage) {
-                    items.push(templates.paginationCurrentPage(i));
-                } else {
-                    items.push(templates.paginationLink(i));
-                }
-            }
-
-            // Tambahkan halaman terakhir jika tidak termasuk dalam range
-            if (endPage < lastPage) {
-                if (endPage < lastPage - 1) {
-                    items.push(templates.paginationDots());
-                }
-                items.push(templates.paginationLink(lastPage));
-            }
-
-            return items.join('');
-        },
-
-        paginationDots: () => `
-        <span aria-disabled="true">
-            <span class="relative inline-flex items-center px-4 py-2 -ml-px text-xs md:text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600">...</span>
-        </span>
-    `,
-
-        paginationCurrentPage: (page) => `
-        <span aria-current="page">
-            <span class="relative inline-flex items-center px-4 py-2 -ml-px text-xs md:text-sm font-medium text-white bg-blue-600 border border-gray-300 cursor-default leading-5 dark:border-gray-600">${page}</span>
-        </span>
-    `,
-
-        paginationLink: (page) => {
-            const currentSearch = document.querySelector('#search-name')?.value || '';
-            const url = new URL(window.location.href);
-            url.searchParams.set('page', page);
-            if (currentSearch) {
-                url.searchParams.set('search', currentSearch);
-            }
-
-            return `
-            <a href="${url.search}"
-               class="relative inline-flex items-center px-4 py-2 -ml-px text-xs md:text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-gray-300"
-               aria-label="Go to page ${page}">
-                ${page}
-            </a>
-        `;
-        },
-
-        paginationPrevButton: (currentPage) => {
-            const currentSearch = document.querySelector('#search-name')?.value || '';
-            const url = new URL(window.location.href);
-
-            if (currentPage > 1) {
-                url.searchParams.set('page', currentPage - 1);
-                if (currentSearch) {
-                    url.searchParams.set('search', currentSearch);
-                }
-
-                return `
-                <a href="${url.search}" rel="prev"
-                   class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-gray-300">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                </a>
-            `;
-            }
-
-            return `
-            <span aria-disabled="true">
-                <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                </span>
-            </span>
-        `;
-        },
-
-        paginationNextButton: (currentPage, lastPage) => {
-            const currentSearch = document.querySelector('#search-name')?.value || '';
-            const url = new URL(window.location.href);
-
-            if (currentPage < lastPage) {
-                url.searchParams.set('page', currentPage + 1);
-                if (currentSearch) {
-                    url.searchParams.set('search', currentSearch);
-                }
-
-                return `
-                <a href="${url.search}" rel="next"
-                   class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-gray-300">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                </a>
-            `;
-            }
-
-            return `
-            <span aria-disabled="true">
-                <span class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-r-md leading-5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                </span>
-            </span>
-        `;
-        }
-    };
-
-    /**
-     * Utility Functions
-     */
-    const utils = {
-        escapeHtml: (str) => {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        },
-
-        truncateText: (text, length) => {
-            if (!text) return '';
-            return text.length > length ? text.substring(0, length) + '...' : text;
-        }
+        loadingModal: '<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90"><i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i></div>',
     };
 
     /**
@@ -489,6 +259,21 @@
                 dataService.fetchData(page, currentSearch);
             });
 
+            // Delete confirmation handler
+            $("body").on('click', '#btn-delete-tax', function() {
+                let tax_id = $(this).data('id');
+
+                // Get tax name from the same row
+                let tax_name = $(this).closest('tr').find('th').text().trim();
+
+                // Update modal content
+                $('#modal-delete h3').text(`Apakah anda yakin ingin menghapus data ${tax_name} ini?`);
+
+                // Update onclick attribute of confirm delete button
+                $('#modal-delete button[data-modal-hide="modal-delete"].bg-red-600').attr('onclick',
+                    `dataService.deleteTax(${tax_id})`);
+            });
+
             // Browser navigation handler
             window.addEventListener('popstate', function() {
                 const params = urlManager.getParams();
@@ -496,10 +281,20 @@
                 dataService.fetchData(params.page, params.search);
             });
 
-            // Delete confirmation handler
-            $('#modal-delete button[data-modal-hide="modal-delete"].bg-red-600').attr('onclick',
-                `deleteTax(${tax_id})`);
-        }
+            // Edit tax handler
+            $('body').on('click', '#btn-edit-tax', function() {
+                let tax_id = $(this).data('id');
+
+                // Reset form
+                $('#modal-edit-tax form').trigger('reset');
+
+                // Show loading icon
+                $('#modal-edit-tax form').prepend(templates.loadingModal);
+
+                // Fetch data
+                dataService.getDetail(tax_id);
+            });
+        },
     };
 
     /**

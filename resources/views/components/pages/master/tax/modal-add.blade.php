@@ -58,14 +58,10 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#create').submit(function(e) {
-            e.preventDefault();
-            handleCreate()
-        })
-    })
+    // Handle form submission
+    $('#modal-add-tax form').on('submit', function(e) {
+        e.preventDefault();
 
-    function handleCreate() {
         let formData = $(this).serializeArray();
         let data = {};
 
@@ -73,8 +69,10 @@
             data[this.name] = this.value;
         });
 
+        // Show loading icon
+        $('#modal-add-tax form').prepend(templates.loadingModal);
         $.ajax({
-            url: `/master/tax`,
+            url: `/inventory/master/tax`,
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
@@ -87,42 +85,22 @@
                 $('#modal-add-tax').removeClass('flex').addClass('hidden');
                 Swal.fire({
                     icon: "success",
-                    title: "Data berhasil diperbarui",
+                    title: "Data menambahkan data",
                     showConfirmButton: false,
                     timer: 1500
                 });
 
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+                // Fetch data again
+                const params = urlManager.getParams();
+                dataService.fetchData(params.page, params.search);
             },
-            error: handleError,
+            error: function(response) {
+                handleFetchError(xhr, status, error);
+            },
             complete: function() {
                 // Hide loading icon
-                hideLoading();
+                $('#modal-edit-tax form .absolute').remove();
             }
         });
-    }
-
-    function showLoading() {
-        let loading = '<i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i>';
-        $('#create').prepend(
-            `<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90">${loading}</div>`
-        );
-    }
-
-    function hideLoading() {
-        $('#create .absolute').remove();
-    }
-
-    function handleError(xhr, status, error) {
-        hideLoading();
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Terjadi kesalahan saat memproses data! Silahkan hubungi administrator.',
-        });
-        updateTable([]);
-    }
+    });
 </script>

@@ -51,60 +51,6 @@
 </div>
 
 <script>
-    // Show modal
-    $('body').on('click', '#btn-edit-tax', function() {
-        let post_id = $(this).data('id');
-        let loading = '<i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i>';
-
-        // Reset form
-        $('#modal-edit-tax form').trigger('reset');
-
-        // Show loading icon
-        $('#modal-edit-tax form').prepend(
-            `<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90">${loading}</div>`
-        );
-        $.ajax({
-            url: `/master/tax/${post_id}`,
-            type: "GET",
-            cache: false,
-            success: function(response) {
-                // Fill the modal with data
-                $('#modal-edit-tax #name').val(response.data.name);
-                $('#modal-edit-tax #rate').val(response.data.rate);
-                $('#modal-edit-tax #description').val(response.data.description);
-
-                // Add hidden input for form submission
-                if (!$('#modal-edit-tax form #tax_id').length) {
-                    $('#modal-edit-tax form').append(
-                        `<input type="hidden" id="tax_id" name="tax_id" value="${post_id}">`);
-                } else {
-                    $('#modal-edit-tax form #tax_id').val(post_id);
-                }
-
-                // Show modal
-                $('#modal-edit-tax').removeClass('hidden').addClass('flex');
-            },
-            error: function(response) {
-                // Handle validation errors
-                let errors = response.responseJSON.errors;
-                $.each(errors, function(key, value) {
-                    alert(value);
-                    Swal.fire({
-                        position: "center",
-                        icon: "error",
-                        title: value,
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                });
-            },
-            complete: function() {
-                // Hide loading icon
-                $('#modal-edit-tax form .absolute').remove();
-            }
-        });
-    });
-
     // Handle form submission
     $('#modal-edit-tax form').on('submit', function(e) {
         e.preventDefault();
@@ -112,18 +58,15 @@
         let tax_id = $('#tax_id').val();
         let formData = $(this).serializeArray();
         let data = {};
-        let loading = '<i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i>';
 
         $.each(formData, function() {
             data[this.name] = this.value;
         });
 
         // Show loading icon
-        $('#modal-edit-tax form').prepend(
-            `<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90">${loading}</div>`
-        );
+        $('#modal-edit-tax form').prepend(templates.loadingModal);
         $.ajax({
-            url: `/master/tax/${tax_id}`,
+            url: `/inventory/master/tax/${tax_id}`,
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
@@ -136,35 +79,29 @@
                 // Close modal
                 $('#modal-edit-tax').removeClass('flex').addClass('hidden');
                 Swal.fire({
-                    position: "center",
                     icon: "success",
                     title: "Data berhasil diperbarui",
                     showConfirmButton: false,
                     timer: 1500
                 });
 
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+                // Fetch data again
+                const params = urlManager.getParams();
+                dataService.fetchData(params.page, params.search);
             },
             error: function(response) {
-                // Handle validation errors
-                let errors = response.responseJSON.errors;
-                $.each(errors, function(key, value) {
-                    alert(value);
-                    Swal.fire({
-                        position: "center",
-                        icon: "error",
-                        title: value,
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                });
+                handleFetchError(xhr, status, error);
             },
             complete: function() {
                 // Hide loading icon
                 $('#modal-edit-tax form .absolute').remove();
             }
         });
+    });
+
+    // Initialize when document is ready
+    $(document).ready(() => {
+        debug.log('Ready', 'Document ready, initializing...');
+        eventHandlers.init();
     });
 </script>
