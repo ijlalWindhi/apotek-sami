@@ -196,24 +196,30 @@
                 <td class="px-6 py-4">
                     ${utils.escapeHtml(utils.truncateText(tax.description, TEXT_TRUNCATE_LENGTH) || '-')}
                 </td>
-                <td class="px-6 py-4 flex gap-2">
+                <td class="px-6 py-4 flex gap-2 items-center">
                     ${templates.actionButtons(tax.id)}
                 </td>
             </tr>
         `,
 
         actionButtons: (id) => `
-            <button id="btn-edit-tax" class="edit-button font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            <button
+                id="btn-edit-tax"
+                class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
                 data-id="${id}"
                 data-modal-target="modal-edit-tax"
-                data-modal-toggle="modal-edit-tax">
+                data-modal-toggle="modal-edit-tax"
+            >
                 <i class="fa-solid fa-pencil"></i>
             </button>
             |
-            <button id="btn-delete-tax" class="delete-button font-medium text-red-600 dark:text-red-500 hover:underline"
+            <button
+                id="btn-delete-tax"
+                class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
                 data-id="${id}"
                 data-modal-target="modal-delete"
-                data-modal-toggle="modal-delete">
+                data-modal-toggle="modal-delete"
+            >
                 <i class="fa-solid fa-trash"></i>
             </button>
         `,
