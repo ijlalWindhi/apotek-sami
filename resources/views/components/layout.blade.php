@@ -27,11 +27,13 @@
 </head>
 
 <body>
-    <x-layout.sidebar></x-layout.sidebar>
+    @if (request()->is('inventory*'))
+        <x-layout.sidebar></x-layout.sidebar>
+    @endif
 
     <x-layout.header></x-layout.header>
 
-    <main class="p-4 mt-14 sm:ml-64 sm:mt-16 md:mt-[4.5rem]">
+    <main class="p-4 mt-14 sm:mt-16 md:mt-[4.5rem] {{ request()->is('inventory*') ? 'sm:ml-64' : '' }}">
         {{ $slot }}
     </main>
 

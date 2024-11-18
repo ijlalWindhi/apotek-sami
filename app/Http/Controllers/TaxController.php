@@ -21,7 +21,7 @@ class TaxController extends Controller
 
     public function index(): View
     {
-        return view('pages.master.tax', [
+        return view('pages.inventory.master.tax', [
             'title' => 'Master Pajak',
         ]);
     }

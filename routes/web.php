@@ -2,14 +2,31 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaxController;
+use App\Http\Controllers\LoginUserController;
+use App\Http\Controllers\RegisterUserController;
+
+// Auth
+Route::prefix('auth')->group(function () {
+    // Login
+    Route::controller(LoginUserController::class)->group(function () {
+        Route::get('/login', 'index')->name('login.index');
+        Route::post('/login', 'login')->name('login.store');
+    });
+
+    // Register
+    Route::controller(RegisterUserController::class)->group(function () {
+        Route::get('/register', 'index')->name('register.index');
+        Route::post('/register', 'register')->name('register.store');
+    });
+});
 
 // Inventory
 Route::prefix('inventory')->group(function () {
 
     // Dashboard
     Route::get('/', function () {
-        return view('pages.dashboard', ['title' => 'Dashboard']);
-    });
+        return view('pages.inventory.dashboard', ['title' => 'Dashboard']);
+    })->name('inventory.dashboard');
 
     // Master
     // Tax
@@ -25,19 +42,26 @@ Route::prefix('inventory')->group(function () {
     });
 
     Route::get('/master/unit', function () {
-        return view('pages.master.unit', ['title' => 'Master Unit Satuan']);
+        return view('pages.inventory.master.unit', ['title' => 'Master Unit Satuan']);
     });
 
     Route::get('/master/payment-type', function () {
-        return view('pages.master.payment-type', ['title' => 'Master Tipe Pembayaran']);
+        return view('pages.inventory.master.payment-type', ['title' => 'Master Tipe Pembayaran']);
     });
 
     Route::get('/master/adjustment-type', function () {
-        return view('pages.master.adjustment-type', ['title' => 'Master Tipe Penyesuaian']);
+        return view('pages.inventory.master.adjustment-type', ['title' => 'Master Tipe Penyesuaian']);
     });
 
     // Transaksi
     Route::get('/transaction', function () {
         return view('pages.transaction', ['title' => 'Transaksi']);
     });
+});
+
+// POS
+Route::prefix('pos')->group(function () {
+    Route::get('/', function () {
+        return view('pages.pos.index', ['title' => 'POS']);
+    })->name('pos.index');
 });

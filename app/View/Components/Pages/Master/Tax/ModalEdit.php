@@ -21,6 +21,6 @@ class ModalEdit extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.pages.master.tax.modal-edit');
+        return view('components.pages.inventory.master.tax.modal-edit');
     }
 }

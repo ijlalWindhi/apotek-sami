@@ -17,13 +17,17 @@
 
                 {{-- Logo --}}
                 <a href="/" class="flex ms-2 md:me-24">
-                    <img src="/images/logo.png" class="h-8 sm:h-10 md:h-12 me-3" alt="FlowBite Logo" />
+                    {{-- <img src="/images/logo.png" class="h-8 sm:h-10 md:h-12 me-3" alt="FlowBite Logo" /> --}}
                 </a>
             </div>
             <div class="flex items-center">
-                <a href="" id="btn-redirect">
-                    <x-button color="blue" data-modal-target="modal-add-tax" data-modal-toggle="modal-add-tax">
-                        <span>Point Of Sales(POS)</span>
+                <a href="{{ request()->is('inventory*') ? route('pos.index') : route('inventory.dashboard') }}">
+                    <x-button color="blue">
+                        @if (request()->is('inventory*'))
+                            Point of Sales (POS)
+                        @elseif (request()->is('pos*'))
+                            Dashboard
+                        @endif
                     </x-button>
                 </a>
                 <div class="flex items-center ms-3">

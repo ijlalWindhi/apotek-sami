@@ -161,7 +161,7 @@
                     Swal.fire({
                         position: "center",
                         icon: "success",
-                        title: "Data berhasil dihapus",
+                        title: "Berhasil menghapus data",
                         showConfirmButton: false,
                         timer: 1500
                     });
