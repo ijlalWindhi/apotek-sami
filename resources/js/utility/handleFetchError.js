@@ -4,10 +4,12 @@ export const handleFetchError = (xhr, status, error) => {
         status,
         error,
     });
+    const errorMessage =
+        xhr.responseJSON.message || error || "Terjadi kesalahan pada server";
     Swal.fire({
         position: "center",
         icon: "error",
-        title: error || "Terjadi kesalahan pada server",
+        title: errorMessage,
         showConfirmButton: false,
         timer: 1500,
     });

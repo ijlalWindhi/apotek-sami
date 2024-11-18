@@ -23,7 +23,7 @@ export const uiManager = {
      */
     updateTable: (data) => {
         debug.log("UpdateTable", "Starting table update");
-        const tbody = $("#tax-table-body");
+        const tbody = $("#table-body");
 
         if (!Array.isArray(data) || data.length === 0) {
             tbody.html(table.emptyTable());
@@ -61,7 +61,7 @@ export const uiManager = {
      * Shows loading state
      */
     showLoading: () => {
-        $("#tax-table-body").html(table.loading());
+        $("#table-body").html(table.loading());
     },
 
     /**
@@ -69,6 +69,6 @@ export const uiManager = {
      * @param {string} message - Error message to display
      */
     showError: (message) => {
-        $("#tax-table-body").html(table.error(message));
+        $("#table-body").html(table.error(message));
     },
 };
