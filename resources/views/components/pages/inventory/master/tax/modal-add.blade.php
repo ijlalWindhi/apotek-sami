@@ -93,6 +93,10 @@
                 // Fetch data again
                 const params = urlManager.getParams();
                 dataService.fetchData(params.page, params.search);
+
+                setTimeout(() => {
+                    window.location.reload()
+                }, 300);
             },
             error: function(response) {
                 handleFetchError(xhr, status, error);
