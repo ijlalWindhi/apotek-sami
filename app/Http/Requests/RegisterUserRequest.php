@@ -20,7 +20,7 @@ class RegisterUserRequest extends FormRequest
         return [
             'name' => ['required', 'max:255', 'min:5', 'string'],
             'email' => [
-                'required',
+                $this->isMethod('post') ? 'required' : 'sometimes',
                 'email',
                 'max:255',
                 Rule::unique('users')->ignore($userId),
