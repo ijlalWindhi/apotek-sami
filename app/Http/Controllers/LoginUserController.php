@@ -19,14 +19,19 @@ class LoginUserController extends Controller
     public function login(LoginUserRequest $request)
     {
         if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])) {
-            printf("Login success");
-            return redirect()->intended(route('inventory.dashboard'));
-        } else {
-            return back()->withErrors([
-                'email' => 'Email atau password salah',
-                'password' => 'Email atau password salah',
-            ]);
+            $request->session()->regenerate();
+
+            // Redirect based on role
+            if (Auth::user()->role == '0') {
+                return redirect()->intended(route('inventory.dashboard'));
+            }
+            return redirect()->intended(route('pos.index'));
         }
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah',
+            'password' => 'Email atau password salah',
+        ]);
     }
 
     public function logout(Request $request)
@@ -35,6 +40,6 @@ class LoginUserController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return to_route('login.index');
+        return to_route('login');
     }
 }
