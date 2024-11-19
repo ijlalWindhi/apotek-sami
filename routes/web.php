@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\TaxController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Middleware\AdminMiddleware;
@@ -54,10 +55,15 @@ Route::prefix('inventory')
                 Route::put('/tax/{tax}', 'update')->name('tax.update');
                 Route::delete('/tax/{tax}', 'destroy')->name('tax.destroy');
             });
-        });
 
-        Route::get('/master/unit', function () {
-            return view('pages.inventory.master.unit', ['title' => 'Master Unit Satuan']);
+            Route::controller(UnitController::class)->group(function () {
+                Route::get('/unit', 'index')->name('unit.index');
+                Route::get('/unit/list', 'getAll')->name('unit.getAll');
+                Route::post('/unit', 'store')->name('unit.store');
+                Route::get('/unit/{unit}', 'show')->name('unit.show');
+                Route::put('/unit/{unit}', 'update')->name('unit.update');
+                Route::delete('/unit/{unit}', 'destroy')->name('unit.destroy');
+            });
         });
 
         Route::get('/master/payment-type', function () {
