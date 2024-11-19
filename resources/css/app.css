@@ -3,3 +3,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+div[drawer-backdrop].bg-gray-900\/50 {
+    z-index: 40 !important;
+}

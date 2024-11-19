@@ -70,11 +70,12 @@
                                     </li>
                                 @else
                                     <li>
-                                        <a href="{{ $menuItem['path'] }}"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                            role="menuitem">
+                                        <div id="btn-edit-profile"
+                                            class="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                            role="menuitem" data-drawer-target="drawer-profile"
+                                            data-drawer-show="drawer-profile" aria-controls="drawer-profile">
                                             {{ $menuItem['title'] }}
-                                        </a>
+                                        </div>
                                     </li>
                                 @endif
                             @endforeach

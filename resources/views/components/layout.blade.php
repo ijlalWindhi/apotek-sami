@@ -27,6 +27,8 @@
 </head>
 
 <body>
+    <x-layout.edit-profile></x-layout.edit-profile>
+
     @if (request()->is('inventory*'))
         <x-layout.sidebar></x-layout.sidebar>
     @endif

@@ -42,12 +42,10 @@ return [
     ],
     'MENU_USER' => [
         [
-            'title' => 'Profile',
-            'path' => '/profile',
+            'title' => 'Ubah Profile',
         ],
         [
             'title' => 'Logout',
-            'path' => '/logout',
         ]
     ]
 ];

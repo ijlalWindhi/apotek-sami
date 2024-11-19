@@ -25,7 +25,10 @@ class RegisterUserRequest extends FormRequest
                 'max:255',
                 Rule::unique('users')->ignore($userId),
             ],
-            'role' => 'required|in:0,1',
+            'role' => [
+                $this->isMethod('post') ? 'required' : 'sometimes',
+                Rule::in([0, 1])
+            ],
             'password' => ['nullable', 'min:8', 'confirmed', Password::defaults()]
         ];
     }
