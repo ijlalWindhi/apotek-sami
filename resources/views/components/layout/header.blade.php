@@ -21,23 +21,28 @@
                 </a>
             </div>
             <div class="flex items-center">
-                <a href="{{ request()->is('inventory*') ? route('pos.index') : route('inventory.dashboard') }}">
-                    <x-button color="blue">
-                        @if (request()->is('inventory*'))
-                            Point of Sales (POS)
-                        @elseif (request()->is('pos*'))
-                            Dashboard
-                        @endif
-                    </x-button>
-                </a>
+                {{-- Tampilkan tombol hanya jika user adalah admin --}}
+                @if (Auth::check() && Auth::user()->role === '0')
+                    <a href="{{ request()->is('inventory*') ? route('pos.index') : route('inventory.dashboard') }}">
+                        <x-button color="blue">
+                            @if (request()->is('inventory*'))
+                                Point of Sales (POS)
+                            @elseif (request()->is('pos*'))
+                                Dashboard
+                            @endif
+                        </x-button>
+                    </a>
+                @endif
                 <div class="flex items-center ms-3">
                     {{-- Toggle user profile --}}
                     <button type="button"
                         class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                         aria-expanded="false" data-dropdown-toggle="dropdown-user">
                         <span class="sr-only">Open user menu</span>
-                        <img class="w-8 h-8 rounded-full" alt="profile"
-                            src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo">
+                        <span
+                            class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-white bg-gray-500 rounded-full">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                        </span>
                     </button>
 
                     {{-- Dropdown profile --}}
@@ -45,10 +50,10 @@
                         id="dropdown-user">
                         <div class="px-4 py-3" role="none">
                             <p class="text-sm text-gray-900 dark:text-white" role="none">
-                                Neil Sims
+                                {{ Auth::user()->name }}
                             </p>
                             <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                                neil.sims@flowbite.com
+                                {{ Auth::user()->email }}
                             </p>
                         </div>
                         <ul class="py-1" role="none">
