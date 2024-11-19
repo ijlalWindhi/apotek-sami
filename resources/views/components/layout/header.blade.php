@@ -22,7 +22,7 @@
             </div>
             <div class="flex items-center">
                 {{-- Tampilkan tombol hanya jika user adalah admin --}}
-                @if (Auth::check() && Auth::user()->role === '0')
+                @if (Auth::check() && Auth::user()->role == '0')
                     <a href="{{ request()->is('inventory*') ? route('pos.index') : route('inventory.dashboard') }}">
                         <x-button color="blue">
                             @if (request()->is('inventory*'))
