@@ -11,13 +11,13 @@ Route::prefix('auth')->group(function () {
     Route::controller(LoginUserController::class)->group(function () {
         Route::get('/login', 'index')->name('login.index');
         Route::post('/login', 'login')->name('login.store');
+        Route::post('/logout', 'logout')->name('login.logout');
     });
 
-    // Register
-    Route::controller(RegisterUserController::class)->group(function () {
-        Route::get('/register', 'index')->name('register.index');
-        Route::post('/register', 'register')->name('register.store');
-    });
+    // Logout
+    Route::get('/logout', function () {
+        return redirect()->route('login.index');
+    })->name('logout');
 });
 
 // Inventory
@@ -51,6 +51,19 @@ Route::prefix('inventory')->group(function () {
 
     Route::get('/master/adjustment-type', function () {
         return view('pages.inventory.master.adjustment-type', ['title' => 'Master Tipe Penyesuaian']);
+    });
+
+    // Pharmacy
+    // Employee
+    Route::prefix('pharmacy')->group(function () {
+        Route::controller(RegisterUserController::class)->group(function () {
+            Route::get('/employee', 'index')->name('employee.index');
+            Route::get('/employee/list', 'getAll')->name('employee.getAll');
+            Route::post('/employee', 'store')->name('employee.store');
+            Route::get('/employee/{user}', 'show')->name('employee.show');
+            Route::put('/employee/{user}', 'update')->name('employee.update');
+            Route::delete('/employee/{user}', 'destroy')->name('employee.destroy');
+        });
     });
 
     // Transaksi

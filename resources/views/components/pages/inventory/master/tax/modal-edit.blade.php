@@ -89,7 +89,7 @@
                 const params = urlManager.getParams();
                 dataService.fetchData(params.page, params.search);
             },
-            error: function(response) {
+            error: (xhr, status, error) => {
                 handleFetchError(xhr, status, error);
             },
             complete: function() {

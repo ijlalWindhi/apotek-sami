@@ -1,4 +1,4 @@
-<nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+<nav class="fixed top-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start rtl:justify-end">
@@ -17,7 +17,7 @@
 
                 {{-- Logo --}}
                 <a href="/" class="flex ms-2 md:me-24">
-                    {{-- <img src="/images/logo.png" class="h-8 sm:h-10 md:h-12 me-3" alt="FlowBite Logo" /> --}}
+                    {{-- <img src="/images/logo.png" class="h-8 sm:h-10 md:h-12 me-3" alt="Logo" /> --}}
                 </a>
             </div>
             <div class="flex items-center">
@@ -53,13 +53,25 @@
                         </div>
                         <ul class="py-1" role="none">
                             @foreach (config('constants.MENU_USER') as $menuItem)
-                                <li>
-                                    <a href="{{ $menuItem['path'] }}"
-                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                        role="menuitem">
-                                        {{ $menuItem['title'] }}
-                                    </a>
-                                </li>
+                                @if ($menuItem['title'] == 'Logout')
+                                    <li>
+                                        <form action="{{ route('logout') }}" method="POST"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            @csrf
+                                            <button type="submit" role="menuitem" class="w-full text-left">
+                                                {{ $menuItem['title'] }}
+                                            </button>
+                                        </form>
+                                    </li>
+                                @else
+                                    <li>
+                                        <a href="{{ $menuItem['path'] }}"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                            role="menuitem">
+                                            {{ $menuItem['title'] }}
+                                        </a>
+                                    </li>
+                                @endif
                             @endforeach
                         </ul>
                     </div>

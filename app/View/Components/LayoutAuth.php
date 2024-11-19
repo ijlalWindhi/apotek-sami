@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\Pages\Master\Tax;
+namespace App\View\Components;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class ModalEdit extends Component
+class LayoutAuth extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class ModalEdit extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.pages.inventory.master.tax.modal-edit');
+        return view('components.layout-auth');
     }
 }
