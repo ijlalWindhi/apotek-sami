@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Tax;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class TaxService
