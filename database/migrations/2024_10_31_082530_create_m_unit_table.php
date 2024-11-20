@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('symbol');
             $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
         });
     }
 

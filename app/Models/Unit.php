@@ -11,7 +11,7 @@ class Unit extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'm_unit';
-    protected $fillable = ['name', 'symbol', 'description'];
+    protected $fillable = ['name', 'symbol', 'description', 'is_active'];
     protected $casts = [
         'symbol' => 'string',
         'created_at' => 'datetime',
