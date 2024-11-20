@@ -3,8 +3,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start rtl:justify-end">
                 {{-- Toggle sidebar in mobile --}}
-                <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
-                    type="button"
+                <button aria-controls="logo-sidebar" type="button"
                     class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
@@ -58,10 +57,10 @@
                         </div>
                         <ul class="py-1" role="none">
                             @foreach (config('constants.MENU_USER') as $menuItem)
-                                @if ($menuItem['title'] == 'Logout')
+                                @if ($menuItem['title'] == 'Keluar')
                                     <li>
                                         <form action="{{ route('logout') }}" method="POST"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600">
                                             @csrf
                                             <button type="submit" role="menuitem" class="w-full text-left">
                                                 {{ $menuItem['title'] }}
