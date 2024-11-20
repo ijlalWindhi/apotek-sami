@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title }} | Penyimpanan</title>
+    <title>{{ $title }} | Auth</title>
 
     {{-- Font Poppins --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,18 +27,9 @@
 </head>
 
 <body>
-    <x-layout.edit-profile></x-layout.edit-profile>
-
-    @if (request()->is('inventory*'))
-        <x-layout.sidebar></x-layout.sidebar>
-    @endif
-
-    <x-layout.header></x-layout.header>
-
-    <main class="p-4 mt-14 sm:mt-16 md:mt-[4.5rem] {{ request()->is('inventory*') ? 'sm:ml-64' : '' }}">
+    <main class="flex items-center justify-center bg-blue-600 p-6 md:p-10 min-h-screen">
         {{ $slot }}
     </main>
-
 </body>
 
 </html>

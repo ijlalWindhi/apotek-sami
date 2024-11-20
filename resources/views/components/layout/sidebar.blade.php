@@ -15,11 +15,10 @@
                             class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 {{ $isActiveDropdown ? 'bg-gray-100 dark:bg-gray-700' : '' }}"
                             aria-controls="dropdown-{{ Str::slug($menuItem['title']) }}"
                             data-collapse-toggle="dropdown-{{ Str::slug($menuItem['title']) }}">
-                            <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white {{ $isActiveDropdown ? 'text-gray-900 dark:text-white' : '' }}"
-                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                viewBox="0 0 18 21">
-                                <path d="{{ $menuItem['icon']['path'] }}" />
-                            </svg>
+                            <div
+                                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white {{ $isActiveDropdown ? 'text-gray-900 dark:text-white' : '' }}">
+                                {!! $menuItem['icon'] !!}
+                            </div>
                             <span
                                 class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">{{ $menuItem['title'] }}</span>
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -44,15 +43,8 @@
                             $isActive = $currentPath === '' ? request()->is('/') : request()->is($currentPath);
                         @endphp
                         <a href="{{ $menuItem['path'] }}"
-                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group {{ $isActive ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
-                            <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white {{ $isActive ? 'text-gray-900 dark:text-white' : '' }}"
-                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                fill="{{ isset($menuItem['icon']['stroke']) ? 'none' : 'currentColor' }}"
-                                viewBox="0 0 18 21">
-                                <path
-                                    {{ isset($menuItem['icon']['stroke']) ? 'stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"' : '' }}
-                                    d="{{ $menuItem['icon']['path'] }}" />
-                            </svg>
+                            class="flex items-center p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 group {{ $isActive ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : '' }}">
+                            {!! $menuItem['icon'] !!}
                             <span class="flex-1 ms-3 whitespace-nowrap">{{ $menuItem['title'] }}</span>
                             @if (isset($menuItem['badge']))
                                 <span

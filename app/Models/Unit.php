@@ -6,22 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Tax extends Model
+class Unit extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'm_tax';
-    protected $fillable = ['name', 'rate', 'description'];
+    protected $table = 'm_unit';
+    protected $fillable = ['name', 'symbol', 'description'];
     protected $casts = [
-        'rate' => 'float',
+        'symbol' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime'
     ];
-
-    // Mutator
-    public function setRateAttribute($value)
-    {
-        $this->attributes['rate'] = str_replace(',', '.', $value);
-    }
 }

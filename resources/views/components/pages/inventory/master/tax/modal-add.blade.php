@@ -1,4 +1,11 @@
-<div id="modal-edit-tax" tabindex="-1" aria-hidden="true"
+{{-- Button Add --}}
+<x-button color="blue" data-modal-target="modal-add-tax" data-modal-toggle="modal-add-tax">
+    <i class="fa-solid fa-plus"></i>
+    <span class="ms-2">Tambah</span>
+</x-button>
+
+{{-- Modal --}}
+<div id="modal-add-tax" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
         <!-- Modal content -->
@@ -6,17 +13,17 @@
             <!-- Modal header -->
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Edit Master Pajak
+                    Tambah Master Pajak
                 </h3>
                 <button type="button"
                     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                    data-modal-toggle="modal-edit-tax">
+                    data-modal-toggle="modal-add-tax">
                     <i class="fa-solid fa-xmark"></i>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
             <!-- Modal body -->
-            <form class="p-4 md:p-5">
+            <form class="p-4 md:p-5" id="create" method="POST">
                 @csrf
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
@@ -36,7 +43,7 @@
                     <div class="col-span-2">
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deskripsi</label>
-                        <textarea id="description" rows="4" name="description"
+                        <textarea id="description" name="description" rows="4"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Deskripsi pajak"></textarea>
                     </div>
@@ -51,58 +58,10 @@
 </div>
 
 <script>
-    // Show modal
-    $('body').on('click', '#btn-edit-tax', function() {
-        let post_id = $(this).data('id');
-
-        // Reset form
-        $('#modal-edit-tax form').trigger('reset');
-
-        $.ajax({
-            url: `/master/tax/${post_id}`,
-            type: "GET",
-            cache: false,
-            success: function(response) {
-                // Fill the modal with data
-                $('#modal-edit-tax #name').val(response.data.name);
-                $('#modal-edit-tax #rate').val(response.data.rate);
-                $('#modal-edit-tax #description').val(response.data.description);
-
-                // Add hidden input for form submission
-                if (!$('#modal-edit-tax form #tax_id').length) {
-                    $('#modal-edit-tax form').append(
-                        `<input type="hidden" id="tax_id" name="tax_id" value="${post_id}">`);
-                } else {
-                    $('#modal-edit-tax form #tax_id').val(post_id);
-                }
-
-                // Show modal
-                $('#modal-edit-tax').removeClass('hidden').addClass('flex');
-            },
-            error: function(response) {
-                error: function(response) {
-                    // Handle validation errors
-                    let errors = response.responseJSON.errors;
-                    $.each(errors, function(key, value) {
-                        alert(value);
-                        Swal.fire({
-                            position: "center",
-                            icon: "error",
-                            title: value,
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    });
-                }
-            }
-        });
-    });
-
     // Handle form submission
-    $('#modal-edit-tax form').on('submit', function(e) {
+    $('#modal-add-tax form').on('submit', function(e) {
         e.preventDefault();
 
-        let tax_id = $('#tax_id').val();
         let formData = $(this).serializeArray();
         let data = {};
 
@@ -110,44 +69,41 @@
             data[this.name] = this.value;
         });
 
+        // Show loading icon
+        $('#modal-add-tax form').prepend(templates.loadingModal);
         $.ajax({
-            url: `/master/tax/${tax_id}`,
+            url: `/inventory/master/tax`,
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
             processData: false,
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                'X-HTTP-Method-Override': 'PUT'
             },
             success: function(response) {
                 // Close modal
-                $('#modal-edit-tax').removeClass('flex').addClass('hidden');
+                $('#modal-add-tax').removeClass('flex').addClass('hidden');
                 Swal.fire({
-                    position: "center",
                     icon: "success",
-                    title: "Data berhasil diperbarui",
+                    title: "Berhasil menambahkan data",
                     showConfirmButton: false,
                     timer: 1500
                 });
 
+                // Fetch data again
+                const params = urlManager.getParams();
+                dataService.fetchData(params.page, params.search);
+
                 setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+                    window.location.reload()
+                }, 300);
             },
-            error: function(response) {
-                // Handle validation errors
-                let errors = response.responseJSON.errors;
-                $.each(errors, function(key, value) {
-                    alert(value);
-                    Swal.fire({
-                        position: "center",
-                        icon: "error",
-                        title: value,
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                });
+            error: (xhr, status, error) => {
+                handleFetchError(xhr, status, error);
+            },
+            complete: function() {
+                // Hide loading icon
+                $('#modal-add-tax form .absolute').remove();
             }
         });
     });

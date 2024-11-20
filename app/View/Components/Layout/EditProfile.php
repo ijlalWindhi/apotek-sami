@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\Pages\Master\Tax;
+namespace App\View\Components\Layout;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class ModalAdd extends Component
+class EditProfile extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class ModalAdd extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.pages.master.tax.modal-add');
+        return view('components.layout.edit-profile');
     }
 }
