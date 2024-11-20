@@ -79,7 +79,7 @@
         });
 
         // Show loading icon
-        $('#drawer-profile form').prepend(templates.loadingModal);
+        $('#drawer-profile form').prepend(uiManager.showLoadingModal);
         $.ajax({
             url: `/inventory/pharmacy/employee/${employee_id}`,
             type: "POST",
@@ -165,7 +165,7 @@
                 $('#drawer-profile form').trigger('reset');
 
                 // Show loading icon
-                $('#drawer-profile form').prepend(templates.loadingModal);
+                $('#drawer-profile form').prepend(uiManager.showLoadingModal);
 
                 // Fetch data
                 dataServiceProfile.getDetail(user_id);
