@@ -20,12 +20,9 @@
                 <h2 class="text-sm md:text-base font-semibold">Dokter <span class="text-gray-400">[CTRL+ALT+D]</span>
                 </h2>
                 <div class="flex w-full justify-between gap-2 items-center">
-                    <p class="text-xs md:text-sm">John Doe</p>
+                    <p id="doctor" class="text-xs md:text-sm">-</p>
                     <div class="flex gap-1">
-                        <button id="btn-search-customer"
-                            class="delete-button font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+                        <x-pages.pos.modal-doctor></x-pages.pos.modal-doctor>
                     </div>
                 </div>
             </div>
@@ -226,14 +223,23 @@
                 <span class="ms-2">Detail Transaksi</span><span class="text-gray-300">[CTRL+ALT+P]</span>
             </x-button>
         </div>
-        <x-button color="green" class="w-full h-16 space-x-1">
+        <x-button color="green" class="w-full h-16 space-x-1" id="btn-payment">
             <i class="fa-solid fa-floppy-disk"></i>
             <span class="ms-2">Bayar</span><span class="text-gray-300">[F9]</span>
         </x-button>
     </div>
 
     {{-- Modal --}}
-    <x-pages.pos.modal-doctor></x-pages.pos.modal-doctor>
     <x-pages.pos.modal-customer></x-pages.pos.modal-customer>
     <x-pages.pos.modal-recipe></x-pages.pos.modal-recipe>
-    </x-layout-pos>
+</x-layout>
+
+<script>
+    $(document).ready(() => {
+        debug.log('Ready', 'Document ready, initializing...');
+
+        $("body").on('click', '#btn-payment', function() {
+            const doctor_id = $('#doctor').attr('data-id');
+        });
+    });
+</script>
