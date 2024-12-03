@@ -28,7 +28,7 @@
                     <form class="w-full">
                         @csrf
                         <div class="relative w-full">
-                            <input type="search" id="search-name"
+                            <input type="search" id="search-doctor"
                                 class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
                                 placeholder="Cari berdasarkan nama, email, no handphone, no sip" />
                             <button type="button" id="search-button"
@@ -52,10 +52,6 @@
      * Doctor Modal
      * Handles the display, and interaction with tax data in a table format
      */
-
-    // Constants
-    const DEBOUNCE_DELAY = 500;
-    const PER_PAGE = 999999;
 
     /**
      * Data Fetching and Processing
@@ -81,8 +77,17 @@
                         throw new Error('Invalid response format');
                     } else {
                         const data = response.data;
-                        const rows = data.map((item) => templateDoctor.generateRow(item));
-                        $('#modal-doctor #modal-body #doctor-content').html(rows.join(''));
+                        if (data.length === 0) {
+                            $('#modal-customer #modal-body #customer-content').html(`
+                                <div class="flex items center justify-center py-3 text-red-600">
+                                    <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+                                    <p class="text-sm text-center">Tidak ada data</p>
+                                </div>
+                            `);
+                        } else {
+                            const rows = data.map((item) => templateDoctor.generateRow(item));
+                            $('#modal-doctor #modal-body #doctor-content').html(rows.join(''));
+                        }
                     }
                 },
                 error: (xhr, status, error) => {
@@ -107,7 +112,7 @@
         init: () => {
             // Search input handler with debounce
             let searchTimeout;
-            $('#search-name').on('input', function() {
+            $('#search-doctor').on('input', function() {
                 const searchValue = $(this).val();
                 clearTimeout(searchTimeout);
 
@@ -130,7 +135,7 @@
                 const target = $(this).data('modal-target');
                 $(`#${target}`).toggleClass('hidden');
                 if (!$(`#${target}`).hasClass('hidden')) {
-                    $('#search-name').val('');
+                    $('#search-doctor').val('');
                     dataServiceDoctor.fetchData(1);
                 }
             });
