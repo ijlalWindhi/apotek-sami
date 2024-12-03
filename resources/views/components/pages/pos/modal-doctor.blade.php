@@ -78,7 +78,7 @@
                     } else {
                         const data = response.data;
                         if (data.length === 0) {
-                            $('#modal-customer #modal-body #customer-content').html(`
+                            $('#modal-doctor #modal-body #doctor-content').html(`
                                 <div class="flex items center justify-center py-3 text-red-600">
                                     <i class="fa-solid fa-triangle-exclamation mr-2"></i>
                                     <p class="text-sm text-center">Tidak ada data</p>
