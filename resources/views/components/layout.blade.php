@@ -18,9 +18,6 @@
     {{-- JQuery --}}
     <script src="{{ asset('js/jquery.min.js') }}"></script>
 
-    {{-- Sweet Alert 2 --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     {{-- Load Resource --}}
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
