@@ -1,5 +1,5 @@
 {{-- Button Add --}}
-<x-button color="blue" data-modal-target="modal-add-doctor" data-modal-toggle="modal-add-doctor">
+<x-button color="blue" data-modal-target="modal-add-doctor" data-modal-toggle="modal-add-doctor" id="btn-add-doctor">
     <i class="fa-solid fa-plus"></i>
 </x-button>
 

@@ -152,6 +152,11 @@
                 // Close the modal
                 $('[data-modal-target="modal-doctor"]').click();
             });
+
+            // Event click button tambah dokter
+            $("body").on('click', '#btn-add-doctor', function() {
+                $('#modal-add-doctor form').trigger('reset');
+            });
         }
     };
 
