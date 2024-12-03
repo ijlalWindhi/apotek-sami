@@ -25,19 +25,16 @@
             <!-- Modal body -->
             <div id="modal-body" class="relative">
                 <div class="flex justify-between items-center gap-2 px-4 md:px-6 mt-3">
-                    <form class="w-full">
-                        @csrf
-                        <div class="relative w-full">
-                            <input type="search" id="search-customer"
-                                class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                                placeholder="Cari berdasarkan nama, email, no handphone" />
-                            <button type="button" id="search-button"
-                                class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <span class="sr-only">Search</span>
-                            </button>
-                        </div>
-                    </form>
+                    <div class="relative w-full">
+                        <input type="search" id="search-customer"
+                            class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+                            placeholder="Cari berdasarkan nama, email, no handphone" />
+                        <button type="button" id="search-button"
+                            class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span class="sr-only">Search</span>
+                        </button>
+                    </div>
                     <x-pages.pos.modal-add-customer></x-pages.pos.modal-add-customer>
                 </div>
                 <div id="customer-content" class="flex flex-col px-4 py-3">
