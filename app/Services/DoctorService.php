@@ -12,15 +12,15 @@ class DoctorService
         return Doctor::create($data);
     }
 
-    public function update(Doctor $tax, array $data): Doctor
+    public function update(Doctor $product, array $data): Doctor
     {
-        $tax->update($data);
-        return $tax->fresh();
+        $product->update($data);
+        return $product->fresh();
     }
 
-    public function delete(Doctor $tax): bool
+    public function delete(Doctor $product): bool
     {
-        return $tax->delete();
+        return $product->delete();
     }
 
     public function getList(array $filters = [], int $page = 1, int $perPage = 10): LengthAwarePaginator
