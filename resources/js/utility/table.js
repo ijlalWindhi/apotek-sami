@@ -1,7 +1,7 @@
 export const table = {
     emptyTable: () => `
         <tr>
-            <td colspan="4" class="px-6 py-4 text-center">
+            <td colspan="100" class="px-6 py-4 text-center">
                 Tidak ada data
             </td>
         </tr>
@@ -9,7 +9,7 @@ export const table = {
 
     loading: () => `
         <tr>
-            <td colspan="4" class="px-6 py-4 text-center">
+            <td colspan="100" class="px-6 py-4 text-center">
                 <div class="flex justify-center items-center">
                     <i class="fa-solid fa-spinner fa-spin mr-2"></i>
                     Loading...
