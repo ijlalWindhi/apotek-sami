@@ -8,6 +8,7 @@ use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProductController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -106,6 +107,16 @@ Route::prefix('inventory')
                 Route::get('/customer/{user}', 'show')->name('customer.show');
                 Route::put('/customer/{user}', 'update')->name('customer.update');
                 Route::delete('/customer/{user}', 'destroy')->name('customer.destroy');
+            });
+
+            // Product
+            Route::controller(ProductController::class)->group(function () {
+                Route::get('/product', 'index')->name('product.index');
+                Route::get('/product/list', 'getAll')->name('product.getAll');
+                Route::post('/product', 'store')->name('product.store');
+                Route::get('/product/{product}', 'show')->name('product.show');
+                Route::put('/product/{product}', 'update')->name('product.update');
+                Route::delete('/product/{product}', 'destroy')->name('product.destroy');
             });
         });
 

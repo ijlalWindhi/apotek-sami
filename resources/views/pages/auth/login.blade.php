@@ -3,7 +3,7 @@
 
     <div class="flex flex-col items-center justify-center w-full h-full space-y-4">
         <div class="w-full max-w-sm p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
-            {{-- <img src="/images/logo.png" class="h-8 sm:h-10 md:h-12 m-auto mb-4" alt="Logo" /> --}}
+            <img src="/images/logo.png" class="h-8 sm:h-10 md:h-12 m-auto mb-4" alt="Logo" />
             <h1 class="text-2xl font-semibold text-center text-gray-800 dark:text-white">Login</h1>
 
             <form action="{{ route('login.store') }}" method="POST" class="mt-4 space-y-4">
