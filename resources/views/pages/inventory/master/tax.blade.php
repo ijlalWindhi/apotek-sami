@@ -15,7 +15,7 @@
                 </button>
             </div>
 
-            <x-pages.inventory.master.tax.modal-add />
+            {{-- <x-pages.inventory.master.tax.modal-add /> --}}
         </div>
 
         {{-- Table --}}
@@ -210,16 +210,6 @@
                 data-modal-toggle="modal-edit-tax"
             >
                 <i class="fa-solid fa-pencil"></i>
-            </button>
-            |
-            <button
-                id="btn-delete-tax"
-                class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
-                data-id="${id}"
-                data-modal-target="modal-delete"
-                data-modal-toggle="modal-delete"
-            >
-                <i class="fa-solid fa-trash"></i>
             </button>
         `,
 
