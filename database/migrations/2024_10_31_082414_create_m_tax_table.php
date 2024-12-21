@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('m_tax', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->softDeletes();
             $table->string('name');
             $table->decimal('rate', 5, 2);
             $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
         });
     }
 

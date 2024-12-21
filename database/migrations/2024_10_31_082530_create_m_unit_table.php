@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('m_unit', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->softDeletes();
             $table->string('name');
             $table->string('symbol');
             $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
         });
     }
 
