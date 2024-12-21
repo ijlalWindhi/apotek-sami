@@ -91,7 +91,7 @@ class PaymentTypeController extends Controller
     {
         try {
             $filters = [
-                'name' => $request->input('search'), // parameter pencarian
+                'search' => $request->input('search'), // parameter pencarian
             ];
 
             $page = $request->input('page', 1);
