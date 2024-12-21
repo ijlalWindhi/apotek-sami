@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('m_tax', function (Blueprint $table) {
+        Schema::create('m_customer', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->softDeletes();
             $table->string('name');
-            $table->decimal('rate', 5, 2);
-            $table->text('description')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->string('phone_number')->nullable();
+            $table->string('email')->nullable();
+            $table->text('address')->nullable();
+            $table->date('birth_date')->nullable();
+            $table->text('notes')->nullable();
+            $table->enum('gender', ['man', 'woman']);
         });
     }
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('m_tax');
+        Schema::dropIfExists('m_customer');
     }
 };

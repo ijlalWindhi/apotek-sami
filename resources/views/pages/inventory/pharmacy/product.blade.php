@@ -5,9 +5,9 @@
         {{-- Search & Add Button --}}
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div class="relative sm:w-full md:w-1/2 lg:w-2/6">
-                <input type="search" id="search-name"
+                <input type="search" id="search-name-product" name="search-name-product"
                     class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                    placeholder="Cari nama, deskripsi" />
+                    placeholder="Cari nama, sku" />
                 <button type="button" id="search-button"
                     class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -15,7 +15,7 @@
                 </button>
             </div>
 
-            {{-- <x-pages.inventory.master.tax.modal-add /> --}}
+            <x-pages.inventory.pharmacy.product.modal-add :units="$units" />
         </div>
 
         {{-- Table --}}
@@ -23,9 +23,14 @@
             <table class="w-full text-xs md:text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Nama</th>
-                        <th scope="col" class="px-6 py-3">Besaran</th>
-                        <th scope="col" class="px-6 py-3">Deskripsi</th>
+                        <th scope="col" class="px-6 py-3 min-w-36">Nama</th>
+                        <th scope="col" class="px-6 py-3 min-w-28">SKU</th>
+                        <th scope="col" class="px-6 py-3 min-w-36">Rak</th>
+                        <th scope="col" class="px-6 py-3">Stok</th>
+                        <th scope="col" class="px-6 py-3 min-w-40">Harga Pokok</th>
+                        <th scope="col" class="px-6 py-3 min-w-36">Harga Jual</th>
+                        <th scope="col" class="px-6 py-3">Markup</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3">Aksi</th>
                     </tr>
                 </thead>
@@ -44,15 +49,15 @@
 
     {{-- Modals --}}
     <span data-modal-target="modal-delete" data-modal-toggle="modal-delete" class="hidden"></span>
-    <span data-modal-target="modal-edit-tax" data-modal-toggle="modal-edit-tax" class="hidden"></span>
-    <x-pages.inventory.master.tax.modal-edit />
+    {{-- <span data-modal-target="modal-edit-product" data-modal-toggle="modal-edit-product" class="hidden"></span> --}}
+    {{-- <x-pages.inventory.pharmacy.product.modal-edit /> --}}
     <x-global.modal-delete name="pajak" />
 </x-layout>
 
 <script>
     /**
-     * Tax Management Module
-     * Handles the display, pagination, and interaction with tax data in a table format
+     * Product Management Module
+     * Handles the display, pagination, and interaction with product data in a table format
      */
 
     // Constants
@@ -66,7 +71,7 @@
      */
     const dataService = {
         /**
-         * Fetches tax data from the server
+         * Fetches product data from the server
          * @param {number} page - Page number to fetch
          * @param {string} search - Search term
          */
@@ -74,7 +79,7 @@
             uiManager.showLoading();
 
             $.ajax({
-                url: '/inventory/master/tax/list',
+                url: '/inventory/pharmacy/product/list',
                 method: 'GET',
                 data: {
                     search,
@@ -91,8 +96,8 @@
                     setTimeout(() => {
                         const modalDelete = new Modal(document.getElementById(
                             'modal-delete'));
-                        const modalEdit = new Modal(document.getElementById(
-                            'modal-edit-tax'));
+                        // const modalEdit = new Modal(document.getElementById(
+                        //     'modal-edit-product'));
 
                         document.querySelectorAll('[data-modal-toggle="modal-delete"]')
                             .forEach(button => {
@@ -101,7 +106,8 @@
                                 });
                             });
 
-                        document.querySelectorAll('[data-modal-toggle="modal-edit-tax"]')
+                        document.querySelectorAll(
+                                '[data-modal-toggle="modal-edit-product"]')
                             .forEach(button => {
                                 button.addEventListener('click', () => {
                                     modalEdit.show();
@@ -118,40 +124,40 @@
 
         getDetail: (id) => {
             $.ajax({
-                url: `/inventory/master/tax/${id}`,
+                url: `/inventory/pharmacy/product/${id}`,
                 type: "GET",
                 cache: false,
                 success: function(response) {
                     // Fill the modal with data
-                    $('#modal-edit-tax #name').val(response.data.name);
-                    $('#modal-edit-tax #rate').val(response.data.rate);
-                    $('#modal-edit-tax #description').val(response.data.description);
+                    $('#modal-edit-product #name').val(response.data.name);
+                    $('#modal-edit-product #email').val(response.data.email);
+                    $('#modal-edit-product #role').val(response.data.role);
 
                     // Add hidden input for form submission
-                    if (!$('#modal-edit-tax form #tax_id').length) {
-                        $('#modal-edit-tax form').append(
-                            `<input type="hidden" id="tax_id" name="tax_id" value="${id}">`
+                    if (!$('#modal-edit-product form #product_id').length) {
+                        $('#modal-edit-product form').append(
+                            `<input type="hidden" id="product_id" name="product_id" value="${id}">`
                         );
                     } else {
-                        $('#modal-edit-tax form #tax_id').val(id);
+                        $('#modal-edit-product form #product_id').val(id);
                     }
 
                     // Show modal
-                    $('#modal-edit-tax').removeClass('hidden').addClass('flex');
+                    $('#modal-edit-product').removeClass('hidden').addClass('flex');
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
                 },
                 complete: function() {
                     // Hide loading icon
-                    $('#modal-edit-tax form .absolute').remove();
+                    $('#modal-edit-product form .absolute').remove();
                 }
             });
         },
 
-        deleteTax: (id) => {
+        deleteProduct: (id) => {
             $.ajax({
-                url: `/inventory/master/tax/${id}`,
+                url: `/inventory/pharmacy/product/${id}`,
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -184,32 +190,70 @@
      * HTML Templates
      */
     const templates = {
-        tableRow: (tax) => `
+        tableRow: (product) => `
             <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    ${utils.escapeHtml(tax.name || '-')}
+                    ${product.name || '-'}
                 </th>
                 <td class="px-6 py-4">
-                    ${tax.rate || '0'}%
+                    ${product.sku || '-'}
                 </td>
                 <td class="px-6 py-4">
-                    ${utils.escapeHtml(utils.truncateText(tax.description, TEXT_TRUNCATE_LENGTH) || '-')}
+                    ${(product.storage_location || '-')}
+                </td>
+                <td class="px-6 py-4">
+                    ${(product.stock || '0')}
+                </td>
+                <td class="px-6 py-4">
+                    ${product.purchase_price ? `Rp${new Intl.NumberFormat('id-ID').format(product.purchase_price)}` : '0'}
+                </td>
+                <td class="px-6 py-4">
+                    ${product.purchase_price ? `Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
+                </td>
+                <td class="px-6 py-4">
+                    ${(product.markup_percentage || '-')}
+                </td>
+                <td class="px-6 py-4">
+                    ${product.status ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
                 </td>
                 <td class="px-6 py-4 flex gap-2 items-center">
-                    ${templates.actionButtons(tax.id)}
+                    ${templates.actionButtons(product.id)}
                 </td>
             </tr>
         `,
 
         actionButtons: (id) => `
             <button
-                id="btn-edit-tax"
+                id="btn-edit-product"
                 class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
                 data-id="${id}"
-                data-modal-target="modal-edit-tax"
-                data-modal-toggle="modal-edit-tax"
+                data-modal-target="modal-edit-product"
+                data-modal-toggle="modal-edit-product"
             >
                 <i class="fa-solid fa-pencil"></i>
+            </button>
+            |
+            <button
+                id="btn-delete-product"
+                class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
+                data-id="${id}"
+                data-modal-target="modal-delete"
+                data-modal-toggle="modal-delete"
+            >
+                <i class="fa-solid fa-trash"></i>
+            </button>
+            |
+            <button
+                id="btn-delete-product"
+                class="font-medium text-xs text-white bg-green-500 hover:bg-green-600 h-8 w-16 rounded-md"
+                data-id="${id}"
+                data-modal-target="modal-delete"
+                data-modal-toggle="modal-delete"
+            >
+                <div class="flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-box"></i>
+                    Stok
+                </div>
             </button>
         `,
 
@@ -226,7 +270,7 @@
         init: () => {
             // Search input handler with debounce
             let searchTimeout;
-            $('#search-name').on('input', function() {
+            $('#search-name-product').on('input', function() {
                 const searchValue = $(this).val();
                 clearTimeout(searchTimeout);
 
@@ -244,7 +288,7 @@
             $(document).on('click', '.pagination a', function(e) {
                 e.preventDefault();
                 const page = $(this).attr('href').split('page=')[1];
-                const currentSearch = $('#search-name').val();
+                const currentSearch = $('#search-name-product').val();
 
                 debug.log('Pagination', `Changing to page ${page}`);
                 urlManager.updateParams({
@@ -255,57 +299,58 @@
             });
 
             // Delete confirmation handler
-            $("body").on('click', '#btn-delete-tax', function() {
-                let tax_id = $(this).data('id');
+            $("body").on('click', '#btn-delete-product', function() {
+                let product_id = $(this).data('id');
 
-                // Get tax name from the same row
-                let tax_name = $(this).closest('tr').find('th').text().trim();
+                // Get product name from the same row
+                let product_name = $(this).closest('tr').find('th').text().trim();
 
                 // Update modal content
-                $('#modal-delete h3').text(`Apakah anda yakin ingin menghapus data ${tax_name} ini?`);
+                $('#modal-delete h3').text(
+                    `Apakah anda yakin ingin menghapus data ${product_name} ini?`);
 
                 // Update onclick attribute of confirm delete button
                 $('#modal-delete button[data-modal-hide="modal-delete"].bg-red-600').attr('onclick',
-                    `dataService.deleteTax(${tax_id})`);
+                    `dataService.deleteProduct(${product_id})`);
             });
 
             // Browser navigation handler
             window.addEventListener('popstate', function() {
                 const params = urlManager.getParams();
-                $('#search-name').val(params.search);
+                $('#search-name-product').val(params.search);
                 dataService.fetchData(params.page, params.search);
             });
 
-            // Edit tax handler
-            $('body').on('click', '#btn-edit-tax', function() {
-                let tax_id = $(this).data('id');
+            // Edit product handler
+            $('body').on('click', '#btn-edit-product', function() {
+                let product_id = $(this).data('id');
 
                 // Reset form
-                $('#modal-edit-tax form').trigger('reset');
+                $('#modal-edit-product form').trigger('reset');
 
                 // Show loading icon
-                $('#modal-edit-tax form').prepend(templates.loadingModal);
+                $('#modal-edit-product form').prepend(templates.loadingModal);
 
                 // Fetch data
-                dataService.getDetail(tax_id);
+                dataService.getDetail(product_id);
             });
         },
     };
 
     /**
-     * Initialize the tax table functionality
+     * Initialize the product table functionality
      */
-    function initTaxTable() {
-        debug.log('Init', 'Initializing tax table...');
+    function initProductTable() {
+        debug.log('Init', 'Initializing product table...');
         const params = urlManager.getParams();
-        $('#search-name').val(params.search);
+        $('#search-name-product').val(params.search);
         dataService.fetchData(params.page, params.search);
     }
 
     // Initialize when document is ready
     $(document).ready(() => {
         debug.log('Ready', 'Document ready, initializing...');
-        initTaxTable();
+        initProductTable();
         eventHandlers.init();
     });
 </script>

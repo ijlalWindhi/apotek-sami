@@ -6,6 +6,9 @@ use App\Http\Controllers\TaxController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\RegisterUserController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProductController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -75,8 +78,8 @@ Route::prefix('inventory')
         });
 
         // Pharmacy
-        // Employee
         Route::prefix('pharmacy')->group(function () {
+            // Employee
             Route::controller(RegisterUserController::class)->group(function () {
                 Route::get('/employee', 'index')->name('employee.index');
                 Route::get('/employee/list', 'getAll')->name('employee.getAll');
@@ -84,6 +87,36 @@ Route::prefix('inventory')
                 Route::get('/employee/{user}', 'show')->name('employee.show');
                 Route::put('/employee/{user}', 'update')->name('employee.update');
                 Route::delete('/employee/{user}', 'destroy')->name('employee.destroy');
+            });
+
+            // Doctor
+            Route::controller(DoctorController::class)->group(function () {
+                // Route::get('/doctor', 'index')->name('doctor.index');
+                Route::get('/doctor/list', 'getAll')->name('doctor.getAll');
+                Route::post('/doctor', 'store')->name('doctor.store');
+                Route::get('/doctor/{user}', 'show')->name('doctor.show');
+                Route::put('/doctor/{user}', 'update')->name('doctor.update');
+                Route::delete('/doctor/{user}', 'destroy')->name('doctor.destroy');
+            });
+
+            // Customer
+            Route::controller(CustomerController::class)->group(function () {
+                // Route::get('/customer', 'index')->name('customer.index');
+                Route::get('/customer/list', 'getAll')->name('customer.getAll');
+                Route::post('/customer', 'store')->name('customer.store');
+                Route::get('/customer/{user}', 'show')->name('customer.show');
+                Route::put('/customer/{user}', 'update')->name('customer.update');
+                Route::delete('/customer/{user}', 'destroy')->name('customer.destroy');
+            });
+
+            // Product
+            Route::controller(ProductController::class)->group(function () {
+                Route::get('/product', 'index')->name('product.index');
+                Route::get('/product/list', 'getAll')->name('product.getAll');
+                Route::post('/product', 'store')->name('product.store');
+                Route::get('/product/{product}', 'show')->name('product.show');
+                Route::put('/product/{product}', 'update')->name('product.update');
+                Route::delete('/product/{product}', 'destroy')->name('product.destroy');
             });
         });
 

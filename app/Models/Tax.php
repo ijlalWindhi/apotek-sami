@@ -11,7 +11,7 @@ class Tax extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'm_tax';
-    protected $fillable = ['name', 'rate', 'description'];
+    protected $fillable = ['name', 'rate', 'description', 'is_active'];
     protected $casts = [
         'rate' => 'float',
         'created_at' => 'datetime',

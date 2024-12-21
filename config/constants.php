@@ -45,7 +45,7 @@ return [
             'title' => 'Ubah Profile',
         ],
         [
-            'title' => 'Logout',
+            'title' => 'Keluar',
         ]
     ]
 ];

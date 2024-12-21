@@ -1,15 +1,18 @@
 export const table = {
     emptyTable: () => `
         <tr>
-            <td colspan="4" class="px-6 py-4 text-center">
-                Tidak ada data
+            <td colspan="100" class="px-6 py-4">
+                <div class="text-red-600 flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+                    <p class="text-sm text-center">Tidak ada data</p>
+                </div>
             </td>
         </tr>
     `,
 
     loading: () => `
         <tr>
-            <td colspan="4" class="px-6 py-4 text-center">
+            <td colspan="100" class="px-6 py-4 text-center">
                 <div class="flex justify-center items-center">
                     <i class="fa-solid fa-spinner fa-spin mr-2"></i>
                     Loading...

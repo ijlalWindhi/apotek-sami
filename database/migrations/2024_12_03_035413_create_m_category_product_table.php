@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('m_payment_type', function (Blueprint $table) {
+        Schema::create('m_category_product', function (Blueprint $table) {
             $table->id();
-            $table->softDeletes();
             $table->timestamps();
-            $table->string('name')->unique();
+            $table->softDeletes();
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->string('account_bank')->nullable();
-            $table->string('name_bank')->nullable();
-            $table->boolean('is_active')->default(true);
         });
     }
 
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('m_payment_type');
+        Schema::dropIfExists('m_category_product');
     }
 };

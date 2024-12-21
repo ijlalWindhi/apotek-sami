@@ -16,10 +16,7 @@
         rel="stylesheet">
 
     {{-- JQuery --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    {{-- Sweet Alert 2 --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
 
     {{-- Load Resource --}}
     @vite('resources/css/app.css')
