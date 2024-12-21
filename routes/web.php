@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\DoctorController;
@@ -67,10 +68,15 @@ Route::prefix('inventory')
                 Route::put('/unit/{unit}', 'update')->name('unit.update');
                 Route::delete('/unit/{unit}', 'destroy')->name('unit.destroy');
             });
-        });
 
-        Route::get('/master/payment-type', function () {
-            return view('pages.inventory.master.payment-type', ['title' => 'Master Tipe Pembayaran']);
+            Route::controller(PaymentTypeController::class)->group(function () {
+                Route::get('/payment-type', 'index')->name('paymentType.index');
+                Route::get('/payment-type/list', 'getAll')->name('paymentType.getAll');
+                Route::post('/payment-type', 'store')->name('paymentType.store');
+                Route::get('/payment-type/{paymentType}', 'show')->name('paymentType.show');
+                Route::put('/payment-type/{paymentType}', 'update')->name('paymentType.update');
+                Route::delete('/payment-type/{paymentType}', 'destroy')->name('paymentType.destroy');
+            });
         });
 
         Route::get('/master/adjustment-type', function () {
