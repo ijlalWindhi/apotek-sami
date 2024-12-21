@@ -30,7 +30,7 @@ return [
                 ['title' => 'Pajak', 'path' => '/inventory/master/tax'],
                 ['title' => 'Unit Satuan', 'path' => '/inventory/master/unit'],
                 ['title' => 'Tipe Pembayaran', 'path' => '/inventory/master/payment-type'],
-                ['title' => 'Tipe Penyesuaian', 'path' => '/inventory/master/adjustment-type'],
+                ['title' => 'Supplier', 'path' => '/inventory/master/supplier'],
             ]
         ],
         [

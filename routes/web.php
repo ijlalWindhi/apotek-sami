@@ -73,8 +73,8 @@ Route::prefix('inventory')
             return view('pages.inventory.master.payment-type', ['title' => 'Master Tipe Pembayaran']);
         });
 
-        Route::get('/master/adjustment-type', function () {
-            return view('pages.inventory.master.adjustment-type', ['title' => 'Master Tipe Penyesuaian']);
+        Route::get('/master/supplier', function () {
+            return view('pages.inventory.master.supplier', ['title' => 'Master Supplier']);
         });
 
         // Pharmacy
