@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\PaymentTypeController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\DoctorController;
@@ -77,10 +78,16 @@ Route::prefix('inventory')
                 Route::put('/payment-type/{paymentType}', 'update')->name('paymentType.update');
                 Route::delete('/payment-type/{paymentType}', 'destroy')->name('paymentType.destroy');
             });
-        });
 
-        Route::get('/master/adjustment-type', function () {
-            return view('pages.inventory.master.adjustment-type', ['title' => 'Master Tipe Penyesuaian']);
+            Route::controller(SupplierController::class)->group(function () {
+                Route::get('/supplier', 'index')->name('supplier.index');
+                Route::get('/supplier/view/{supplier}', 'detail')->name('supplier.detail');
+                Route::get('/supplier/list', 'getAll')->name('supplier.getAll');
+                Route::post('/supplier', 'store')->name('supplier.store');
+                Route::get('/supplier/{supplier}', 'show')->name('supplier.show');
+                Route::put('/supplier/{supplier}', 'update')->name('supplier.update');
+                Route::delete('/supplier/{supplier}', 'destroy')->name('supplier.destroy');
+            });
         });
 
         // Pharmacy
