@@ -7,8 +7,31 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class SupplierService
 {
+    private function generateCode(): string
+    {
+        $prefix = 'SPLR-';
+
+        // Get the last supplier with the SPLR- prefix
+        $lastSupplier = Supplier::where('code', 'like', $prefix . '%')
+            ->orderBy('code', 'desc')
+            ->first();
+
+        if (!$lastSupplier) {
+            // If no supplier exists yet, start with 0001
+            return $prefix . '0001';
+        }
+
+        // Extract the number from the last code
+        $lastNumber = intval(str_replace($prefix, '', $lastSupplier->code));
+
+        // Increment and pad with zeros
+        $newNumber = $lastNumber + 1;
+        return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+    }
+
     public function create(array $data): Supplier
     {
+        $data['code'] = $this->generateCode();
         return Supplier::create($data);
     }
 
