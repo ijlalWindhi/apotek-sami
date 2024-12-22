@@ -81,6 +81,7 @@ Route::prefix('inventory')
 
             Route::controller(SupplierController::class)->group(function () {
                 Route::get('/supplier', 'index')->name('supplier.index');
+                Route::get('/supplier/create', 'create')->name('supplier.create');
                 Route::get('/supplier/view/{supplier}', 'detail')->name('supplier.detail');
                 Route::get('/supplier/list', 'getAll')->name('supplier.getAll');
                 Route::post('/supplier', 'store')->name('supplier.store');

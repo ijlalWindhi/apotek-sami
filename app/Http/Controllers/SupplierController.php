@@ -22,10 +22,27 @@ class SupplierController extends Controller
 
     public function index(): View
     {
+        return view('pages.inventory.master.supplier.supplier', [
+            'title' => 'Master Supplier',
+        ]);
+    }
+
+    public function createview(): View
+    {
         $payment_type = PaymentType::all();
 
-        return view('pages.inventory.master.supplier', [
-            'title' => 'Master Supplier',
+        return view('pages.inventory.master.supplier.supplier-create', [
+            'title' => 'Create Master Supplier',
+            'payment_type' => $payment_type
+        ]);
+    }
+
+    public function detailview(): View
+    {
+        $payment_type = PaymentType::all();
+
+        return view('pages.inventory.master.supplier.supplier-edit', [
+            'title' => 'Edit Master Supplier',
             'payment_type' => $payment_type
         ]);
     }
