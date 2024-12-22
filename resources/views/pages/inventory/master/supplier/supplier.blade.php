@@ -14,6 +14,13 @@
                     <span class="sr-only">Search</span>
                 </button>
             </div>
+
+            <a href="{{ route('supplier.create') }}">
+                <x-button color="blue">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="ms-2">Tambah</span>
+                </x-button>
+            </a>
         </div>
 
         {{-- Table --}}
