@@ -101,10 +101,24 @@
                                 });
                             });
 
+                        document.querySelectorAll('[data-modal-hide="modal-delete"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalDelete.hide();
+                                });
+                            });
+
                         document.querySelectorAll('[data-modal-toggle="modal-edit-unit"]')
                             .forEach(button => {
                                 button.addEventListener('click', () => {
                                     modalEdit.show();
+                                });
+                            });
+
+                        document.querySelectorAll('[data-modal-hide="modal-edit-unit"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalEdit.hide();
                                 });
                             });
                     }, 100);
