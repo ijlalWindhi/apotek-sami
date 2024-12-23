@@ -96,10 +96,27 @@
                         const modalEdit = new Modal(document.getElementById(
                             'modal-edit-payment-type'));
 
+                        // Untuk modal delete
+                        document.querySelectorAll('[data-modal-hide="modal-delete"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalDelete.hide(); // Perbaikan di sini
+                                });
+                            });
+
                         document.querySelectorAll('[data-modal-toggle="modal-delete"]')
                             .forEach(button => {
                                 button.addEventListener('click', () => {
                                     modalDelete.show();
+                                });
+                            });
+
+                        // Untuk modal edit
+                        document.querySelectorAll(
+                                '[data-modal-hide="modal-edit-payment-type"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalEdit.hide(); // Perbaikan di sini
                                 });
                             });
 
@@ -181,7 +198,8 @@
                 },
                 complete: () => {
                     // Hide modal
-                    $('#modal-delete').removeClass('flex').addClass('hidden');
+                    const modal = new Modal(document.getElementById('modal-delete'));
+                    modal.hide();
                 }
             });
         }
