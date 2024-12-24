@@ -24,8 +24,28 @@ class ProductController extends Controller
     {
         $units = Unit::all();
 
-        return view('pages.inventory.pharmacy.product', [
-            'title' => 'Master Produk',
+        return view('pages.inventory.pharmacy.product.product', [
+            'title' => 'Produk',
+            'units' => $units
+        ]);
+    }
+
+    public function create(): View
+    {
+        $units = Unit::all();
+
+        return view('pages.inventory.pharmacy.product.product-create', [
+            'title' => 'Tambah Produk',
+            'units' => $units
+        ]);
+    }
+
+    public function detail(): View
+    {
+        $units = Unit::all();
+
+        return view('pages.inventory.pharmacy.product.product-detail', [
+            'title' => 'Ubah Produk',
             'units' => $units
         ]);
     }
