@@ -14,6 +14,13 @@
                     <span class="sr-only">Search</span>
                 </button>
             </div>
+
+            <a href="{{ route('supplier.create') }}">
+                <x-button color="blue">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="ms-2">Tambah</span>
+                </x-button>
+            </a>
         </div>
 
         {{-- Table --}}
@@ -90,6 +97,14 @@
                         const modalDelete = new Modal(document.getElementById(
                             'modal-delete'));
 
+                        // Tambahkan event listener untuk semua tombol penutup modal
+                        document.querySelectorAll('[data-modal-hide="modal-delete"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalDelete.hide();
+                                });
+                            });
+
                         document.querySelectorAll('[data-modal-toggle="modal-delete"]')
                             .forEach(button => {
                                 button.addEventListener('click', () => {
@@ -130,7 +145,8 @@
                 },
                 complete: () => {
                     // Hide modal
-                    $('#modal-delete').removeClass('flex').addClass('hidden');
+                    const modalDelete = new Modal(document.getElementById('modal-delete'));
+                    modalDelete.hide();
                 }
             });
         }

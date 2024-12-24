@@ -50,8 +50,8 @@ Route::prefix('inventory')
         })->name('inventory.dashboard');
 
         // Master
-        // Tax
         Route::prefix('master')->group(function () {
+            // Tax
             Route::controller(TaxController::class)->group(function () {
                 Route::get('/tax', 'index')->name('tax.index');
                 Route::get('/tax/list', 'getAll')->name('tax.getAll');
@@ -61,6 +61,7 @@ Route::prefix('inventory')
                 Route::delete('/tax/{tax}', 'destroy')->name('tax.destroy');
             });
 
+            // Unit
             Route::controller(UnitController::class)->group(function () {
                 Route::get('/unit', 'index')->name('unit.index');
                 Route::get('/unit/list', 'getAll')->name('unit.getAll');
@@ -70,6 +71,7 @@ Route::prefix('inventory')
                 Route::delete('/unit/{unit}', 'destroy')->name('unit.destroy');
             });
 
+            // Payment Type
             Route::controller(PaymentTypeController::class)->group(function () {
                 Route::get('/payment-type', 'index')->name('paymentType.index');
                 Route::get('/payment-type/list', 'getAll')->name('paymentType.getAll');
@@ -79,9 +81,11 @@ Route::prefix('inventory')
                 Route::delete('/payment-type/{paymentType}', 'destroy')->name('paymentType.destroy');
             });
 
+            // Supplier
             Route::controller(SupplierController::class)->group(function () {
                 Route::get('/supplier', 'index')->name('supplier.index');
-                Route::get('/supplier/view/{supplier}', 'detail')->name('supplier.detail');
+                Route::get('/supplier/create', 'createview')->name('supplier.create');
+                Route::get('/supplier/view/{supplier}', 'detailview')->name('supplier.detail');
                 Route::get('/supplier/list', 'getAll')->name('supplier.getAll');
                 Route::post('/supplier', 'store')->name('supplier.store');
                 Route::get('/supplier/{supplier}', 'show')->name('supplier.show');

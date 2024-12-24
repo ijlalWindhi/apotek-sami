@@ -16,7 +16,6 @@ class SupplierRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'type' => 'required|in:Pedagang Besar Farmasi,Apotek Lain,Toko Obat,Lain-Lain',
-            'code' => 'required|string|unique:m_supplier,code',
             'is_active' => 'required|boolean',
             'payment_type' => 'required|exists:m_payment_type,id',
             'payment_term' => 'required|in:Tunai,1 Hari,7 Hari,14 Hari,21 Hari,30 Hari,45 Hari',
