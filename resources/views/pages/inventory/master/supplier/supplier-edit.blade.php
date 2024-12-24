@@ -1,63 +1,133 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <div class="flex flex-col gap-4 w-full">
-        {{-- Search & Add Button --}}
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div class="relative sm:w-full md:w-1/2 lg:w-2/6">
-                <input type="search" id="search-name-supplier" name="search-name-supplier"
-                    class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                    placeholder="Cari nama, kode, email, nomor handphone" />
-                <button type="button" id="search-button"
-                    class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <span class="sr-only">Search</span>
-                </button>
+    <form id="supplier" class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full">
+        @csrf
+        <div class="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start justify-between gap-4">
+            <div>
+                <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode
+                    <span class="text-red-500">*</span></label>
+                <input type="text" name="name" id="name"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Nama supplier" required>
+            </div>
+            <div>
+                <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipe Supplier
+                    <span class="text-red-500">*</span></label>
+                <select name="type" id="type" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                    <option value="" selected disabled hidden>Pilih tipe supplier</option>
+                    <option value="Pedagang Besar Farmasi">Pedaan Besar Farmasi</option>
+                    <option value="Apotek Lain">Apotek Lain</option>
+                    <option value="Toko Obat">Toko Obat</option>
+                    <option value="Lain-Lain">Lain-Lain</option>
+                </select>
+            </div>
+            <div>
+                <label for="code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode
+                    <span class="text-red-500">*</span></label>
+                <input type="text" name="code" id="code" disabled
+                    class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
+                    placeholder="Terisi otomatis">
+            </div>
+            <div>
+                <label for="payment_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipe
+                    Pembayaran
+                    <span class="text-red-500">*</span></label>
+                <select name="payment_type" id="payment_type" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                    <option value="" selected disabled hidden>Pilih Tipe Pembayaran</option>
+                    @foreach ($payment_type as $payment)
+                        <option value="{{ $payment->id }}">{{ $payment->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label for="payment_term" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jangka
+                    Waktu
+                    Pembayaran
+                    <span class="text-red-500">*</span></label>
+                <select name="payment_term" id="payment_term" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                    <option value="" selected disabled hidden>Pilih Jangka Waktu Pembayaran</option>
+                    <option value="Tunai">Tunai</option>
+                    <option value="1 Hari">1 Hari</option>
+                    <option value="7 Hari">7 Hari</option>
+                    <option value="14 Hari">14 Hari</option>
+                    <option value="21 Hari">21 Hari</option>
+                    <option value="30 Hari">30 Hari</option>
+                    <option value="45 Hari">45 Hari</option>
+                </select>
+            </div>
+            <div>
+                <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status
+                    <span class="text-red-500">*</span></label>
+                <select name="is_active" id="is_active" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                    <option value="" selected disabled hidden>Pilih status</option>
+                    <option value="true">Aktif</option>
+                    <option value="false">Tidak Aktif</option>
+                </select>
+            </div>
+            <div>
+                <label for="phone_1" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Telepon
+                    1</label>
+                <input type="text" name="phone_1" id="phone_1"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Nomor Telepon 1">
+            </div>
+            <div>
+                <label for="phone_2" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Telepon
+                    2</label>
+                <input type="text" name="phone_2" id="phone_2"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Nomor Telepon 2">
+            </div>
+            <div>
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email
+                </label>
+                <input type="email" name="email" id="email"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Email">
+            </div>
+            <div>
+                <label for="postal_code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode Pos
+                </label>
+                <input type="text" name="postal_code" id="postal_code"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Kode Pos">
+            </div>
+            <div>
+                <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat
+                </label>
+                <textarea id="address" name="address" rows="4"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Catatan"></textarea>
+            </div>
+            <div>
+                <label for="description"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Catatan</label>
+                <textarea id="description" name="description" rows="4"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Catatan"></textarea>
             </div>
         </div>
-
-        {{-- Table --}}
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-xs md:text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 min-w-36">Nama</th>
-                        <th scope="col" class="px-6 py-3">Kode</th>
-                        <th scope="col" class="px-6 py-3 min-w-40">Tipe Supplier</th>
-                        <th scope="col" class="px-6 py-3">Status</th>
-                        <th scope="col" class="px-6 py-3 min-w-40">Alamat</th>
-                        <th scope="col" class="px-6 py-3">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    {{-- Table content will be inserted here --}}
-                </tbody>
-            </table>
+        <div class="flex justify-end items-center gap-3 flex-col sm:flex-row">
+            <a href="{{ route('supplier.index') }}">
+                <x-button color="red" class="w-full md:w-32">Batal</x-button>
+            </a>
+            <x-button color="blue" type="submit" class="w-full md:w-32">Simpan</x-button>
         </div>
-
-        {{-- Pagination --}}
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm">
-            <div class="data-info"></div>
-            <div class="pagination-container"></div>
-        </div>
-    </div>
-
-    {{-- Modals --}}
-    <span data-modal-target="modal-delete" data-modal-toggle="modal-delete" class="hidden"></span>
-    <x-global.modal-delete name="Supplier" />
+    </form>
 </x-layout>
 
 <script>
     /**
-     * Supplier Management Module
-     * Handles the display, pagination, and interaction with supplier data in a table format
+     * Create Supplier Management Module
+     * Handles the creation of a new supplier
      */
-
-    // Constants
-    const PAGINATION_DISPLAY_RANGE = 2;
-    const DEBOUNCE_DELAY = 500;
-    const PER_PAGE = 10;
-    const TEXT_TRUNCATE_LENGTH = 40;
+    const url = window.location.pathname;
+    const supplierId = url.split('/').pop();
 
     /**
      * Data Fetching and Processing
@@ -68,199 +138,132 @@
          * @param {number} page - Page number to fetch
          * @param {string} search - Search term
          */
-        fetchData: (page = 1, search = '') => {
-            uiManager.showLoading();
+        fetchData: () => {
+            $("#supplier").prepend(uiManager.showScreenLoader);
 
             $.ajax({
-                url: '/inventory/master/supplier/list',
+                url: `/inventory/master/supplier/${supplierId}`,
                 method: 'GET',
-                data: {
-                    search,
-                    page,
-                    per_page: PER_PAGE
+                contentType: 'application/json',
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
                 success: async (response) => {
                     if (!response?.success) {
                         throw new Error('Invalid response format');
                     }
-                    await uiManager.refreshUI(response);
 
-                    // Handle reinitialization of modals
-                    setTimeout(() => {
-                        const modalDelete = new Modal(document.getElementById(
-                            'modal-delete'));
+                    const data = response.data;
+                    const form = $('form');
 
-                        document.querySelectorAll('[data-modal-toggle="modal-delete"]')
-                            .forEach(button => {
-                                button.addEventListener('click', () => {
-                                    modalDelete.show();
-                                });
-                            });
-                    }, 100);
+                    form.find('input[name="name"]').val(data.name);
+                    form.find('input[name="code"]').val(data.code);
+                    form.find('select[name="type"]').val(data.type);
+                    form.find('select[name="payment_type"]').val(data.payment_type);
+                    form.find('select[name="payment_term"]').val(data.payment_term);
+                    form.find('select[name="is_active"]').val(data.is_active ? 'true' : 'false');
+                    form.find('input[name="phone_1"]').val(data.phone_1);
+                    form.find('input[name="phone_2"]').val(data.phone_2);
+                    form.find('input[name="email"]').val(data.email);
+                    form.find('input[name="postal_code"]').val(data.postal_code);
+                    form.find('textarea[name="address"]').val(data.address);
+                    form.find('textarea[name="description"]').val(data.description);
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
-                    uiManager.showError('Gagal mengambil data supplier. Silahkan coba lagi.');
                 },
+                complete: function() {
+                    // Hide loading icon
+                    $('#supplier .fixed').remove();
+                }
             });
         },
 
-        deleteSupplier: (id) => {
+        /**
+         * Fetches updated supplier data from the server
+         */
+        updateData: (data) => {
+            $("#supplier").prepend(uiManager.showScreenLoader);
+
             $.ajax({
-                url: `/inventory/master/supplier/${id}`,
-                type: 'DELETE',
+                url: `/inventory/master/supplier/${supplierId}`,
+                method: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                processData: false,
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'X-HTTP-Method-Override': 'PUT'
                 },
-                success: function(response) {
+                success: async (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
+                    }
+
                     Swal.fire({
-                        position: "center",
                         icon: "success",
-                        title: "Berhasil menghapus data",
+                        title: "Berhasil memperbarui data",
                         showConfirmButton: false,
                         timer: 1500
                     });
 
-                    // Fetch data again
-                    const params = urlManager.getParams();
-                    dataService.fetchData(params.page, params.search);
+                    // Redirect to page list
+                    setTimeout(() => {
+                        window.location.href = '/inventory/master/supplier';
+                    }, 300);
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
                 },
-                complete: () => {
-                    // Hide modal
-                    $('#modal-delete').removeClass('flex').addClass('hidden');
+                complete: function() {
+                    // Hide loading icon
+                    $('#supplier .fixed').remove();
                 }
             });
-        }
-    };
-
-    /**
-     * HTML Templates
-     */
-    const templates = {
-        tableRow: (supplier) => `
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    ${supplier.name || '-'}
-                </th>
-                <td class="px-6 py-4">
-                    ${supplier.code || '-'}
-                </td>
-                <td class="px-6 py-4">
-                    ${(supplier.type || '-')}
-                </td>
-                <td class="px-6 py-4">
-                    ${(supplier.is_active ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Aktif</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Aktif</span>')}
-                </td>
-                <td class="px-6 py-4">
-                    ${(supplier.address || '-')}
-                </td>
-                <td class="px-6 py-4 flex gap-2 items-center">
-                    ${templates.actionButtons(supplier.id)}
-                </td>
-            </tr>
-        `,
-
-        actionButtons: (id) => `
-            <a href="/inventory/master/supplier/view/${id}" id="btn-edit-supplier">
-                <button class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md">
-                    <i class="fa-solid fa-pencil"></i>
-                </button>
-            </a>
-            |
-            <button
-                id="btn-delete-supplier"
-                class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
-                data-id="${id}"
-                data-modal-target="modal-delete"
-                data-modal-toggle="modal-delete"
-            >
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        `,
-
-        loadingModal: '<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90"><i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i></div>',
+        },
     };
 
     /**
      * Event Handlers
      */
-    const eventHandlers = {
+    const eventHandlersSupplier = {
         /**
          * Initializes all event handlers
          */
         init: () => {
             // Search input handler with debounce
             let searchTimeout;
-            $('#search-name-supplier').on('input', function() {
-                const searchValue = $(this).val();
-                clearTimeout(searchTimeout);
-
-                searchTimeout = setTimeout(() => {
-                    debug.log('Search', 'Triggering search...');
-                    urlManager.updateParams({
-                        search: searchValue,
-                        page: 1
-                    });
-                    dataService.fetchData(1, searchValue);
-                }, DEBOUNCE_DELAY);
-            });
-
-            // Pagination click handler
-            $(document).on('click', '.pagination a', function(e) {
+            $('form').on('submit', function(e) {
                 e.preventDefault();
-                const page = $(this).attr('href').split('page=')[1];
-                const currentSearch = $('#search-name-supplier').val();
 
-                debug.log('Pagination', `Changing to page ${page}`);
-                urlManager.updateParams({
-                    page,
-                    search: currentSearch
+                let formData = $(this).serializeArray();
+                let data = {};
+
+                $.each(formData, function() {
+                    if (this.name === 'is_active') {
+                        this.value = this.value === 'true';
+                    }
+                    data[this.name] = this.value;
                 });
-                dataService.fetchData(page, currentSearch);
-            });
 
-            // Delete confirmation handler
-            $("body").on('click', '#btn-delete-supplier', function() {
-                let supplier_id = $(this).data('id');
-
-                // Get supplier name from the same row
-                let supplier_name = $(this).closest('tr').find('th').text().trim();
-
-                // Update modal content
-                $('#modal-delete h3').text(
-                    `Apakah anda yakin ingin menghapus data ${supplier_name} ini?`);
-
-                // Update onclick attribute of confirm delete button
-                $('#modal-delete button[data-modal-hide="modal-delete"].bg-red-600').attr('onclick',
-                    `dataService.deleteSupplier(${supplier_id})`);
-            });
-
-            // Browser navigation handler
-            window.addEventListener('popstate', function() {
-                const params = urlManager.getParams();
-                $('#search-name-supplier').val(params.search);
-                dataService.fetchData(params.page, params.search);
+                dataService.updateData(data);
             });
         },
     };
 
     /**
-     * Initialize the supplier table functionality
+     * Initialize the supplier detail
      */
-    function initSupplierTable() {
-        debug.log('Init', 'Initializing supplier table...');
-        const params = urlManager.getParams();
-        $('#search-name-supplier').val(params.search);
-        dataService.fetchData(params.page, params.search);
+    function initSupplierDetail() {
+        debug.log('Init', 'Initializing supplier data...');
+        dataService.fetchData();
     }
 
     // Initialize when document is ready
     $(document).ready(() => {
         debug.log('Ready', 'Document ready, initializing...');
-        initSupplierTable();
-        eventHandlers.init();
+        initSupplierDetail();
+        eventHandlersSupplier.init();
     });
 </script>

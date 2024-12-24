@@ -100,7 +100,7 @@
             <div>
                 <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat
                 </label>
-                <textarea id="description" name="description" rows="4"
+                <textarea id="address" name="address" rows="4"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Catatan"></textarea>
             </div>
@@ -175,7 +175,7 @@
     /**
      * Event Handlers
      */
-    const eventHandlers = {
+    const eventHandlersSupplier = {
         /**
          * Initializes all event handlers
          */
@@ -203,6 +203,6 @@
     // Initialize when document is ready
     $(document).ready(() => {
         debug.log('Ready', 'Document ready, initializing...');
-        eventHandlers.init();
+        eventHandlersSupplier.init();
     });
 </script>

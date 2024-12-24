@@ -11,8 +11,9 @@ class SupplierService
     {
         $prefix = 'SPLR-';
 
-        // Get the last supplier with the SPLR- prefix
-        $lastSupplier = Supplier::where('code', 'like', $prefix . '%')
+        // Get the last supplier with the SPLR- prefix, including soft deleted records
+        $lastSupplier = Supplier::withTrashed()
+            ->where('code', 'like', $prefix . '%')
             ->orderBy('code', 'desc')
             ->first();
 
@@ -29,9 +30,21 @@ class SupplierService
         return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 
+    // Optional: Add validation method to ensure code uniqueness
+    private function ensureUniqueCode(string $code): bool
+    {
+        return !Supplier::withTrashed()
+            ->where('code', $code)
+            ->exists();
+    }
+
     public function create(array $data): Supplier
     {
-        $data['code'] = $this->generateCode();
+        do {
+            $code = $this->generateCode();
+        } while (!$this->ensureUniqueCode($code));
+
+        $data['code'] = $code;
         return Supplier::create($data);
     }
 
