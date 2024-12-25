@@ -16,7 +16,7 @@
 
                 {{-- Logo --}}
                 <a href="/" class="flex ms-2 md:me-24">
-                    {{-- <img src="/images/logo.png" class="h-8 sm:h-10 md:h-12 me-3" alt="Logo" /> --}}
+                    <img src="/images/logo.png" class="h-8 sm:h-10 md:h-12 me-3" alt="Logo" />
                 </a>
             </div>
             <div class="flex items-center">
