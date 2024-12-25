@@ -16,23 +16,27 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->string('name');
-            $table->boolean('status')->default(true); // true = dijual, false = tidak dijual
+            $table->enum('type', ['Obat', 'Alat Kesehatan', 'Umum', 'Lain-Lain']);
+            $table->enum('drug_group', [
+                'Obat Bebas',
+                'Obat Bebas Terbatas',
+                'Obat Keras',
+                'Obat Golongan Narkotika',
+                'Obat Fitofarmaka',
+                'Obat Herbal Terstandar (OHT)',
+                'Obat Herbal (Jamu)',
+            ]);
             $table->string('sku')->unique();
-            $table->foreignId('unit_id')->constrained('m_unit');
-            $table->foreignId('category_id')->constrained('m_category_product');
             $table->integer('minimum_stock')->default(0);
-            $table->string('manufacturer')->nullable(); // pabrikan
-            $table->text('notes')->nullable();
-            $table->decimal('purchase_price', 12, 2); // harga beli
-            $table->boolean('show_markup_margin')->default(false);
-            $table->decimal('markup_percentage', 5, 2)->nullable();
+            $table->integer('stock')->default(0);
+            $table->string('supplier')->constrained('m_supplier');
+            $table->boolean('is_active')->default(true);
+            $table->foreignId('unit')->constrained('m_unit');
+            $table->text('description')->nullable();
+            $table->decimal('purchase_price', 12, 2);
+            $table->boolean('show_margin')->default(false);
             $table->decimal('margin_percentage', 5, 2)->nullable();
             $table->decimal('selling_price', 12, 2);
-            $table->boolean('show_overhead_cost')->default(false);
-            $table->decimal('overhead_cost_percentage', 5, 2)->nullable(); // Persentase biaya overhead
-            $table->decimal('overhead_cost_value', 12, 2)->nullable(); // Nilai biaya overhead dalam rupiah
-            $table->enum('overhead_cost_type', ['percentage', 'fixed'])->default('percentage'); // Tipe perhitungan tuslah
-            $table->text('overhead_cost_description')->nullable(); // Keterangan detail biaya overhead
         });
     }
 

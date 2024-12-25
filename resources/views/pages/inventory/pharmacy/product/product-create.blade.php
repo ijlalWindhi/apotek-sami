@@ -1,356 +1,341 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <div class="flex flex-col gap-4 w-full">
-        {{-- Search & Add Button --}}
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div class="relative sm:w-full md:w-1/2 lg:w-2/6">
-                <input type="search" id="search-name-product" name="search-name-product"
-                    class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                    placeholder="Cari nama, sku" />
-                <button type="button" id="search-button"
-                    class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <span class="sr-only">Search</span>
-                </button>
+    <form id="product" class="flex flex-col justify-between w-full h-full">
+        @csrf
+        <!-- Product Tab -->
+        <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" role="tablist">
+                <li class="me-2" role="presentation">
+                    <button type="button"
+                        class="tab-button inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-blue-600 border-blue-600"
+                        data-tab="info" aria-selected="true">
+                        Informasi Produk
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button type="button"
+                        class="tab-button inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                        data-tab="price" aria-selected="false">
+                        Informasi Harga
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div id="tab-contents">
+            <!-- Informasi Produk Tab -->
+            <div id="info" role="tabpanel" aria-labelledby="info-tab"
+                class="grid gird-cols-1 md:grid-cols-2 items-start justify-between gap-4">
+                <div>
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
+                        <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" id="name"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Nama produk" required>
+                </div>
+                <div>
+                    <label for="sku" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode
+                        Produk
+                        (SKU)
+                        <span class="text-red-500">*</span></label>
+                    <div class="flex w-full justify-between items-center gap-2">
+                        <input type="text" name="sku" id="sku" required placeholder="Kode Produk"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <button type="button" id="btn-generate-sku"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <i class="fa-solid fa-sync"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipe
+                        Produk
+                        <span class="text-red-500">*</span></label>
+                    <select name="type" id="type" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <option value="" selected disabled hidden>Pilih tipe produk</option>
+                        <option value="Obat">Obat</option>
+                        <option value="Alat Kesehatan">Alat Kesehatan</option>
+                        <option value="Umum">Umum</option>
+                        <option value="Lain-Lain">Lain-Lain</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="drug_group"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Golongan Obat
+                        <span class="text-red-500">*</span></label>
+                    <select name="drug_group" id="drug_group" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <option value="" selected disabled hidden>Pilih golongan obat</option>
+                        <option value="Obat Bebas">Obat Bebas</option>
+                        <option value="Obat Bebas Terbatas">Obat Bebas Terbatas</option>
+                        <option value="Obat Keras">Obat Keras</option>
+                        <option value="Obat Golongan Narkotika">Obat Golongan Narkotika</option>
+                        <option value="Obat Fitofarmaka">Obat Fitofarmaka</option>
+                        <option value="Obat Herbal Terstandar (OHT)">Obat Herbal Terstandar (OHT)</option>
+                        <option value="Obat Herbal (Jamu)">Obat Herbal (Jamu)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="minimum_stock" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Stok
+                        Minimum
+                        <span class="text-red-500">*</span></label>
+                    <input type="number" name="minimum_stock" id="minimum_stock"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Stok Minimum" required>
+                </div>
+                <div>
+                    <label for="supplier" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Supplier
+                        <span class="text-red-500">*</span></label>
+                    <select name="supplier" id="supplier" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <option value="" selected disabled hidden>Pilih supplier produk</option>
+                        @foreach ($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-4 items-start justify-start">
+                    <div class="w-full">
+                        <label for="is_active"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status
+                            <span class="text-red-500">*</span></label>
+                        <select name="is_active" id="is_active" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                            <option value="" selected disabled hidden>Pilih status</option>
+                            <option value="true">Aktif</option>
+                            <option value="false">Tidak Aktif</option>
+                        </select>
+                    </div>
+                    <div class="w-full">
+                        <label for="description"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Catatan</label>
+                        <textarea id="description" name="description" rows="4"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Catatan"></textarea>
+                    </div>
+                </div>
+                <div id="additional-units" class="flex flex-col justify-start items-start w-full gap-2">
+                    <div class="w-full">
+                        <label for="unit"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Satuan
+                            Dasar
+                            <span class="text-red-500">*</span></label>
+                        <select name="unit" id="unit" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                            <option value="" selected disabled hidden>Pilih satuan produk</option>
+                            @foreach ($units as $unit)
+                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <x-button id="btn-add-unit" color="blue" class="w-full">
+                        <i class="fa-solid fa-plus mr-2"></i>
+                        Tambah Satuan Lainnya</x-button>
+                </div>
             </div>
 
-            <x-pages.inventory.pharmacy.product.modal-add :units="$units" />
+            <!-- Informasi Harga Tab -->
+            <div class="hidden" id="price" role="tabpanel" aria-labelledby="price-tab">
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-1">
+                        <label for="purchase_price"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Harga
+                            Beli <span class="text-red-500">*</span></label>
+                        <input type="text" step="0.01" name="purchase_price" id="purchase_price" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    </div>
+                    <div class="col-span-1">
+                        <label for="selling_price"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Harga
+                            Jual <span class="text-red-500">*</span></label>
+                        <input type="text" step="0.01" name="selling_price" id="selling_price" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    </div>
+
+                    {{-- Margin --}}
+                    <div class="col-span-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="show_margin" id="show_margin" class="sr-only peer"
+                                value="1">
+                            <div
+                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                            </div>
+                            <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Tampilkan
+                                Margin</span>
+                            <i class="fa-solid fa-info-circle text-xs ml-2"
+                                data-tooltip-target="information-margin"></i>
+                        </label>
+                        <div id="information-margin" role="tooltip"
+                            class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-blue-500 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                            Margin = (Harga Jual - Harga Beli) / Harga Beli
+                            <div class="tooltip-arrow" data-popper-arrow></div>
+                        </div>
+                    </div>
+                    <div class="col-span-1 margin-fields hidden">
+                        <label for="margin_display"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Margin
+                            (%)</label>
+                        <input type="text" id="margin_display"
+                            class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                        <input type="hidden" name="margin_percentage" id="margin_percentage">
+                    </div>
+                </div>
+            </div>
         </div>
 
-        {{-- Table --}}
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-xs md:text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 min-w-36">Nama</th>
-                        <th scope="col" class="px-6 py-3 min-w-28">SKU</th>
-                        <th scope="col" class="px-6 py-3 min-w-36">Rak</th>
-                        <th scope="col" class="px-6 py-3">Stok</th>
-                        <th scope="col" class="px-6 py-3 min-w-40">Harga Pokok</th>
-                        <th scope="col" class="px-6 py-3 min-w-36">Harga Jual</th>
-                        <th scope="col" class="px-6 py-3">Markup</th>
-                        <th scope="col" class="px-6 py-3">Status</th>
-                        <th scope="col" class="px-6 py-3">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    {{-- Table content will be inserted here --}}
-                </tbody>
-            </table>
+        <!-- Submit Button -->
+        <div class="flex justify-end items-center gap-3 flex-col sm:flex-row mt-4 md:mt-10">
+            <a href="{{ route('product.index') }}" class="w-full md:w-32">
+                <x-button color="red" class="w-full md:w-32">Batal</x-button>
+            </a>
+            <x-button color="blue" type="submit" class="w-full md:w-32">Simpan</x-button>
         </div>
-
-        {{-- Pagination --}}
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm">
-            <div class="data-info"></div>
-            <div class="pagination-container"></div>
-        </div>
-    </div>
-
-    {{-- Modals --}}
-    <span data-modal-target="modal-delete" data-modal-toggle="modal-delete" class="hidden"></span>
-    {{-- <span data-modal-target="modal-edit-product" data-modal-toggle="modal-edit-product" class="hidden"></span> --}}
-    {{-- <x-pages.inventory.pharmacy.product.modal-edit /> --}}
-    <x-global.modal-delete name="pajak" />
+    </form>
 </x-layout>
 
 <script>
-    /**
-     * Product Management Module
-     * Handles the display, pagination, and interaction with product data in a table format
-     */
-
     // Constants
-    const PAGINATION_DISPLAY_RANGE = 2;
-    const DEBOUNCE_DELAY = 500;
-    const PER_PAGE = 10;
-    const TEXT_TRUNCATE_LENGTH = 40;
+    let unitCount = 0;
 
-    /**
-     * Data Fetching and Processing
-     */
-    const dataService = {
+    // Data Fetching and Processing
+    const dataServiceProduct = {
         /**
-         * Fetches product data from the server
-         * @param {number} page - Page number to fetch
-         * @param {string} search - Search term
+         * Creates a new product
+         * @param {Object} data - Product data
          */
-        fetchData: (page = 1, search = '') => {
-            uiManager.showLoading();
+        createProduct: (data) => {
+            uiManager.showScreenLoader();
 
             $.ajax({
-                url: '/inventory/pharmacy/product/list',
-                method: 'GET',
-                data: {
-                    search,
-                    page,
-                    per_page: PER_PAGE
+                url: '/inventory/pharmacy/product',
+                method: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
                 success: async (response) => {
                     if (!response?.success) {
                         throw new Error('Invalid response format');
                     }
-                    await uiManager.refreshUI(response);
 
-                    // Handle reinitialization of modals
-                    setTimeout(() => {
-                        const modalDelete = new Modal(document.getElementById(
-                            'modal-delete'));
-                        // const modalEdit = new Modal(document.getElementById(
-                        //     'modal-edit-product'));
-
-                        document.querySelectorAll('[data-modal-toggle="modal-delete"]')
-                            .forEach(button => {
-                                button.addEventListener('click', () => {
-                                    modalDelete.show();
-                                });
-                            });
-
-                        document.querySelectorAll(
-                                '[data-modal-toggle="modal-edit-product"]')
-                            .forEach(button => {
-                                button.addEventListener('click', () => {
-                                    modalEdit.show();
-                                });
-                            });
-                    }, 100);
-                },
-                error: (xhr, status, error) => {
-                    handleFetchError(xhr, status, error);
-                    uiManager.showError('Gagal mengambil data pajak. Silahkan coba lagi.');
-                },
-            });
-        },
-
-        getDetail: (id) => {
-            $.ajax({
-                url: `/inventory/pharmacy/product/${id}`,
-                type: "GET",
-                cache: false,
-                success: function(response) {
-                    // Fill the modal with data
-                    $('#modal-edit-product #name').val(response.data.name);
-                    $('#modal-edit-product #email').val(response.data.email);
-                    $('#modal-edit-product #role').val(response.data.role);
-
-                    // Add hidden input for form submission
-                    if (!$('#modal-edit-product form #product_id').length) {
-                        $('#modal-edit-product form').append(
-                            `<input type="hidden" id="product_id" name="product_id" value="${id}">`
-                        );
-                    } else {
-                        $('#modal-edit-product form #product_id').val(id);
-                    }
-
-                    // Show modal
-                    $('#modal-edit-product').removeClass('hidden').addClass('flex');
-                },
-                error: (xhr, status, error) => {
-                    handleFetchError(xhr, status, error);
-                },
-                complete: function() {
-                    // Hide loading icon
-                    $('#modal-edit-product form .absolute').remove();
-                }
-            });
-        },
-
-        deleteProduct: (id) => {
-            $.ajax({
-                url: `/inventory/pharmacy/product/${id}`,
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
                     Swal.fire({
-                        position: "center",
                         icon: "success",
-                        title: "Berhasil menghapus data",
+                        title: "Berhasil menambahkan data",
                         showConfirmButton: false,
                         timer: 1500
                     });
 
-                    // Fetch data again
-                    const params = urlManager.getParams();
-                    dataService.fetchData(params.page, params.search);
+                    // Redirect to page list
+                    setTimeout(() => {
+                        window.location.href = '/inventory/pharmacy/product';
+                    }, 300);
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
                 },
-                complete: () => {
-                    // Hide modal
-                    $('#modal-delete').removeClass('flex').addClass('hidden');
-                }
-            });
-        }
-    };
-
-    /**
-     * HTML Templates
-     */
-    const templates = {
-        tableRow: (product) => `
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    ${product.name || '-'}
-                </th>
-                <td class="px-6 py-4">
-                    ${product.sku || '-'}
-                </td>
-                <td class="px-6 py-4">
-                    ${(product.storage_location || '-')}
-                </td>
-                <td class="px-6 py-4">
-                    ${(product.stock || '0')}
-                </td>
-                <td class="px-6 py-4">
-                    ${product.purchase_price ? `Rp${new Intl.NumberFormat('id-ID').format(product.purchase_price)}` : '0'}
-                </td>
-                <td class="px-6 py-4">
-                    ${product.purchase_price ? `Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
-                </td>
-                <td class="px-6 py-4">
-                    ${(product.markup_percentage || '-')}
-                </td>
-                <td class="px-6 py-4">
-                    ${product.status ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
-                </td>
-                <td class="px-6 py-4 flex gap-2 items-center">
-                    ${templates.actionButtons(product.id)}
-                </td>
-            </tr>
-        `,
-
-        actionButtons: (id) => `
-            <button
-                id="btn-edit-product"
-                class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
-                data-id="${id}"
-                data-modal-target="modal-edit-product"
-                data-modal-toggle="modal-edit-product"
-            >
-                <i class="fa-solid fa-pencil"></i>
-            </button>
-            |
-            <button
-                id="btn-delete-product"
-                class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
-                data-id="${id}"
-                data-modal-target="modal-delete"
-                data-modal-toggle="modal-delete"
-            >
-                <i class="fa-solid fa-trash"></i>
-            </button>
-            |
-            <button
-                id="btn-delete-product"
-                class="font-medium text-xs text-white bg-green-500 hover:bg-green-600 h-8 w-16 rounded-md"
-                data-id="${id}"
-                data-modal-target="modal-delete"
-                data-modal-toggle="modal-delete"
-            >
-                <div class="flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-box"></i>
-                    Stok
-                </div>
-            </button>
-        `,
-
-        loadingModal: '<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90"><i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i></div>',
-    };
-
-    /**
-     * Event Handlers
-     */
-    const eventHandlers = {
-        /**
-         * Initializes all event handlers
-         */
-        init: () => {
-            // Search input handler with debounce
-            let searchTimeout;
-            $('#search-name-product').on('input', function() {
-                const searchValue = $(this).val();
-                clearTimeout(searchTimeout);
-
-                searchTimeout = setTimeout(() => {
-                    debug.log('Search', 'Triggering search...');
-                    urlManager.updateParams({
-                        search: searchValue,
-                        page: 1
-                    });
-                    dataService.fetchData(1, searchValue);
-                }, DEBOUNCE_DELAY);
-            });
-
-            // Pagination click handler
-            $(document).on('click', '.pagination a', function(e) {
-                e.preventDefault();
-                const page = $(this).attr('href').split('page=')[1];
-                const currentSearch = $('#search-name-product').val();
-
-                debug.log('Pagination', `Changing to page ${page}`);
-                urlManager.updateParams({
-                    page,
-                    search: currentSearch
-                });
-                dataService.fetchData(page, currentSearch);
-            });
-
-            // Delete confirmation handler
-            $("body").on('click', '#btn-delete-product', function() {
-                let product_id = $(this).data('id');
-
-                // Get product name from the same row
-                let product_name = $(this).closest('tr').find('th').text().trim();
-
-                // Update modal content
-                $('#modal-delete h3').text(
-                    `Apakah anda yakin ingin menghapus data ${product_name} ini?`);
-
-                // Update onclick attribute of confirm delete button
-                $('#modal-delete button[data-modal-hide="modal-delete"].bg-red-600').attr('onclick',
-                    `dataService.deleteProduct(${product_id})`);
-            });
-
-            // Browser navigation handler
-            window.addEventListener('popstate', function() {
-                const params = urlManager.getParams();
-                $('#search-name-product').val(params.search);
-                dataService.fetchData(params.page, params.search);
-            });
-
-            // Edit product handler
-            $('body').on('click', '#btn-edit-product', function() {
-                let product_id = $(this).data('id');
-
-                // Reset form
-                $('#modal-edit-product form').trigger('reset');
-
-                // Show loading icon
-                $('#modal-edit-product form').prepend(templates.loadingModal);
-
-                // Fetch data
-                dataService.getDetail(product_id);
             });
         },
     };
 
-    /**
-     * Initialize the product table functionality
-     */
-    function initProductTable() {
-        debug.log('Init', 'Initializing product table...');
-        const params = urlManager.getParams();
-        $('#search-name-product').val(params.search);
-        dataService.fetchData(params.page, params.search);
-    }
+    // Event Handlers
+    const eventHandlersProduct = {
+        /**
+         * Initializes all event handlers
+         */
+        init: () => {
+            // Submit form
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                const formData = $(this).serializeArray();
+                const formattedData = UtilsProduct.formatRequestData(formData);
+                dataServiceProduct.createProduct(formattedData);
+            });
+
+            // Generate SKU
+            $('body').on('click', '#btn-generate-sku', function() {
+                const sku = `SKU-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+                $('#sku').val(sku);
+            });
+
+            // Add additional unit
+            $('#btn-add-unit').on('click', function(e) {
+                if ($('#unit option:selected').val() === '') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Gagal',
+                        text: 'Pilih satuan dasar terlebih dahulu',
+                    });
+                    return;
+                }
+                e.preventDefault();
+                const label =
+                    `<p class="text-sm font-medium text-gray-900 dark:text-white additional-unit">Satuan Lainnya</p>`;
+                if (unitCount === 0) {
+                    $('#additional-units').append(label);
+                }
+                unitCount++;
+
+                const unitSelect = `
+                                <div class="flex w-full justify-between items-center gap-2 additional-unit">
+                                    <div class="flex w-fit items-center gap-2 bg-gray-50 border border-gray-300 rounded-lg">
+                                        <input type="number" name="additional_conversion_${unitCount}" value="1"
+                                            class="bg-gray-50 border-transparent text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-20 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            required />
+                                        X
+                                        <select name="additional_unit_${unitCount}"
+                                            class="bg-gray-50 border-transparent text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-32 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                            <option value="" selected disabled hidden>Pilih satuan produk</option>
+                                            @foreach ($units as $unit)
+                                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    =
+                                    <div class="flex w-fit items-center bg-gray-50 border border-gray-300 rounded-lg">
+                                        <input type="number" name="additional_conversion_${unitCount}" value="1"
+                                            class="bg-gray-50 border-transparent text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-20 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            required />
+                                        <span class="text-gray-900 dark:text-white text-sm p-2.5">${
+                                            $('#unit option:selected').text()
+                                            }</span>
+                                    </div>
+                                    <button type="button"
+                                        class="btn-remove-unit text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            `;
+
+                $('#additional-units').append(unitSelect);
+            });
+
+            // Remove additional unit
+            $('body').on('click', '.btn-remove-unit', function() {
+                $(this).closest('.additional-unit').remove();
+                unitCount--;
+
+                if (unitCount === 0) {
+                    $('.additional-unit').remove();
+                }
+            });
+
+            // Change unit
+            $('#unit').on('change', function() {
+                $('.additional-unit').remove();
+                unitCount = 0;
+            });
+        },
+    };
 
     // Initialize when document is ready
     $(document).ready(() => {
         debug.log('Ready', 'Document ready, initializing...');
-        initProductTable();
-        eventHandlers.init();
+        eventHandlersProduct.init();
+        TabManager.init();
+        initEventListeners();
     });
 </script>

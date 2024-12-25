@@ -15,7 +15,12 @@
                 </button>
             </div>
 
-            <x-pages.inventory.pharmacy.product.modal-add :units="$units" />
+            <a href="{{ route('product.create') }}">
+                <x-button color="blue">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="ms-2">Tambah</span>
+                </x-button>
+            </a>
         </div>
 
         {{-- Table --}}
@@ -23,14 +28,13 @@
             <table class="w-full text-xs md:text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3 min-w-36">Nama</th>
-                        <th scope="col" class="px-6 py-3 min-w-28">SKU</th>
-                        <th scope="col" class="px-6 py-3 min-w-36">Rak</th>
+                        <th scope="col" class="px-6 py-3 min-w-40">Nama</th>
+                        <th scope="col" class="px-6 py-3 min-w-36">SKU</th>
                         <th scope="col" class="px-6 py-3">Stok</th>
                         <th scope="col" class="px-6 py-3 min-w-40">Harga Pokok</th>
                         <th scope="col" class="px-6 py-3 min-w-36">Harga Jual</th>
-                        <th scope="col" class="px-6 py-3">Markup</th>
-                        <th scope="col" class="px-6 py-3">Status</th>
+                        <th scope="col" class="px-6 py-3">Margin</th>
+                        <th scope="col" class="px-6 py-3 min-w-40">Status</th>
                         <th scope="col" class="px-6 py-3">Aksi</th>
                     </tr>
                 </thead>
@@ -199,9 +203,6 @@
                     ${product.sku || '-'}
                 </td>
                 <td class="px-6 py-4">
-                    ${(product.storage_location || '-')}
-                </td>
-                <td class="px-6 py-4">
                     ${(product.stock || '0')}
                 </td>
                 <td class="px-6 py-4">
@@ -211,7 +212,7 @@
                     ${product.purchase_price ? `Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
                 </td>
                 <td class="px-6 py-4">
-                    ${(product.markup_percentage || '-')}
+                    ${(product.margin_percentage + "%" || '0')}
                 </td>
                 <td class="px-6 py-4">
                     ${product.status ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
@@ -223,15 +224,14 @@
         `,
 
         actionButtons: (id) => `
-            <button
-                id="btn-edit-product"
-                class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
-                data-id="${id}"
-                data-modal-target="modal-edit-product"
-                data-modal-toggle="modal-edit-product"
-            >
-                <i class="fa-solid fa-pencil"></i>
-            </button>
+            <a href="/inventory/pharmacy/product/view/${id}" id="btn-edit-supplier">
+                <button
+                    id="btn-edit-product"
+                    class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
+                >
+                    <i class="fa-solid fa-pencil"></i>
+                </button>
+            </a>
             |
             <button
                 id="btn-delete-product"
@@ -241,19 +241,6 @@
                 data-modal-toggle="modal-delete"
             >
                 <i class="fa-solid fa-trash"></i>
-            </button>
-            |
-            <button
-                id="btn-delete-product"
-                class="font-medium text-xs text-white bg-green-500 hover:bg-green-600 h-8 w-16 rounded-md"
-                data-id="${id}"
-                data-modal-target="modal-delete"
-                data-modal-toggle="modal-delete"
-            >
-                <div class="flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-box"></i>
-                    Stok
-                </div>
             </button>
         `,
 

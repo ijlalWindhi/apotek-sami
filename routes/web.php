@@ -130,7 +130,7 @@ Route::prefix('inventory')
             Route::controller(ProductController::class)->group(function () {
                 Route::get('/product', 'index')->name('product.index');
                 Route::get('/product/create', 'createview')->name('product.create');
-                Route::get('/product/view/{product}', 'detailview')->name('product.detail');
+                Route::get('/product/view/{product}', 'detailview')->name('product.edit');
                 Route::get('/product/list', 'getAll')->name('product.getAll');
                 Route::post('/product', 'store')->name('product.store');
                 Route::get('/product/{product}', 'show')->name('product.show');
