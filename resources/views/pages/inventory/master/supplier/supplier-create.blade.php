@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <form class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full">
+    <form id="supplier" class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full">
         @csrf
         <div class="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start justify-between gap-4">
             <div>
@@ -137,7 +137,7 @@
          * @param {string} search - Search term
          */
         fetchData: (data) => {
-            uiManager.showScreenLoader();
+            $("#supplier").prepend(uiManager.showScreenLoader);
 
             $.ajax({
                 url: '/inventory/master/supplier',
