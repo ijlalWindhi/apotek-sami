@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Unit;
+use App\Models\Supplier;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Services\ProductService;
@@ -24,9 +25,33 @@ class ProductController extends Controller
     {
         $units = Unit::all();
 
-        return view('pages.inventory.pharmacy.product', [
-            'title' => 'Master Produk',
+        return view('pages.inventory.pharmacy.product.product', [
+            'title' => 'Produk',
             'units' => $units
+        ]);
+    }
+
+    public function createview(): View
+    {
+        $units = Unit::all();
+        $suppliers = Supplier::all();
+
+        return view('pages.inventory.pharmacy.product.product-create', [
+            'title' => 'Tambah Produk',
+            'units' => $units,
+            'suppliers' => $suppliers
+        ]);
+    }
+
+    public function detailview(): View
+    {
+        $units = Unit::all();
+        $suppliers = Supplier::all();
+
+        return view('pages.inventory.pharmacy.product.product-edit', [
+            'title' => 'Ubah Produk',
+            'units' => $units,
+            'suppliers' => $suppliers
         ]);
     }
 

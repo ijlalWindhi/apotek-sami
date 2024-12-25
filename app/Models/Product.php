@@ -16,25 +16,25 @@ class Product extends Model
     protected $table = 'm_product';
     protected $fillable = [
         'name',
-        'status',
-        'sku',
         'type',
-        'unit_id',
-        'category_id',
+        'drug_group',
+        'sku',
         'minimum_stock',
-        'manufacturer',
-        'notes',
+        'stock',
+        'supplier',
+        'is_active',
+        'unit',
+        'description',
         'purchase_price',
-        'show_markup_margin',
-        'markup_percentage',
+        'show_margin',
         'margin_percentage',
+        'selling_price'
     ];
 
     protected $casts = [
         'status' => 'boolean',
-        'show_markup_margin' => 'boolean',
+        'show_margin' => 'boolean',
         'purchase_price' => self::DECIMAL_CAST,
-        'markup_percentage' => self::DECIMAL_CAST,
         'margin_percentage' => self::DECIMAL_CAST,
         'selling_price' => self::DECIMAL_CAST,
         'created_at' => 'datetime',
@@ -45,5 +45,15 @@ class Product extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function unitConversions()
+    {
+        return $this->hasMany(ProductUnitConversion::class);
     }
 }

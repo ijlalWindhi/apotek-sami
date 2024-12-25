@@ -47,16 +47,6 @@ class SupplierController extends Controller
         ]);
     }
 
-    public function detail(): View
-    {
-        $payment_type = PaymentType::all();
-
-        return view('pages.inventory.master.supplier', [
-            'title' => 'Detail Supplier',
-            'payment_type' => $payment_type
-        ]);
-    }
-
     public function store(SupplierRequest $request): JsonResponse
     {
         try {
