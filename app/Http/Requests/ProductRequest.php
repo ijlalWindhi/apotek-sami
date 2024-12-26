@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
 {
@@ -19,7 +20,12 @@ class ProductRequest extends FormRequest
             'name' => 'required|string|max:255',
             'type' => 'required|in:Obat,Alat Kesehatan,Umum,Lain-Lain',
             'drug_group' => 'required|in:Obat Bebas,Obat Bebas Terbatas,Obat Keras,Obat Golongan Narkotika,Obat Fitofarmaka,Obat Herbal Terstandar (OHT),Obat Herbal (Jamu)',
-            'sku' => 'required|string|unique:m_product,sku',
+            'sku' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('m_product')->ignore($this->route('product')),
+            ],
             'minimum_stock' => 'required|integer|min:0',
             'stock' => 'nullable|integer',
             'supplier' => 'required|exists:m_supplier,id',
@@ -27,7 +33,7 @@ class ProductRequest extends FormRequest
             'unit' => 'required|exists:m_unit,id',
             'description' => 'nullable|string',
             'purchase_price' => self::NUMERIC_MIN_ZERO,
-            'show_margin' => 'required|boolean',
+            'show_margin' => 'boolean',
             'margin_percentage' => 'required_if:show_markup_margin,true|nullable|numeric',
             'selling_price' => 'required|numeric|min:0|gt:purchase_price',
             'unit_conversions' => 'nullable|array',

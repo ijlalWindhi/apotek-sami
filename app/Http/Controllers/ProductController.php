@@ -75,6 +75,8 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
+        $product->load('unitConversions.fromUnit', 'unitConversions.toUnit');
+
         return response()->json([
             'success' => true,
             'data' => new ProductResource($product)

@@ -126,39 +126,6 @@
             });
         },
 
-        getDetail: (id) => {
-            $.ajax({
-                url: `/inventory/pharmacy/product/${id}`,
-                type: "GET",
-                cache: false,
-                success: function(response) {
-                    // Fill the modal with data
-                    $('#modal-edit-product #name').val(response.data.name);
-                    $('#modal-edit-product #email').val(response.data.email);
-                    $('#modal-edit-product #role').val(response.data.role);
-
-                    // Add hidden input for form submission
-                    if (!$('#modal-edit-product form #product_id').length) {
-                        $('#modal-edit-product form').append(
-                            `<input type="hidden" id="product_id" name="product_id" value="${id}">`
-                        );
-                    } else {
-                        $('#modal-edit-product form #product_id').val(id);
-                    }
-
-                    // Show modal
-                    $('#modal-edit-product').removeClass('hidden').addClass('flex');
-                },
-                error: (xhr, status, error) => {
-                    handleFetchError(xhr, status, error);
-                },
-                complete: function() {
-                    // Hide loading icon
-                    $('#modal-edit-product form .absolute').remove();
-                }
-            });
-        },
-
         deleteProduct: (id) => {
             $.ajax({
                 url: `/inventory/pharmacy/product/${id}`,
@@ -212,10 +179,10 @@
                     ${product.purchase_price ? `Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
                 </td>
                 <td class="px-6 py-4">
-                    ${(product.margin_percentage + "%" || '0')}
+                    ${(product.margin_percentage ? `${product.margin_percentage}%` : '0%')}
                 </td>
                 <td class="px-6 py-4">
-                    ${product.status ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
+                    ${product.is_active ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
                 </td>
                 <td class="px-6 py-4 flex gap-2 items-center">
                     ${templates.actionButtons(product.id)}
@@ -306,20 +273,6 @@
                 const params = urlManager.getParams();
                 $('#search-name-product').val(params.search);
                 dataService.fetchData(params.page, params.search);
-            });
-
-            // Edit product handler
-            $('body').on('click', '#btn-edit-product', function() {
-                let product_id = $(this).data('id');
-
-                // Reset form
-                $('#modal-edit-product form').trigger('reset');
-
-                // Show loading icon
-                $('#modal-edit-product form').prepend(templates.loadingModal);
-
-                // Fetch data
-                dataService.getDetail(product_id);
             });
         },
     };
