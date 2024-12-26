@@ -42,10 +42,10 @@ export const UIManager = {
     // Parse input mata uang
     parseCurrency: function (formattedValue) {
         if (typeof formattedValue !== "string") return 0;
-
-        // Hapus titik sebagai pemisah ribuan
-        const cleanedValue = formattedValue.replace(/\./g, "");
-
+        // Remove thousand separators and replace comma with dot
+        const cleanedValue = formattedValue
+            .replace(/\./g, "")
+            .replace(",", ".");
         const parsedValue = parseFloat(cleanedValue);
         return isNaN(parsedValue) ? 0 : parsedValue;
     },
@@ -315,11 +315,11 @@ export const UtilsProduct = {
                 item.name === "purchase_price" ||
                 item.name === "selling_price"
             ) {
-                data[item.name] = parseFloat(item.value);
+                data[item.name] = UIManager.parseCurrency(item.value);
             } else if (item.name === "margin_percentage") {
-                data[item.name] = parseFloat(item.value);
+                data[item.name] = UIManager.parsePercentage(item.value);
             } else if (item.name === "show_margin") {
-                data[item.name] = true; // Checkbox is only included when checked
+                data[item.name] = item.value === "1";
             } else if (
                 item.name === "supplier" ||
                 item.name === "unit" ||
