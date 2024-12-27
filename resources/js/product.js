@@ -317,7 +317,10 @@ export const UtilsProduct = {
             ) {
                 data[item.name] = UIManager.parseCurrency(item.value);
             } else if (item.name === "margin_percentage") {
-                data[item.name] = UIManager.parsePercentage(item.value);
+                data[item.name] =
+                    typeof item.value === "number"
+                        ? item.value
+                        : UIManager.parsePercentage(item.value);
             } else if (item.name === "show_margin") {
                 data[item.name] = item.value === "1";
             } else if (

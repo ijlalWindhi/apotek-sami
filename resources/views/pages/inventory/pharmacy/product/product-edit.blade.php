@@ -361,6 +361,14 @@
             $('form').on('submit', function(e) {
                 e.preventDefault();
                 const formData = $(this).serializeArray();
+
+                const purchasePrice = UIManager.parseCurrency($(SELECTORS.purchasePrice).val());
+                const sellingPrice = UIManager.parseCurrency($(SELECTORS.sellingPrice).val());
+                const margin = PriceCalculator.calculateMargin(purchasePrice, sellingPrice);
+                formData.push({
+                    name: 'margin_percentage',
+                    value: margin
+                });
                 formData.push({
                     name: 'show_margin',
                     value: $('#show_margin').is(':checked') ? '1' : '0'
