@@ -14,11 +14,19 @@ return [
             'icon' => '<i class="fa-solid fa-mortar-pestle"></i>',
             'isDropdown' => true,
             'submenu' => [
-                ['title' => 'Data Apotek', 'path' => '/inventory/pharmacy/pharmacy'],
                 ['title' => 'Data Pegawai', 'path' => '/inventory/pharmacy/employee'],
-                ['title' => 'Data Pelanggan', 'path' => '/inventory/pharmacy/customer'],
                 ['title' => 'Data Produk', 'path' => '/inventory/pharmacy/product'],
                 ['title' => 'Data Resep', 'path' => '/inventory/pharmacy/recipe'],
+            ]
+        ],
+        [
+            'title' => 'Transaksi',
+            'path' => '#',
+            'icon' => '<i class="fa-solid fa-cart-shopping"></i>',
+            'isDropdown' => true,
+            'submenu' => [
+                ['title' => 'Faktur Pembelian', 'path' => '/inventory/transaction/purchase-invoice'],
+                ['title' => 'Transaksi Penjualan', 'path' => '/inventory/transaction/sales-transaction'],
             ]
         ],
         [
@@ -32,12 +40,6 @@ return [
                 ['title' => 'Tipe Pembayaran', 'path' => '/inventory/master/payment-type'],
                 ['title' => 'Supplier', 'path' => '/inventory/master/supplier'],
             ]
-        ],
-        [
-            'title' => 'Transaksi',
-            'path' => '/inventory/transaction',
-            'icon' => '<i class="fa-solid fa-cart-shopping"></i>',
-            'badge' => ['text' => 'Pro', 'type' => 'gray']
         ],
     ],
     'MENU_USER' => [
