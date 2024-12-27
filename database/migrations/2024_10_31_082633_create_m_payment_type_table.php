@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('m_payment_type', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->timestamps();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->text('description')->nullable();
+            $table->string('account_bank')->nullable();
+            $table->string('name_bank')->nullable();
+            $table->boolean('is_active')->default(true);
         });
     }
 
