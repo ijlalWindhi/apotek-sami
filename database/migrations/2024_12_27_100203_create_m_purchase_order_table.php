@@ -34,6 +34,7 @@ return new class extends Migration
             $table->decimal('tax_total', 12, 2);
             $table->decimal('discount_total', 12, 2);
             $table->decimal('total', 12, 2);
+            $table->index(['supplier', 'order_date', 'status', 'code']);
         });
     }
 
