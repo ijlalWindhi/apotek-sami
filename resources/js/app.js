@@ -1,7 +1,6 @@
 import "./bootstrap";
 import "flowbite";
 import Alpine from "alpinejs";
-import select2 from "select2";
 
 // custom js
 import { uiManager } from "./utility/ui-manager.js";
@@ -20,7 +19,6 @@ import {
 import Swal from "sweetalert2";
 
 window.Alpine = Alpine;
-window.select2 = select2;
 
 // expose utility functions to the global scope
 window.urlManager = urlManager;
