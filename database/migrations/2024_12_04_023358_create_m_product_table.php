@@ -29,9 +29,9 @@ return new class extends Migration
             $table->string('sku')->unique();
             $table->integer('minimum_stock')->default(0);
             $table->integer('stock')->default(0);
-            $table->string('supplier')->constrained('m_supplier');
             $table->boolean('is_active')->default(true);
-            $table->foreignId('unit')->constrained('m_unit');
+            $table->foreignId('supplier_id')->constrained('m_supplier');
+            $table->foreignId('unit_id')->constrained('m_unit');
             $table->text('description')->nullable();
             $table->decimal('purchase_price', 12, 2);
             $table->boolean('show_margin')->default(false);

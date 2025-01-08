@@ -64,8 +64,8 @@
                 <div>
                     <label for="drug_group"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Golongan Obat
-                        <span class="text-red-500">*</span></label>
-                    <select name="drug_group" id="drug_group" required
+                    </label>
+                    <select name="drug_group" id="drug_group"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                         <option value="" selected disabled hidden>Pilih golongan obat</option>
                         <option value="Obat Bebas">Obat Bebas</option>
@@ -86,9 +86,10 @@
                         placeholder="Stok Minimum" required>
                 </div>
                 <div>
-                    <label for="supplier" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Supplier
+                    <label for="supplier_id"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Supplier
                         <span class="text-red-500">*</span></label>
-                    <select name="supplier" id="supplier" required
+                    <select name="supplier_id" id="supplier_id" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                         <option value="" selected disabled hidden>Pilih supplier produk</option>
                         @foreach ($suppliers as $supplier)
@@ -118,11 +119,11 @@
                 </div>
                 <div id="additional-units" class="flex flex-col justify-start items-start w-full gap-2">
                     <div class="w-full">
-                        <label for="unit"
+                        <label for="unit_id"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Satuan
                             Dasar
                             <span class="text-red-500">*</span></label>
-                        <select name="unit" id="unit" required
+                        <select name="unit_id" id="unit_id" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                             <option value="" selected disabled hidden>Pilih satuan produk</option>
                             @foreach ($units as $unit)
@@ -231,10 +232,10 @@
                     form.find('select[name="type"]').val(data.type);
                     form.find('select[name="drug_group"]').val(data.drug_group);
                     form.find('input[name="minimum_stock"]').val(data.minimum_stock);
-                    form.find('select[name="supplier"]').val(data.supplier);
+                    form.find('select[name="supplier_id"]').val(data.supplier?.id);
                     form.find('select[name="is_active"]').val(data.is_active ? 'true' : 'false');
                     form.find('textarea[name="description"]').val(data.description);
-                    form.find('select[name="unit"]').val(data.unit);
+                    form.find('select[name="unit_id"]').val(data.unit?.id);
 
                     // Format currency values using UIManager
                     form.find('input[name="purchase_price"]').val(UIManager.formatCurrency(data
@@ -277,7 +278,7 @@
                                                             <select name="additional_unit_${unitCount}"
                                                                 class="bg-gray-50 border-transparent text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-32 p-2.5">
                                                                 <option value="" disabled hidden>Pilih satuan produk</option>
-                                                                ${$('#unit option').map(function() {
+                                                                ${$('#unit_id option').map(function() {
                                                                     const isSelected = parseInt($(this).val()) === conversion.to_unit.id;
                                                                     return `<option value="${$(this).val()}" ${isSelected ? 'selected' : ''}>${$(this).text()}</option>`;
                                                                 }).get().join('')}
@@ -385,7 +386,7 @@
 
             // Add additional unit
             $('#btn-add-unit').on('click', function(e) {
-                if ($('#unit option:selected').val() === '') {
+                if ($('#unit_id option:selected').val() === '') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Gagal',
@@ -401,7 +402,7 @@
 
                 unitCount++;
 
-                const selectedUnitText = $('#unit option:selected').text();
+                const selectedUnitText = $('#unit_id option:selected').text();
                 const unitSelect = `
                 ${label}
                 <div class="flex w-full justify-between items-center gap-2 additional-unit">
@@ -412,7 +413,7 @@
                         <select name="additional_unit_${unitCount}"
                             class="bg-gray-50 border-transparent text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-32 p-2.5">
                             <option value="" selected disabled hidden>Pilih satuan produk</option>
-                            ${$('#unit option').map(function() {
+                            ${$('#unit_id option').map(function() {
                                 return `<option value="${$(this).val()}">${$(this).text()}</option>`;
                             }).get().join('')}
                         </select>
@@ -447,7 +448,7 @@
             });
 
             // Change unit
-            $('#unit').on('change', function() {
+            $('#unit_id').on('change', function() {
                 $('.additional-unit').remove();
                 unitCount = 0;
             });
