@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\PurchaseOrder;
 use App\Models\ProductPurchaseOrder;
+use App\Models\Product;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PurchaseOrderService
@@ -25,6 +26,11 @@ class PurchaseOrderService
                     'subtotal' => $product['subtotal'],
                     'description' => $product['description'] ?? null
                 ]);
+
+                // Update stok produk
+                $productModel = Product::find($product['product']);
+                $productModel->stock += $product['qty'];
+                $productModel->save();
             }
         }
 
