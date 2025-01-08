@@ -17,6 +17,8 @@
 
     {{-- JQuery --}}
     <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
+    <script src="{{ asset('js/select2.full.min.js') }}"></script>
 
     {{-- Load Resource --}}
     @vite('resources/css/app.css')

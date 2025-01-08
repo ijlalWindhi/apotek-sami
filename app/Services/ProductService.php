@@ -30,7 +30,7 @@ class ProductService
             }
         }
 
-        return $product;
+        return $product->load(['supplier', 'unit', 'unitConversions']);
     }
 
     public function update(Product $product, array $data): Product
@@ -74,7 +74,7 @@ class ProductService
         }
 
         // Tambahkan pengurutan default
-        $query->orderBy('created_at', 'desc');
+        $query->orderBy('name', 'asc');
 
         // Include unit relationship
         $query->with('unit');

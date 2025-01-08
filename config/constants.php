@@ -25,7 +25,7 @@ return [
             'icon' => '<i class="fa-solid fa-cart-shopping"></i>',
             'isDropdown' => true,
             'submenu' => [
-                ['title' => 'Faktur Pembelian', 'path' => '/inventory/transaction/purchase-invoice'],
+                ['title' => 'Faktur Pembelian', 'path' => '/inventory/transaction/purchase-order'],
                 ['title' => 'Transaksi Penjualan', 'path' => '/inventory/transaction/sales-transaction'],
             ]
         ],

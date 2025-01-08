@@ -324,8 +324,8 @@ export const UtilsProduct = {
             } else if (item.name === "show_margin") {
                 data[item.name] = item.value === "1";
             } else if (
-                item.name === "supplier" ||
-                item.name === "unit" ||
+                item.name === "supplier_id" ||
+                item.name === "unit_id" ||
                 item.name === "minimum_stock"
             ) {
                 data[item.name] = parseInt(item.value);
@@ -349,7 +349,7 @@ export const UtilsProduct = {
 
             if (fromValue && toValue && toUnitId) {
                 unitConversions.push({
-                    from_unit_id: parseInt(data.unit), // Base unit ID
+                    from_unit_id: parseInt(data.unit_id), // Base unit ID
                     to_unit_id: toUnitId,
                     from_value: fromValue,
                     to_value: toValue,

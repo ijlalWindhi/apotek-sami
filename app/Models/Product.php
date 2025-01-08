@@ -21,9 +21,9 @@ class Product extends Model
         'sku',
         'minimum_stock',
         'stock',
-        'supplier',
+        'supplier_id',
         'is_active',
-        'unit',
+        'unit_id',
         'description',
         'purchase_price',
         'show_margin',
@@ -32,7 +32,6 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'status' => 'boolean',
         'show_margin' => 'boolean',
         'purchase_price' => self::DECIMAL_CAST,
         'margin_percentage' => self::DECIMAL_CAST,
@@ -44,12 +43,12 @@ class Product extends Model
 
     public function unit(): BelongsTo
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class, 'unit_id');
     }
 
     public function supplier(): BelongsTo
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
     public function unitConversions()
