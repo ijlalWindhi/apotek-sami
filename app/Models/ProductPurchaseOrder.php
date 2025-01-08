@@ -18,7 +18,6 @@ class ProductPurchaseOrder extends Model
         'price',
         'discount',
         'discount_type',
-        'tax',
         'subtotal',
         'description'
     ];
@@ -27,7 +26,6 @@ class ProductPurchaseOrder extends Model
         'qty' => 'integer',
         'price' => 'decimal:2',
         'discount' => 'decimal:2',
-        'tax' => 'decimal:2',
         'subtotal' => 'decimal:2'
     ];
 

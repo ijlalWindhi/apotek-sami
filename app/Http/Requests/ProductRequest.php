@@ -19,7 +19,7 @@ class ProductRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'type' => 'required|in:Obat,Alat Kesehatan,Umum,Lain-Lain',
-            'drug_group' => 'required|in:Obat Bebas,Obat Bebas Terbatas,Obat Keras,Obat Golongan Narkotika,Obat Fitofarmaka,Obat Herbal Terstandar (OHT),Obat Herbal (Jamu)',
+            'drug_group' => 'in:Obat Bebas,Obat Bebas Terbatas,Obat Keras,Obat Golongan Narkotika,Obat Fitofarmaka,Obat Herbal Terstandar (OHT),Obat Herbal (Jamu)',
             'sku' => [
                 'required',
                 'string',
@@ -28,9 +28,9 @@ class ProductRequest extends FormRequest
             ],
             'minimum_stock' => 'required|integer|min:0',
             'stock' => 'nullable|integer',
-            'supplier' => 'required|exists:m_supplier,id',
+            'supplier_id' => 'required|exists:m_supplier,id',
             'is_active' => 'required|boolean',
-            'unit' => 'required|exists:m_unit,id',
+            'unit_id' => 'required|exists:m_unit,id',
             'description' => 'nullable|string',
             'purchase_price' => self::NUMERIC_MIN_ZERO,
             'show_margin' => 'boolean',

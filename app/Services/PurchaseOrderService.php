@@ -3,27 +3,26 @@
 namespace App\Services;
 
 use App\Models\PurchaseOrder;
+use App\Models\ProductPurchaseOrder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PurchaseOrderService
 {
     public function create(array $data): PurchaseOrder
     {
-        $data = $this->calculateTotals($data);
-        
         $purchaseOrder = PurchaseOrder::create($data);
 
         // Simpan produk jika ada
         if (isset($data['products'])) {
             foreach ($data['products'] as $product) {
-                $purchaseOrder->productPurchaseOrders()->create([
+                ProductPurchaseOrder::create([
+                    'purchase_order' => $purchaseOrder->id,
                     'product' => $product['product'],
                     'qty' => $product['qty'],
                     'price' => $product['price'],
                     'discount' => $product['discount'],
                     'discount_type' => $product['discount_type'],
-                    'tax' => $product['tax'],
-                    'subtotal' => $this->calculateSubtotal($product),
+                    'subtotal' => $product['subtotal'],
                     'description' => $product['description'] ?? null
                 ]);
             }
@@ -34,8 +33,6 @@ class PurchaseOrderService
 
     public function update(PurchaseOrder $purchaseOrder, array $data): PurchaseOrder
     {
-        $data = $this->calculateTotals($data);
-        
         $purchaseOrder->update($data);
 
         // Update produk jika ada
@@ -51,8 +48,7 @@ class PurchaseOrderService
                     'price' => $product['price'],
                     'discount' => $product['discount'],
                     'discount_type' => $product['discount_type'],
-                    'tax' => $product['tax'],
-                    'subtotal' => $this->calculateSubtotal($product),
+                    'subtotal' => $product['subtotal'],
                     'description' => $product['description'] ?? null
                 ]);
             }
@@ -80,11 +76,6 @@ class PurchaseOrderService
             });
         }
 
-        // Filter berdasarkan status
-        if (!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-
         // Filter berdasarkan tanggal
         if (!empty($filters['start_date'])) {
             $query->where('order_date', '>=', $filters['start_date']);
@@ -100,59 +91,5 @@ class PurchaseOrderService
         $query->with(['supplier', 'tax', 'paymentType']);
 
         return $query->paginate($perPage, ['*'], 'page', $page);
-    }
-
-    private function calculateSubtotal(array $product): float
-    {
-        $baseSubtotal = $product['price'] * $product['qty'];
-        
-        // Hitung diskon
-        if ($product['discount_type'] === 'Percentage') {
-            $discount = $baseSubtotal * ($product['discount'] / 100);
-        } else {
-            $discount = $product['discount'] * $product['qty'];
-        }
-        
-        return $baseSubtotal - $discount;
-    }
-
-    private function calculateDiscount(array $product): float
-    {
-        $baseSubtotal = $product['price'] * $product['qty'];
-        
-        if ($product['discount_type'] === 'Percentage') {
-            return $baseSubtotal * ($product['discount'] / 100);
-        } else {
-            return $product['discount'] * $product['qty'];
-        }
-    }
-
-    private function calculateTotals(array $data): array
-    {
-        $qtyTotal = 0;
-        $totalBeforeTaxDiscount = 0;
-        $discountTotal = 0;
-        $taxTotal = 0;
-
-        if (isset($data['products'])) {
-            foreach ($data['products'] as $product) {
-                $qtyTotal += $product['qty'];
-                $baseSubtotal = $product['price'] * $product['qty'];
-                $itemDiscount = $this->calculateDiscount($product);
-                $subtotalAfterDiscount = $baseSubtotal - $itemDiscount;
-                
-                $discountTotal += $itemDiscount;
-                $totalBeforeTaxDiscount += $baseSubtotal;
-                $taxTotal += $subtotalAfterDiscount * ($product['tax'] / 100);
-            }
-        }
-
-        $data['qty_total'] = $qtyTotal;
-        $data['total_before_tax_discount'] = $totalBeforeTaxDiscount;
-        $data['tax_total'] = $taxTotal;
-        $data['discount_total'] = $discountTotal;
-        $data['total'] = $totalBeforeTaxDiscount - $discountTotal + $taxTotal;
-
-        return $data;
     }
 }

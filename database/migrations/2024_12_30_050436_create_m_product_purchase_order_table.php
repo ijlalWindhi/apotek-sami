@@ -21,7 +21,6 @@ return new class extends Migration
             $table->decimal('price', 12, 2)->check('price > 0');
             $table->decimal('discount', 12, 2)->default(0)->check('discount >= 0');
             $table->enum('discount_type', ['Percentage', 'Nominal'])->default('Percentage');
-            $table->decimal('tax', 12, 2)->default(0);
             $table->decimal('subtotal', 12, 2);
             $table->text('description')->nullable();
             $table->index(['purchase_order', 'product']);

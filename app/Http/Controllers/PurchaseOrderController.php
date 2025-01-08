@@ -7,6 +7,7 @@ use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\PaymentType;
 use App\Models\Unit;
+use App\Models\Product;
 use App\Http\Requests\PurchaseOrderRequest;
 use App\Http\Resources\PurchaseOrderResource;
 use App\Services\PurchaseOrderService;
@@ -48,6 +49,7 @@ class PurchaseOrderController extends Controller
             'suppliers' => $suppliers,
             'taxes' => $taxes,
             'paymentTypes' => $paymentTypes,
+            'products' => Product::all(),
             'units' => Unit::all()
         ]);
     }
@@ -134,7 +136,6 @@ class PurchaseOrderController extends Controller
         try {
             $filters = [
                 'search' => $request->input('search'),
-                'status' => $request->input('status'),
                 'start_date' => $request->input('start_date'),
                 'end_date' => $request->input('end_date')
             ];

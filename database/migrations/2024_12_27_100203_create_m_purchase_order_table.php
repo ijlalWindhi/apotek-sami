@@ -20,21 +20,20 @@ return new class extends Migration
             $table->date('order_date');
             $table->date('delivery_date')->nullable();
             $table->date('payment_due_date');
-            $table->enum('status', ['Draft', 'Ordered', 'Received', 'Canceled']);
             $table->foreignId('tax')->constrained('m_tax');
             $table->string('no_factur_supplier', 100)->nullable();
             $table->text('description')->nullable();
             $table->foreignId('payment_type')->constrained('m_payment_type');
             $table->enum('payment_term', ['Tunai', '1 Hari', '7 Hari', '14 Hari', '21 Hari', '30 Hari', '45 Hari']);
             $table->boolean('payment_include_tax')->default(false);
-            $table->decimal('payment_total', 12, 2);
             $table->integer('qty_total')->default(0);
             $table->decimal('discount', 12, 2);
+            $table->enum('discount_type', ['Percentage', 'Nominal'])->default('Percentage');
             $table->decimal('total_before_tax_discount', 12, 2);
             $table->decimal('tax_total', 12, 2);
             $table->decimal('discount_total', 12, 2);
             $table->decimal('total', 12, 2);
-            $table->index(['supplier', 'order_date', 'status', 'code']);
+            $table->index(['supplier', 'order_date', 'code']);
         });
     }
 

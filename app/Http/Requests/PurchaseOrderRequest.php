@@ -28,15 +28,19 @@ class PurchaseOrderRequest extends FormRequest
             'order_date' => 'required|date',
             'delivery_date' => 'nullable|date|after_or_equal:order_date',
             'payment_due_date' => 'required|date|after_or_equal:order_date',
-            'status' => ['required', Rule::in(['Draft', 'Ordered', 'Received', 'Canceled'])],
             'tax' => 'required|exists:m_tax,id',
             'no_factur_supplier' => 'nullable|string|max:100',
             'description' => 'nullable|string',
             'payment_type' => 'required|exists:m_payment_type,id',
             'payment_term' => ['required', Rule::in(['Tunai', '1 Hari', '7 Hari', '14 Hari', '21 Hari', '30 Hari', '45 Hari'])],
             'payment_include_tax' => 'boolean',
-            'payment_total' => self::NUMERIC_MIN_ZERO,
+            'qty_total' => 'required|integer|min:0',
             'discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
+            'discount_type' => ['required', Rule::in(['Percentage', 'Nominal'])],
+            'total_before_tax_discount' => self::NUMERIC_MIN_ZERO,
+            'tax_total' => self::NUMERIC_MIN_ZERO,
+            'discount_total' => self::NUMERIC_MIN_ZERO,
+            'total' => self::NUMERIC_MIN_ZERO,
 
             // Validasi untuk products
             'products' => 'required|array|min:1',
@@ -45,8 +49,8 @@ class PurchaseOrderRequest extends FormRequest
             'products.*.price' => self::NUMERIC_MIN_ZERO,
             'products.*.discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'products.*.discount_type' => ['required', Rule::in(['Percentage', 'Nominal'])],
-            'products.*.tax' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'products.*.description' => 'nullable|string',
+            'products.*.subtotal' => self::NUMERIC_MIN_ZERO,
         ];
     }
 
@@ -59,13 +63,26 @@ class PurchaseOrderRequest extends FormRequest
             'delivery_date.after_or_equal' => 'Tanggal pengiriman harus sama dengan atau setelah tanggal order.',
             'payment_due_date.required' => 'Tanggal jatuh tempo pembayaran wajib diisi.',
             'payment_due_date.after_or_equal' => 'Tanggal jatuh tempo harus sama dengan atau setelah tanggal order.',
-            'status.in' => 'Status yang dipilih tidak valid.',
             'tax.exists' => 'Pajak yang dipilih tidak valid.',
             'payment_type.exists' => 'Tipe pembayaran yang dipilih tidak valid.',
             'payment_term.in' => 'Termin pembayaran yang dipilih tidak valid.',
             'payment_include_tax.boolean' => 'Payment include tax harus berupa true atau false.',
-            'payment_total.min' => 'Total pembayaran minimal 0.',
+            'qty_total.required' => 'Total quantity wajib diisi.',
+            'qty_total.integer' => 'Total quantity harus berupa angka.',
+            'qty_total.min' => 'Total quantity minimal 0.',
             'discount.min' => 'Diskon minimal 0.',
+            'total_before_tax_discount.min' => 'Total sebelum diskon pajak minimal 0.',
+            'total_before_tax_discount.required' => 'Total sebelum diskon pajak wajib diisi.',
+            'total_before_tax_discount.numeric' => 'Total sebelum diskon pajak harus berupa angka.',
+            'tax_total.min' => 'Total pajak minimal 0.',
+            'tax_total.required' => 'Total pajak wajib diisi.',
+            'tax_total.numeric' => 'Total pajak harus berupa angka.',
+            'discount_total.min' => 'Total diskon minimal 0.',
+            'discount_total.required' => 'Total diskon wajib diisi.',
+            'discount_total.numeric' => 'Total diskon harus berupa angka.',
+            'total.min' => 'Total minimal 0.',
+            'total.required' => 'Total wajib diisi.',
+            'total.numeric' => 'Total harus berupa angka.',
 
             'products.required' => 'Minimal harus ada 1 produk.',
             'products.*.product.required' => 'Produk wajib dipilih.',
@@ -77,7 +94,10 @@ class PurchaseOrderRequest extends FormRequest
             'products.*.discount.min' => 'Diskon minimal 0.',
             'products.*.discount_type.required' => 'Tipe diskon wajib dipilih.',
             'products.*.discount_type.in' => 'Tipe diskon tidak valid.',
-            'products.*.tax.min' => 'Pajak minimal 0.',
+            'products.*.description.string' => 'Deskripsi produk harus berupa teks.',
+            'products.*.subtotal.min' => 'Subtotal minimal 0.',
+            'products.*.subtotal.required' => 'Subtotal wajib diisi.',
+            'products.*.subtotal.numeric' => 'Subtotal harus berupa angka.',
         ];
     }
 
@@ -92,7 +112,6 @@ class PurchaseOrderRequest extends FormRequest
 
         // Set default values if not provided
         $this->merge([
-            'status' => $this->status ?? 'Draft',
             'discount' => $this->discount ?? 0,
         ]);
     }

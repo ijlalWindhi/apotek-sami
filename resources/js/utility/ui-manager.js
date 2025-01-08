@@ -6,9 +6,9 @@ export const uiManager = {
      * Refreshes all UI components
      * @param {Object} response - Server response containing data and meta information
      */
-    refreshUI: (response) => {
+    refreshUI: (response, id_table) => {
         try {
-            uiManager.updateTable(response.data);
+            uiManager.updateTable(response.data, id_table);
             uiManager.updatePagination(response.meta);
             uiManager.updateInfo(response.meta);
         } catch (error) {
@@ -21,9 +21,9 @@ export const uiManager = {
      * Updates the tax data table
      * @param {Array} data - Array of tax objects
      */
-    updateTable: (data) => {
+    updateTable: (data, id_table = "#table-body") => {
         debug.log("UpdateTable", "Starting table update");
-        const tbody = $("#table-body");
+        const tbody = $(id_table);
 
         if (!Array.isArray(data) || data.length === 0) {
             tbody.html(table.emptyTable());
@@ -60,8 +60,8 @@ export const uiManager = {
     /**
      * Shows loading state
      */
-    showLoading: () => {
-        $("#table-body").html(table.loading());
+    showLoading: (id_table = "#table-body") => {
+        $(id_table).html(table.loading());
     },
 
     /**
