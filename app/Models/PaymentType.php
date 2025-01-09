@@ -23,4 +23,9 @@ class PaymentType extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime'
     ];
+
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
 }

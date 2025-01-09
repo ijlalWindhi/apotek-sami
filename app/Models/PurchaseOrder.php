@@ -58,7 +58,7 @@ class PurchaseOrder extends Model
 
     public function paymentType()
     {
-        return $this->belongsTo(PaymentType::class);
+        return $this->belongsTo(PaymentType::class, "payment_type", "id");
     }
 
     public function productPurchaseOrders()
