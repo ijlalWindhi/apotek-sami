@@ -24,4 +24,9 @@ class Tax extends Model
     {
         $this->attributes['rate'] = str_replace(',', '.', $value);
     }
+
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
 }

@@ -17,8 +17,8 @@ class PurchaseOrderService
         if (isset($data['products'])) {
             foreach ($data['products'] as $product) {
                 ProductPurchaseOrder::create([
-                    'purchase_order' => $purchaseOrder->id,
-                    'product' => $product['product'],
+                    'purchase_order_id' => $purchaseOrder->id,
+                    'product_id' => $product['product'],
                     'qty' => $product['qty'],
                     'price' => $product['price'],
                     'discount' => $product['discount'],
@@ -94,7 +94,7 @@ class PurchaseOrderService
         $query->orderBy('created_at', 'desc');
 
         // Include relationships
-        $query->with(['supplier', 'tax', 'paymentType']);
+        $query->with(['supplier', 'tax', 'paymentType', 'productPurchaseOrders.product']);
 
         return $query->paginate($perPage, ['*'], 'page', $page);
     }

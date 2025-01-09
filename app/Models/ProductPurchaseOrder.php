@@ -12,8 +12,8 @@ class ProductPurchaseOrder extends Model
     protected $table = 'm_product_purchase_order';
 
     protected $fillable = [
-        'purchase_order',
-        'product',
+        'purchase_order_id',
+        'product_id',
         'qty',
         'price',
         'discount',
