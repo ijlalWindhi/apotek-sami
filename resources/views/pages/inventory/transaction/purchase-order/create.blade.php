@@ -12,9 +12,9 @@
                     placeholder="Terisi otomatis">
             </div>
             <div>
-                <label for="supplier" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Supplier
+                <label for="supplier_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Supplier
                     <span class="text-red-500">*</span></label>
-                <select class="js-example-basic-single" id="supplier" name="supplier">
+                <select class="js-example-basic-single" id="supplier_id" name="supplier_id">
                     <option value="" selected disabled hidden>Pilih Supplier</option>
                     @foreach ($suppliers as $supplier)
                         <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
@@ -40,10 +40,10 @@
                     placeholder="Tanggal Pengantaran" required>
             </div>
             <div>
-                <label for="payment_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipe
+                <label for="payment_type_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipe
                     Pembayaran
                     <span class="text-red-500">*</span></label>
-                <select class="js-example-basic-single" id="payment_type" name="payment_type">
+                <select class="js-example-basic-single" id="payment_type_id" name="payment_type_id">
                     <option value="" selected disabled hidden>Pilih Tipe Pembayaran</option>
                     @foreach ($paymentTypes as $payment)
                         <option value="{{ $payment->id }}">{{ $payment->name }}</option>
@@ -213,8 +213,6 @@
         formData.forEach(item => {
             formDataObj[item.name] = item.value;
         });
-        formDataObj.tax = resTax[0].id;
-        formDataObj.code = 'PO-' + new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
 
         // Initialize products array
         const products = [];
@@ -267,15 +265,15 @@
 
         // Build the final request object
         const requestData = {
-            code: formDataObj.code,
-            supplier: formDataObj.supplier,
+            code: 'PO-' + new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14),
+            supplier_id: formDataObj.supplier_id,
             order_date: formatDate(formDataObj.order_date),
             delivery_date: formatDate(formDataObj.delivery_date),
             payment_due_date: formatDate(formDataObj.payment_due_date),
-            tax: formDataObj.tax,
+            tax_id: resTax[0]?.id || 1,
             no_factur_supplier: formDataObj.no_factur_supplier,
             description: formDataObj.description,
-            payment_type: formDataObj.payment_type,
+            payment_type_id: formDataObj.payment_type_id,
             payment_term: formDataObj.payment_term,
             payment_include_tax: formDataObj.payment_include_tax === '1',
             discount: parseFloat(formDataObj.discount) || 0,
