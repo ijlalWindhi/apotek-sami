@@ -32,7 +32,7 @@
                         <th scope="col" class="px-6 py-3 min-w-44">Faktur Supplier</th>
                         <th scope="col" class="px-6 py-3 min-w-52">Tanggal Pemesanan</th>
                         <th scope="col" class="px-6 py-3 min-w-56">Tanggal Jatuh Tempo</th>
-                        <th scope="col" class="px-6 py-3 min-w-36">Vendor</th>
+                        <th scope="col" class="px-6 py-3 min-w-44">Supplier</th>
                         <th scope="col" class="px-6 py-3 min-w-40">Total QTY</th>
                         <th scope="col" class="px-6 py-3 min-w-40">Nilai Tagihan</th>
                         <th scope="col" class="px-6 py-3 min-w-48">Deskripsi</th>
@@ -118,7 +118,7 @@
                     ${(purchaseOrder.payment_due_date || '-')}
                 </td>
                 <td class="px-6 py-4">
-                    ${purchaseOrder.purchase_price ? `Rp${new Intl.NumberFormat('id-ID').format(purchaseOrder.purchase_price)}` : '0'}
+                    ${purchaseOrder?.supplier?.name || '-'}
                 </td>
                 <td class="px-6 py-4">
                     ${purchaseOrder.qty_total || '0'}
