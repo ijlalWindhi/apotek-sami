@@ -60,7 +60,7 @@ class PurchaseOrderController extends Controller
         $taxes = Tax::all();
         $paymentTypes = PaymentType::all();
 
-        return view('pages.inventory.transaction.purchase-order.edit', [
+        return view('pages.inventory.transaction.purchase-order.view', [
             'title' => 'Ubah Purchase Order',
             'suppliers' => $suppliers,
             'taxes' => $taxes,
