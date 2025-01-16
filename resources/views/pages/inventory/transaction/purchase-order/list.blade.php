@@ -3,18 +3,18 @@
 
     <div class="flex flex-col gap-4 w-full">
         {{-- Search & Add Button --}}
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div class="relative sm:w-full md:w-1/2 lg:w-2/6">
-                <input type="search" id="search-name-product" name="search-name-product"
+        <div class="flex flex-col md:flex-row sm:justify-between sm:items-center gap-4">
+            <div class="w-full">
+                <input type="search" id="faktur" name="faktur"
                     class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                    placeholder="Cari nama, sku" />
-                <button type="button" id="search-button"
-                    class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <span class="sr-only">Search</span>
-                </button>
+                    placeholder="Cari no faktur, faktur supplier, supplier" />
             </div>
-
+            <div class="w-full">
+                <input id="date" name="date" datepicker datepicker-buttons datepicker-autohide
+                    datepicker-format="dd-mm-yyyy" type="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Tanggal pemesanan/jatuh tempo" required>
+            </div>
             <a href="{{ route('purchaseOrder.create') }}">
                 <x-button color="blue">
                     <i class="fa-solid fa-plus"></i>
@@ -72,16 +72,18 @@
         /**
          * Fetches product data from the server
          * @param {number} page - Page number to fetch
-         * @param {string} search - Search term
+         * @param {string} faktur - Search term
+         * @param {string} date - Date
          */
-        fetchData: (page = 1, search = '') => {
+        fetchData: (page = 1, faktur = '', date = '') => {
             uiManager.showLoading();
 
             $.ajax({
                 url: '/inventory/transaction/purchase-order/list',
                 method: 'GET',
                 data: {
-                    search,
+                    faktur,
+                    date,
                     page,
                     per_page: PER_PAGE
                 },
@@ -136,12 +138,11 @@
         `,
 
         actionButtons: (id) => `
-            <a href="/inventory/pharmacy/product/view/${id}" id="btn-edit-supplier">
+            <a href="/inventory/transaction/purchase-order/view/${id}">
                 <button
-                    id="btn-edit-product"
                     class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
                 >
-                    <i class="fa-solid fa-pencil"></i>
+                    <i class="fa-solid fa-info"></i>
                 </button>
             </a>
         `,
@@ -157,41 +158,63 @@
          * Initializes all event handlers
          */
         init: () => {
-            // Search input handler with debounce
-            let searchTimeout;
-            $('#search-name-product').on('input', function() {
-                const searchValue = $(this).val();
-                clearTimeout(searchTimeout);
+            // Common function to handle all filter changes
+            const handleFilterChange = () => {
+                const searchValue = $('#faktur').val();
+                const dateValue = $('#date').val();
 
+                urlManager.updateParams({
+                    search: searchValue,
+                    date: dateValue,
+                    page: 1
+                });
+
+                dataServicePurchaseOrder.fetchData(1, searchValue, dateValue);
+            };
+
+            // Faktur input handler with debounce
+            let searchTimeout;
+            $('#faktur').on('input', function() {
+                clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     debug.log('Search', 'Triggering search...');
-                    urlManager.updateParams({
-                        search: searchValue,
-                        page: 1
-                    });
-                    dataServicePurchaseOrder.fetchData(1, searchValue);
+                    handleFilterChange();
                 }, DEBOUNCE_DELAY);
+            });
+
+            // Date input handler
+            $('#date').on('changeDate', function() {
+                debug.log('Date', 'Date changed...');
+                handleFilterChange();
             });
 
             // Pagination click handler
             $(document).on('click', '.pagination a', function(e) {
                 e.preventDefault();
                 const page = $(this).attr('href').split('page=')[1];
-                const currentSearch = $('#search-name-product').val();
+                const searchValue = $('#faktur').val();
+                const dateValue = $('#date').val();
 
                 debug.log('Pagination', `Changing to page ${page}`);
                 urlManager.updateParams({
                     page,
-                    search: currentSearch
+                    search: searchValue,
+                    date: dateValue
                 });
-                dataServicePurchaseOrder.fetchData(page, currentSearch);
+
+                dataServicePurchaseOrder.fetchData(page, searchValue, dateValue);
             });
 
             // Browser navigation handler
             window.addEventListener('popstate', function() {
                 const params = urlManager.getParams();
-                $('#search-name-product').val(params.search);
-                dataServicePurchaseOrder.fetchData(params.page, params.search);
+                $('#faktur').val(params.search || '');
+                $('#date').val(params.date || '');
+                dataServicePurchaseOrder.fetchData(
+                    params.page || 1,
+                    params.search || '',
+                    params.date || ''
+                );
             });
         },
     };
@@ -202,8 +225,20 @@
     function initPurchaseOrderTable() {
         debug.log('Init', 'Initializing purchase order table...');
         const params = urlManager.getParams();
-        $('#search-name-product').val(params.search);
-        dataServicePurchaseOrder.fetchData(params.page, params.search);
+
+        // Set initial values for all filters
+        $('#faktur').val(params.search || '');
+        const dateInput = $('#date');
+        if (dateInput) {
+            dateInput.val(params.date || '');
+        }
+
+        // Initial data fetch with all parameters
+        dataServicePurchaseOrder.fetchData(
+            params.page || 1,
+            params.search || '',
+            params.date || ''
+        );
     }
 
     // Initialize when document is ready

@@ -34,6 +34,7 @@ export const urlManager = {
         const urlParams = new URLSearchParams(window.location.search);
         return {
             search: urlParams.get("search") || "",
+            date: urlParams.get("date") || "",
             page: parseInt(urlParams.get("page")) || 1,
         };
     },
