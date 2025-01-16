@@ -237,7 +237,6 @@
 
         setFormValues: (form, data) => {
             const nominal_discount = priceCalculationsPO.calculateMainDiscount(data?.total_before_tax_discount)
-            console.log("NOMINAL", data?.total_before_tax_discount)
 
             // Set basic form values
             form.find('input[name="code"]').val(data.code);
