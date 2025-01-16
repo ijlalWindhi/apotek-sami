@@ -184,6 +184,7 @@
             <a href="{{ route('purchaseOrder.index') }}" class="w-full md:w-32">
                 <x-button color="blue" class="w-full md:w-32">Kembali</x-button>
             </a>
+            <div id="placeholder-payment"></div>
         </div>
     </form>
 </x-layout>
@@ -227,9 +228,49 @@
                 // Handle products
                 dataServicePurchaseOrder.setProducts(data.products);
 
+                if (data.payment_status === "Belum Terbayar") {
+                    const paymentButton =
+                        `<x-button color="green" class="w-full md:w-32" id="btn-payment">Bayar</x-button>`;
+                    $('#placeholder-payment').html(paymentButton);
+                }
+
             } catch (error) {
                 handleFetchError(error);
                 uiManager.showError('Gagal mengambil data purchase order. Silahkan coba lagi.');
+            } finally {
+                $('#view-purchase-order .fixed').remove();
+            }
+        },
+
+        updateStatusPayment: async () => {
+            $("#view-purchase-order").prepend(uiManager.showScreenLoader());
+
+            try {
+                const response = await $.ajax({
+                    url: `/inventory/transaction/purchase-order/${purchaseOrderId}/payment`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    processData: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    }
+                });
+
+                if (!response?.success) {
+                    throw new Error('Invalid response format');
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Berhasil melakukan pembayaran",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                $('#btn-payment').remove();
+            } catch (error) {
+                handleFetchError(error);
+                uiManager.showError('Gagal melakukan pembayaran. Silahkan coba lagi.');
             } finally {
                 $('#view-purchase-order .fixed').remove();
             }
@@ -310,6 +351,20 @@
     };
 
     /**
+     * Event Handlers
+     */
+    const eventHandlersPurchaseOrder = {
+        /**
+         * Initializes all event handlers
+         */
+        init: () => {
+            $('body').on('click', '#btn-payment', function() {
+                dataServicePurchaseOrder.updateStatusPayment();
+            });
+        },
+    };
+
+    /**
      * Initialize the detail purchase order page
      */
     function initPurchaseOrderDetail() {
@@ -321,6 +376,7 @@
     $(document).ready(function() {
         debug.log('Ready', 'Document ready, initializing...');
         initPurchaseOrderDetail();
+        eventHandlersPurchaseOrder.init();
 
         // Initialize select2
         $('.js-example-basic-single').select2({
