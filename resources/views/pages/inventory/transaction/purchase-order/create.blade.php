@@ -12,9 +12,9 @@
                     placeholder="Terisi otomatis">
             </div>
             <div>
-                <label for="supplier" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Supplier
+                <label for="supplier_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Supplier
                     <span class="text-red-500">*</span></label>
-                <select class="js-example-basic-single" id="supplier" name="supplier">
+                <select class="js-example-basic-single" id="supplier_id" name="supplier_id">
                     <option value="" selected disabled hidden>Pilih Supplier</option>
                     @foreach ($suppliers as $supplier)
                         <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
@@ -40,10 +40,10 @@
                     placeholder="Tanggal Pengantaran" required>
             </div>
             <div>
-                <label for="payment_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipe
+                <label for="payment_type_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipe
                     Pembayaran
                     <span class="text-red-500">*</span></label>
-                <select class="js-example-basic-single" id="payment_type" name="payment_type">
+                <select class="js-example-basic-single" id="payment_type_id" name="payment_type_id">
                     <option value="" selected disabled hidden>Pilih Tipe Pembayaran</option>
                     @foreach ($paymentTypes as $payment)
                         <option value="{{ $payment->id }}">{{ $payment->name }}</option>
@@ -213,8 +213,6 @@
         formData.forEach(item => {
             formDataObj[item.name] = item.value;
         });
-        formDataObj.tax = resTax[0].id;
-        formDataObj.code = 'PO-' + new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
 
         // Initialize products array
         const products = [];
@@ -262,27 +260,29 @@
         const formatDate = (dateStr) => {
             if (!dateStr) return null;
             const [day, month, year] = dateStr.split('-');
-            return `${year}-${month}-${day}`;
+            return `${year}-${month}-${day} 00:00:00`;
         };
 
         // Build the final request object
         const requestData = {
-            code: formDataObj.code,
-            supplier: formDataObj.supplier,
+            code: 'PO-' + new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14),
+            supplier_id: formDataObj.supplier_id,
             order_date: formatDate(formDataObj.order_date),
             delivery_date: formatDate(formDataObj.delivery_date),
             payment_due_date: formatDate(formDataObj.payment_due_date),
-            tax: formDataObj.tax,
+            tax_id: resTax[0]?.id || 1,
             no_factur_supplier: formDataObj.no_factur_supplier,
             description: formDataObj.description,
-            payment_type: formDataObj.payment_type,
+            payment_type_id: formDataObj.payment_type_id,
             payment_term: formDataObj.payment_term,
+            payment_status: formDataObj.payment_term === 'Tunai' ? 'Lunas' : 'Belum Terbayar',
             payment_include_tax: formDataObj.payment_include_tax === '1',
             discount: parseFloat(formDataObj.discount) || 0,
             qty_total: Number(formDataObj.qty_total),
             discount: formDataObj.discount?.endsWith('%') ? parseFloat(formDataObj.discount) : parseInt(formDataObj
                 .discount?.replace(/[^\d]/g, '')) || 0,
             discount_type: formDataObj.discount?.endsWith('%') ? 'Percentage' : 'Nominal',
+            nominal_discount: formDataObj.nominal_discount || 0,
             total_before_tax_discount: parseFloat(formDataObj.total_before_tax_discount.replace(/[^\d]/g, '')),
             tax_total: parseFloat(formDataObj.tax_total.replace(/[^\d]/g, '')),
             discount_total: parseFloat(formDataObj.discount_total.replace(/[^\d]/g, '')),
@@ -408,7 +408,7 @@
 
             // Handle change tax
             $('#payment_include_tax').on('change', function() {
-                priceCalculations.updateAllTotals();
+                priceCalculationsPO.updateAllTotals();
             });
 
             // Handle change delivery_date
@@ -554,125 +554,13 @@
         }
     };
 
-    const priceCalculations = {
-        init: () => {
-            // Listen for changes in product subtotals
-            $(document).on('subtotalUpdated', priceCalculations.updateAllTotals);
-
-            // Handle main discount input changes
-            $('#discount').on('input', function() {
-                priceCalculations.updateAllTotals();
-            });
-        },
-
-        updateAllTotals: () => {
-            const isIncludeTax = $('#payment_include_tax').val();
-            const totals = priceCalculations.calculateProductTotals();
-
-            // Update quantity total
-            $('#qty_total').val(totals.quantityTotal);
-
-            let totalBeforeTaxDiscount = totals.totalBeforeTaxDiscount;
-
-            // Jika harga termasuk pajak, hitung harga sebelum pajak
-            if (isIncludeTax === '1') {
-                totalBeforeTaxDiscount = Math.round(totals.totalBeforeTaxDiscount / (1 + (taxPercentage /
-                    100)));
-            }
-
-            // Update total before tax and discount
-            $('#total_before_tax_discount').val(UIManager.formatCurrency(totalBeforeTaxDiscount));
-
-            // Hitung diskon
-            const discount = priceCalculations.calculateMainDiscount(totalBeforeTaxDiscount);
-            $('#nominal_discount').val(UIManager.formatCurrency(discount.nominalDiscount));
-
-            // Update total discount (product discounts + main discount)
-            const totalDiscount = totals.productDiscountsTotal + discount.nominalDiscount;
-            $('#discount_total').val(UIManager.formatCurrency(totalDiscount));
-
-            // Hitung pajak berdasarkan total setelah diskon
-            const totalAfterDiscount = totalBeforeTaxDiscount - totalDiscount;
-            const tax = priceCalculations.calculateTax(totalAfterDiscount);
-            $('#tax_total').val(UIManager.formatCurrency(tax));
-
-            // Update final total
-            let finalTotal;
-            if (isIncludeTax === '1') {
-                finalTotal = totals.totalBeforeTaxDiscount - totalDiscount;
-            } else {
-                finalTotal = totalAfterDiscount + tax;
-            }
-            $('#total').val(UIManager.formatCurrency(finalTotal));
-        },
-
-        calculateProductTotals: () => {
-            let quantityTotal = 0;
-            let totalBeforeTaxDiscount = 0;
-            let productDiscountsTotal = 0;
-
-            // Iterate through all products in the table
-            $('#table-body tr').each(function() {
-                const quantity = parseInt($(this).find('input[id^="product_total_"]').val()) || 0;
-                const price = parseInt($(this).find('input[id^="product_price_"]').val()?.replace(
-                    /[^\d]/g, '')) || 0;
-                const subtotal = parseInt($(this).find('input[id^="product_subtotal_"]').val()?.replace(
-                    /[^\d]/g, '')) || 0;
-
-                quantityTotal += quantity;
-                totalBeforeTaxDiscount += (quantity * price);
-                productDiscountsTotal += (quantity * price) - subtotal;
-            });
-
-            return {
-                quantityTotal,
-                totalBeforeTaxDiscount,
-                productDiscountsTotal
-            };
-        },
-
-        calculateMainDiscount: (total) => {
-            const discountInput = $('#discount').val();
-            let nominalDiscount = 0;
-
-            if (discountInput) {
-                if (discountInput.endsWith('%')) {
-                    // Percentage discount
-                    const discountPercentage = parseFloat(discountInput) || 0;
-                    nominalDiscount = total * (discountPercentage / 100);
-                } else {
-                    // Fixed amount discount
-                    nominalDiscount = parseInt(discountInput?.replace(/[^\d]/g, '')) || 0;
-                }
-            }
-
-            return {
-                nominalDiscount: Math.min(nominalDiscount, total) // Ensure discount doesn't exceed total
-            };
-        },
-
-        calculateTax: (totalAfterDiscount) => {
-            const isIncludeTax = $('#payment_include_tax').val();
-
-            if (isIncludeTax === '1') {
-                // Jika harga termasuk pajak, pajak dihitung dari total / 1.11 * 0.11
-                return Math.round(totalAfterDiscount * (taxPercentage / 100));
-            } else if (isIncludeTax === '0') {
-                // Jika harga tidak termasuk pajak, pajak dihitung langsung
-                return Math.round(totalAfterDiscount * (taxPercentage / 100));
-            }
-
-            return 0; // Default case, no tax
-        }
-    };
-
     $(document).ready(function() {
         debug.log('Ready', 'Document ready, initializing...');
 
         // Initialize all modules
         productCalculations.init();
         eventHandlerProduct.init();
-        priceCalculations.init();
+        priceCalculationsPO.init();
         dataServicePurchaseOrder.fetchData();
 
         // Add initial empty row

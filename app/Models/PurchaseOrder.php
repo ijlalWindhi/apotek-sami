@@ -13,14 +13,14 @@ class PurchaseOrder extends Model
 
     protected $fillable = [
         'code',
-        'supplier',
+        'supplier_id',
         'order_date',
         'delivery_date',
         'payment_due_date',
-        'tax',
+        'tax_id',
         'no_factur_supplier',
         'description',
-        'payment_type',
+        'payment_type_id',
         'payment_term',
         'payment_include_tax',
         'qty_total',

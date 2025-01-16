@@ -17,8 +17,8 @@ class PurchaseOrderService
         if (isset($data['products'])) {
             foreach ($data['products'] as $product) {
                 ProductPurchaseOrder::create([
-                    'purchase_order' => $purchaseOrder->id,
-                    'product' => $product['product'],
+                    'purchase_order_id' => $purchaseOrder->id,
+                    'product_id' => $product['product'],
                     'qty' => $product['qty'],
                     'price' => $product['price'],
                     'discount' => $product['discount'],
@@ -37,35 +37,12 @@ class PurchaseOrderService
         return $purchaseOrder;
     }
 
-    public function update(PurchaseOrder $purchaseOrder, array $data): PurchaseOrder
+    public function updatePaymentStatus(PurchaseOrder $purchaseOrder): PurchaseOrder
     {
-        $purchaseOrder->update($data);
+        $purchaseOrder->payment_status = "Lunas";
+        $purchaseOrder->save();
 
-        // Update produk jika ada
-        if (isset($data['products'])) {
-            // Hapus produk yang lama
-            $purchaseOrder->productPurchaseOrders()->delete();
-
-            // Buat produk baru
-            foreach ($data['products'] as $product) {
-                $purchaseOrder->productPurchaseOrders()->create([
-                    'product' => $product['product'],
-                    'qty' => $product['qty'],
-                    'price' => $product['price'],
-                    'discount' => $product['discount'],
-                    'discount_type' => $product['discount_type'],
-                    'subtotal' => $product['subtotal'],
-                    'description' => $product['description'] ?? null
-                ]);
-            }
-        }
-
-        return $purchaseOrder->fresh(['productPurchaseOrders']);
-    }
-
-    public function delete(PurchaseOrder $purchaseOrder): bool
-    {
-        return $purchaseOrder->delete();
+        return $purchaseOrder;
     }
 
     public function getList(array $filters = [], int $page = 1, int $perPage = 10): LengthAwarePaginator
@@ -76,25 +53,24 @@ class PurchaseOrderService
         if (!empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('code', 'like', '%' . $filters['search'] . '%')
-                    ->orWhereHas('supplier', function ($q) use ($filters) {
-                        $q->where('name', 'like', '%' . $filters['search'] . '%');
-                    });
+                    ->orWhere('no_factur_supplier', 'like', '%' . $filters['search'] . '%');
             });
         }
 
         // Filter berdasarkan tanggal
-        if (!empty($filters['start_date'])) {
-            $query->where('order_date', '>=', $filters['start_date']);
-        }
-        if (!empty($filters['end_date'])) {
-            $query->where('order_date', '<=', $filters['end_date']);
+        if (!empty($filters['date']) && $filters['date'] instanceof \Carbon\Carbon) {
+            $dateString = $filters['date']->format('Y-m-d');
+            $query->where(function ($q) use ($dateString) {
+                $q->whereDate('order_date', '=', $dateString)
+                    ->orWhereDate('payment_due_date', '=', $dateString);
+            });
         }
 
         // Tambahkan pengurutan default
         $query->orderBy('created_at', 'desc');
 
         // Include relationships
-        $query->with(['supplier', 'tax', 'paymentType']);
+        $query->with(['supplier', 'tax', 'paymentType', 'productPurchaseOrders.product']);
 
         return $query->paginate($perPage, ['*'], 'page', $page);
     }

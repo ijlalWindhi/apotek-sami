@@ -15,6 +15,14 @@ div[drawer-backdrop].bg-gray-900\/50 {
     border-radius: 0.5rem !important; /* rounded-lg */
     height: 42px !important; /* sesuaikan dengan height input */
 }
+/* disabled */
+.select2-container--default.select2-container--disabled
+    .select2-selection--single {
+    background-color: rgb(229 231 235) !important; /* bg-gray-200 */
+    border: 1px solid rgb(209 213 219) !important; /* border-gray-300 */
+    color: rgb(107 114 128) !important; /* text-gray-500 */
+    cursor: not-allowed !important;
+}
 .select2-container--default
     .select2-selection--single
     .select2-selection__rendered {

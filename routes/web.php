@@ -146,12 +146,11 @@ Route::prefix('inventory')
             Route::controller(PurchaseOrderController::class)->group(function () {
                 Route::get('/purchase-order', 'index')->name('purchaseOrder.index');
                 Route::get('/purchase-order/create', 'createview')->name('purchaseOrder.create');
-                Route::get('/purchase-order/view/{product}', 'detailview')->name('purchaseOrder.edit');
+                Route::get('/purchase-order/view/{purchaseOrder}', 'detailview')->name('purchaseOrder.edit');
                 Route::get('/purchase-order/list', 'getAll')->name('purchaseOrder.getAll');
                 Route::post('/purchase-order', 'store')->name('purchaseOrder.store');
-                Route::get('/purchase-order/{product}', 'show')->name('purchaseOrder.show');
-                Route::put('/purchase-order/{product}', 'update')->name('purchaseOrder.update');
-                Route::delete('/purchase-order/{product}', 'destroy')->name('purchaseOrder.destroy');
+                Route::get('/purchase-order/{purchaseOrder}', 'show')->name('purchaseOrder.show');
+                Route::post('/purchase-order/{purchaseOrder}/payment', 'updatePaymentStatus')->name('purchaseOrder.updatePaymentStatus');
             });
         });
     });
