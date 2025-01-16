@@ -150,8 +150,7 @@ Route::prefix('inventory')
                 Route::get('/purchase-order/list', 'getAll')->name('purchaseOrder.getAll');
                 Route::post('/purchase-order', 'store')->name('purchaseOrder.store');
                 Route::get('/purchase-order/{purchaseOrder}', 'show')->name('purchaseOrder.show');
-                Route::put('/purchase-order/{purchaseOrder}', 'update')->name('purchaseOrder.update');
-                Route::delete('/purchase-order/{purchaseOrder}', 'destroy')->name('purchaseOrder.destroy');
+                Route::post('/purchase-order/{purchaseOrder}/payment', 'updatePaymentStatus')->name('purchaseOrder.updatePaymentStatus');
             });
         });
     });
