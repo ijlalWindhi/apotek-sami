@@ -32,6 +32,7 @@
                         <th scope="col" class="px-6 py-3 min-w-44">Faktur Supplier</th>
                         <th scope="col" class="px-6 py-3 min-w-52">Tanggal Pemesanan</th>
                         <th scope="col" class="px-6 py-3 min-w-56">Tanggal Jatuh Tempo</th>
+                        <th scope="col" class="px-6 py-3 min-w-52">Status Pembayaran</th>
                         <th scope="col" class="px-6 py-3 min-w-44">Supplier</th>
                         <th scope="col" class="px-6 py-3 min-w-40">Total QTY</th>
                         <th scope="col" class="px-6 py-3 min-w-40">Nilai Tagihan</th>
@@ -118,6 +119,9 @@
                 </td>
                 <td class="px-6 py-4">
                     ${(purchaseOrder.payment_due_date || '-')}
+                </td>
+                <td class="px-6 py-4">
+                    ${(purchaseOrder.payment_status === 'Lunas' ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Lunas</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Belum Terbayar</span>')}
                 </td>
                 <td class="px-6 py-4">
                     ${purchaseOrder?.supplier?.name || '-'}
