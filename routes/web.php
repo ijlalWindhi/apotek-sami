@@ -11,6 +11,7 @@ use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -140,8 +141,17 @@ Route::prefix('inventory')
         });
 
         // Transaksi
-        Route::get('/transaction', function () {
-            return view('pages.transaction', ['title' => 'Transaksi']);
+        Route::prefix('transaction')->group(function () {
+            // Purchase Order
+            Route::controller(PurchaseOrderController::class)->group(function () {
+                Route::get('/purchase-order', 'index')->name('purchaseOrder.index');
+                Route::get('/purchase-order/create', 'createview')->name('purchaseOrder.create');
+                Route::get('/purchase-order/view/{purchaseOrder}', 'detailview')->name('purchaseOrder.edit');
+                Route::get('/purchase-order/list', 'getAll')->name('purchaseOrder.getAll');
+                Route::post('/purchase-order', 'store')->name('purchaseOrder.store');
+                Route::get('/purchase-order/{purchaseOrder}', 'show')->name('purchaseOrder.show');
+                Route::post('/purchase-order/{purchaseOrder}/payment', 'updatePaymentStatus')->name('purchaseOrder.updatePaymentStatus');
+            });
         });
     });
 

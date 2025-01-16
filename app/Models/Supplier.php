@@ -36,4 +36,9 @@ class Supplier extends Model
     {
         return $this->belongsTo(PaymentType::class);
     }
+
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
 }

@@ -16,6 +16,7 @@ import {
     UtilsProduct,
     initEventListeners,
 } from "./product.js";
+import { priceCalculationsPO } from "./purchase-order.js";
 import Swal from "sweetalert2";
 
 window.Alpine = Alpine;
@@ -37,5 +38,8 @@ window.UIManager = UIManager;
 window.initEventListeners = initEventListeners;
 window.SELECTORS = SELECTORS;
 window.UtilsProduct = UtilsProduct;
+
+// expose purchase order related functions to the global scope
+window.priceCalculationsPO = priceCalculationsPO;
 
 Alpine.start();
