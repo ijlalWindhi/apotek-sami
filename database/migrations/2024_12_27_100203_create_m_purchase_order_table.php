@@ -25,6 +25,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('payment_type_id')->constrained('m_payment_type')->onDelete('cascade');
             $table->enum('payment_term', ['Tunai', '1 Hari', '7 Hari', '14 Hari', '21 Hari', '30 Hari', '45 Hari']);
+            $table->enum('payment_status', ['Lunas', 'Belum Terbayar'])->default('Belum Terbayar');
             $table->boolean('payment_include_tax')->default(false);
             $table->integer('qty_total')->default(0);
             $table->decimal('discount', 12, 2);

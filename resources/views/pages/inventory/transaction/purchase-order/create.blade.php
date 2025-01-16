@@ -275,6 +275,7 @@
             description: formDataObj.description,
             payment_type_id: formDataObj.payment_type_id,
             payment_term: formDataObj.payment_term,
+            payment_status: formDataObj.payment_term === 'Tunai' ? 'Lunas' : 'Belum Terbayar',
             payment_include_tax: formDataObj.payment_include_tax === '1',
             discount: parseFloat(formDataObj.discount) || 0,
             qty_total: Number(formDataObj.qty_total),

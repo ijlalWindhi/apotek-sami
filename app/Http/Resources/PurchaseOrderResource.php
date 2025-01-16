@@ -20,6 +20,7 @@ class PurchaseOrderResource extends JsonResource
             'description' => $this->description,
             'payment_type' => new PaymentTypeResource($this->whenLoaded('paymentType')),
             'payment_term' => $this->payment_term,
+            'payment_status' => $this->payment_status,
             'payment_include_tax' => $this->payment_include_tax,
             'qty_total' => $this->qty_total,
             'discount' => $this->discount,
