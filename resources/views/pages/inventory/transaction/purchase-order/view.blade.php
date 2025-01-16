@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <form id="purchase-order" class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full">
+    <form id="view-purchase-order" class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start justify-between gap-4">
             <div>
@@ -117,7 +117,6 @@
                             <th scope="col" class="px-6 py-3 min-w-36">Harga</th>
                             <th scope="col" class="px-6 py-3 min-w-36">Diskon<br />(Rp / %)</th>
                             <th scope="col" class="px-6 py-3 min-w-36">Sub Total</th>
-                            <th scope="col" class="px-6 py-3">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -190,8 +189,139 @@
 </x-layout>
 
 <script>
+    /**
+     * Detail Purchase Order Module
+     * Handles the detail purchase order page
+     */
+    const url = window.location.pathname;
+    const purchaseOrderId = url.split('/').pop();
+
+    /**
+     * Data Fetching and Processing
+     */
+    const dataServicePurchaseOrder = {
+        fetchData: async () => {
+            $("#view-purchase-order").prepend(uiManager.showScreenLoader());
+
+            try {
+                const response = await $.ajax({
+                    url: `/inventory/transaction/purchase-order/${purchaseOrderId}`,
+                    method: 'GET',
+                    contentType: 'application/json',
+                    processData: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    }
+                });
+
+                if (!response?.success) {
+                    throw new Error('Invalid response format');
+                }
+
+                const data = response.data;
+                const form = $('form');
+
+                // Set form values for basic fields
+                dataServicePurchaseOrder.setFormValues(form, data);
+
+                // Handle products
+                dataServicePurchaseOrder.setProducts(data.products);
+
+            } catch (error) {
+                handleFetchError(error);
+                uiManager.showError('Gagal mengambil data purchase order. Silahkan coba lagi.');
+            } finally {
+                $('#view-purchase-order .fixed').remove();
+            }
+        },
+
+        setFormValues: (form, data) => {
+            const nominal_discount = priceCalculationsPO.calculateMainDiscount(data?.total_before_tax_discount)
+            console.log("NOMINAL", data?.total_before_tax_discount)
+
+            // Set basic form values
+            form.find('input[name="code"]').val(data.code);
+            form.find('select[name="supplier_id"]').val(data.supplier.id).trigger('change');
+            form.find('input[name="order_date"]').val(data.order_date);
+            form.find('input[name="delivery_date"]').val(data.delivery_date);
+            form.find('select[name="payment_type_id"]').val(data.payment_type.id).trigger('change');
+            form.find('select[name="payment_term"]').val(data.payment_term).trigger('change');
+            form.find('input[name="payment_due_date"]').val(data.payment_due_date);
+            form.find('input[name="no_factur_supplier"]').val(data.no_factur_supplier);
+            form.find('select[name="payment_include_tax"]').val(data.payment_include_tax ? 1 : 0).trigger(
+                'change');
+            form.find('textarea[name="description"]').val(data.description);
+            form.find('input[name="qty_total"]').val(data.qty_total);
+            form.find('input[name="discount"]').val(data.discount);
+            form.find('input[name="nominal_discount"]').val(UIManager.formatCurrency(data.nominal_discount));
+            form.find('input[name="total_before_tax_discount"]').val(UIManager.formatCurrency(data
+                .total_before_tax_discount));
+            form.find('input[name="discount_total"]').val(UIManager.formatCurrency(data.discount_total));
+            form.find('input[name="tax_total"]').val(UIManager.formatCurrency(data.tax_total));
+            form.find('input[name="total"]').val(UIManager.formatCurrency(data.total));
+        },
+
+        setProducts: (products) => {
+            if (!products || products.length === 0) {
+                $('#table-body').html(`
+                <tr>
+                    <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                        Tidak ada produk yang dipilih
+                    </td>
+                </tr>`);
+                return;
+            }
+
+            // Clear existing table content
+            $('#table-body').empty();
+
+            // Add products to table
+            products.forEach(product => {
+                const discount = product.discount_type === 'Percentage' ?
+                    product.discount + '%' :
+                    UIManager.formatCurrency(product.discount);
+
+                const row = `
+                <tr>
+                    <td class="px-6 py-4">
+                        ${product.product.name || '-'}
+                    </td>
+                    <td class="px-6 py-4" id="product_description_${product.product.id}">
+                        ${product.description || '-'}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${product.qty || 0}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${product.product.unit.name || 0}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${UIManager.formatCurrency(product?.price)}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${discount}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${UIManager.formatCurrency(product.subtotal)}
+                    </td>
+                </tr>`;
+                $('#table-body').append(row);
+            });
+        }
+    };
+
+    /**
+     * Initialize the detail purchase order page
+     */
+    function initPurchaseOrderDetail() {
+        debug.log('Init', 'Initializing purchase order detail...');
+
+        dataServicePurchaseOrder.fetchData();
+    }
+
     $(document).ready(function() {
         debug.log('Ready', 'Document ready, initializing...');
+        initPurchaseOrderDetail();
 
         // Initialize select2
         $('.js-example-basic-single').select2({
