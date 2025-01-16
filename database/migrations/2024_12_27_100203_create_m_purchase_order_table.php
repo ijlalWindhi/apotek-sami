@@ -29,6 +29,7 @@ return new class extends Migration
             $table->integer('qty_total')->default(0);
             $table->decimal('discount', 12, 2);
             $table->enum('discount_type', ['Percentage', 'Nominal'])->default('Percentage');
+            $table->decimal('nominal_discount', 12, 2);
             $table->decimal('total_before_tax_discount', 12, 2);
             $table->decimal('tax_total', 12, 2);
             $table->decimal('discount_total', 12, 2);

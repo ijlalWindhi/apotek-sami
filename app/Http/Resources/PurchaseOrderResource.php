@@ -24,6 +24,7 @@ class PurchaseOrderResource extends JsonResource
             'qty_total' => $this->qty_total,
             'discount' => $this->discount,
             'discount_type' => $this->discount_type,
+            'nominal_discount' => $this->nominal_discount,
             'total_before_tax_discount' => $this->total_before_tax_discount,
             'tax_total' => $this->tax_total,
             'discount_total' => $this->discount_total,

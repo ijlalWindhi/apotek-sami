@@ -37,6 +37,7 @@ class PurchaseOrderRequest extends FormRequest
             'qty_total' => 'required|integer|min:0',
             'discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'discount_type' => ['required', Rule::in(['Percentage', 'Nominal'])],
+            'nominal_discount' => self::NUMERIC_MIN_ZERO,
             'total_before_tax_discount' => self::NUMERIC_MIN_ZERO,
             'tax_total' => self::NUMERIC_MIN_ZERO,
             'discount_total' => self::NUMERIC_MIN_ZERO,
