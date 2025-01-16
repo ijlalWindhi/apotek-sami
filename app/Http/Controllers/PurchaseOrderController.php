@@ -135,9 +135,10 @@ class PurchaseOrderController extends Controller
     {
         try {
             $filters = [
-                'search' => $request->input('search'),
-                'start_date' => $request->input('start_date'),
-                'end_date' => $request->input('end_date')
+                'search' => $request->input('faktur'),
+                'date' => $request->input('date')
+                    ? \Carbon\Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay()
+                    : null,
             ];
 
             $page = $request->input('page', 1);
