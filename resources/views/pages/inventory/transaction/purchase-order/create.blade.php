@@ -281,6 +281,7 @@
             discount: formDataObj.discount?.endsWith('%') ? parseFloat(formDataObj.discount) : parseInt(formDataObj
                 .discount?.replace(/[^\d]/g, '')) || 0,
             discount_type: formDataObj.discount?.endsWith('%') ? 'Percentage' : 'Nominal',
+            nominal_discount: formDataObj.nominal_discount || 0,
             total_before_tax_discount: parseFloat(formDataObj.total_before_tax_discount.replace(/[^\d]/g, '')),
             tax_total: parseFloat(formDataObj.tax_total.replace(/[^\d]/g, '')),
             discount_total: parseFloat(formDataObj.discount_total.replace(/[^\d]/g, '')),
@@ -406,7 +407,7 @@
 
             // Handle change tax
             $('#payment_include_tax').on('change', function() {
-                priceCalculations.updateAllTotals();
+                priceCalculationsPO.updateAllTotals();
             });
 
             // Handle change delivery_date
@@ -552,125 +553,13 @@
         }
     };
 
-    const priceCalculations = {
-        init: () => {
-            // Listen for changes in product subtotals
-            $(document).on('subtotalUpdated', priceCalculations.updateAllTotals);
-
-            // Handle main discount input changes
-            $('#discount').on('input', function() {
-                priceCalculations.updateAllTotals();
-            });
-        },
-
-        updateAllTotals: () => {
-            const isIncludeTax = $('#payment_include_tax').val();
-            const totals = priceCalculations.calculateProductTotals();
-
-            // Update quantity total
-            $('#qty_total').val(totals.quantityTotal);
-
-            let totalBeforeTaxDiscount = totals.totalBeforeTaxDiscount;
-
-            // Jika harga termasuk pajak, hitung harga sebelum pajak
-            if (isIncludeTax === '1') {
-                totalBeforeTaxDiscount = Math.round(totals.totalBeforeTaxDiscount / (1 + (taxPercentage /
-                    100)));
-            }
-
-            // Update total before tax and discount
-            $('#total_before_tax_discount').val(UIManager.formatCurrency(totalBeforeTaxDiscount));
-
-            // Hitung diskon
-            const discount = priceCalculations.calculateMainDiscount(totalBeforeTaxDiscount);
-            $('#nominal_discount').val(UIManager.formatCurrency(discount.nominalDiscount));
-
-            // Update total discount (product discounts + main discount)
-            const totalDiscount = totals.productDiscountsTotal + discount.nominalDiscount;
-            $('#discount_total').val(UIManager.formatCurrency(totalDiscount));
-
-            // Hitung pajak berdasarkan total setelah diskon
-            const totalAfterDiscount = totalBeforeTaxDiscount - totalDiscount;
-            const tax = priceCalculations.calculateTax(totalAfterDiscount);
-            $('#tax_total').val(UIManager.formatCurrency(tax));
-
-            // Update final total
-            let finalTotal;
-            if (isIncludeTax === '1') {
-                finalTotal = totals.totalBeforeTaxDiscount - totalDiscount;
-            } else {
-                finalTotal = totalAfterDiscount + tax;
-            }
-            $('#total').val(UIManager.formatCurrency(finalTotal));
-        },
-
-        calculateProductTotals: () => {
-            let quantityTotal = 0;
-            let totalBeforeTaxDiscount = 0;
-            let productDiscountsTotal = 0;
-
-            // Iterate through all products in the table
-            $('#table-body tr').each(function() {
-                const quantity = parseInt($(this).find('input[id^="product_total_"]').val()) || 0;
-                const price = parseInt($(this).find('input[id^="product_price_"]').val()?.replace(
-                    /[^\d]/g, '')) || 0;
-                const subtotal = parseInt($(this).find('input[id^="product_subtotal_"]').val()?.replace(
-                    /[^\d]/g, '')) || 0;
-
-                quantityTotal += quantity;
-                totalBeforeTaxDiscount += (quantity * price);
-                productDiscountsTotal += (quantity * price) - subtotal;
-            });
-
-            return {
-                quantityTotal,
-                totalBeforeTaxDiscount,
-                productDiscountsTotal
-            };
-        },
-
-        calculateMainDiscount: (total) => {
-            const discountInput = $('#discount').val();
-            let nominalDiscount = 0;
-
-            if (discountInput) {
-                if (discountInput.endsWith('%')) {
-                    // Percentage discount
-                    const discountPercentage = parseFloat(discountInput) || 0;
-                    nominalDiscount = total * (discountPercentage / 100);
-                } else {
-                    // Fixed amount discount
-                    nominalDiscount = parseInt(discountInput?.replace(/[^\d]/g, '')) || 0;
-                }
-            }
-
-            return {
-                nominalDiscount: Math.min(nominalDiscount, total) // Ensure discount doesn't exceed total
-            };
-        },
-
-        calculateTax: (totalAfterDiscount) => {
-            const isIncludeTax = $('#payment_include_tax').val();
-
-            if (isIncludeTax === '1') {
-                // Jika harga termasuk pajak, pajak dihitung dari total / 1.11 * 0.11
-                return Math.round(totalAfterDiscount * (taxPercentage / 100));
-            } else if (isIncludeTax === '0') {
-                // Jika harga tidak termasuk pajak, pajak dihitung langsung
-                return Math.round(totalAfterDiscount * (taxPercentage / 100));
-            }
-
-            return 0; // Default case, no tax
-        }
-    };
-
     $(document).ready(function() {
         debug.log('Ready', 'Document ready, initializing...');
 
         // Initialize all modules
         productCalculations.init();
         eventHandlerProduct.init();
-        priceCalculations.init();
+        priceCalculationsPO.init();
         dataServicePurchaseOrder.fetchData();
 
         // Add initial empty row
