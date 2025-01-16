@@ -96,36 +96,19 @@ class PurchaseOrderController extends Controller
         ]);
     }
 
-    public function update(PurchaseOrderRequest $request, PurchaseOrder $purchaseOrder): JsonResponse
+    public function updatePaymentStatus(PurchaseOrder $purchaseOrder): JsonResponse
     {
         try {
-            $updatedPurchaseOrder = $this->purchaseOrderService->update($purchaseOrder, $request->validated());
+            $purchaseOrder = $this->purchaseOrderService->updatePaymentStatus($purchaseOrder);
             return response()->json([
                 'success' => true,
-                'message' => 'Purchase order updated successfully',
-                'data' => new PurchaseOrderResource($updatedPurchaseOrder)
+                'message' => 'Payment status updated successfully',
+                'data' => new PurchaseOrderResource($purchaseOrder)
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update purchase order',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function destroy(PurchaseOrder $purchaseOrder): JsonResponse
-    {
-        try {
-            $this->purchaseOrderService->delete($purchaseOrder);
-            return response()->json([
-                'success' => true,
-                'message' => 'Purchase order deleted successfully'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to delete purchase order',
+                'message' => 'Failed to update payment status',
                 'error' => $e->getMessage()
             ], 500);
         }

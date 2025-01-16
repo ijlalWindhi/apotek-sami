@@ -37,35 +37,12 @@ class PurchaseOrderService
         return $purchaseOrder;
     }
 
-    public function update(PurchaseOrder $purchaseOrder, array $data): PurchaseOrder
+    public function updatePaymentStatus(PurchaseOrder $purchaseOrder): PurchaseOrder
     {
-        $purchaseOrder->update($data);
+        $purchaseOrder->payment_status = "Lunas";
+        $purchaseOrder->save();
 
-        // Update produk jika ada
-        if (isset($data['products'])) {
-            // Hapus produk yang lama
-            $purchaseOrder->productPurchaseOrders()->delete();
-
-            // Buat produk baru
-            foreach ($data['products'] as $product) {
-                $purchaseOrder->productPurchaseOrders()->create([
-                    'product' => $product['product'],
-                    'qty' => $product['qty'],
-                    'price' => $product['price'],
-                    'discount' => $product['discount'],
-                    'discount_type' => $product['discount_type'],
-                    'subtotal' => $product['subtotal'],
-                    'description' => $product['description'] ?? null
-                ]);
-            }
-        }
-
-        return $purchaseOrder->fresh(['productPurchaseOrders']);
-    }
-
-    public function delete(PurchaseOrder $purchaseOrder): bool
-    {
-        return $purchaseOrder->delete();
+        return $purchaseOrder;
     }
 
     public function getList(array $filters = [], int $page = 1, int $perPage = 10): LengthAwarePaginator
