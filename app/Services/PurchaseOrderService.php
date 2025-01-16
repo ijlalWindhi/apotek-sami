@@ -76,18 +76,17 @@ class PurchaseOrderService
         if (!empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('code', 'like', '%' . $filters['search'] . '%')
-                    ->orWhereHas('supplier', function ($q) use ($filters) {
-                        $q->where('name', 'like', '%' . $filters['search'] . '%');
-                    });
+                    ->orWhere('no_factur_supplier', 'like', '%' . $filters['search'] . '%');
             });
         }
 
         // Filter berdasarkan tanggal
-        if (!empty($filters['start_date'])) {
-            $query->where('order_date', '>=', $filters['start_date']);
-        }
-        if (!empty($filters['end_date'])) {
-            $query->where('order_date', '<=', $filters['end_date']);
+        if (!empty($filters['date']) && $filters['date'] instanceof \Carbon\Carbon) {
+            $dateString = $filters['date']->format('Y-m-d');
+            $query->where(function ($q) use ($dateString) {
+                $q->whereDate('order_date', '=', $dateString)
+                    ->orWhereDate('payment_due_date', '=', $dateString);
+            });
         }
 
         // Tambahkan pengurutan default
