@@ -8,10 +8,9 @@ use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\RegisterUserController;
-use App\Http\Controllers\DoctorController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\PosController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -107,26 +106,6 @@ Route::prefix('inventory')
                 Route::delete('/employee/{user}', 'destroy')->name('employee.destroy');
             });
 
-            // Doctor
-            Route::controller(DoctorController::class)->group(function () {
-                // Route::get('/doctor', 'index')->name('doctor.index');
-                Route::get('/doctor/list', 'getAll')->name('doctor.getAll');
-                Route::post('/doctor', 'store')->name('doctor.store');
-                Route::get('/doctor/{user}', 'show')->name('doctor.show');
-                Route::put('/doctor/{user}', 'update')->name('doctor.update');
-                Route::delete('/doctor/{user}', 'destroy')->name('doctor.destroy');
-            });
-
-            // Customer
-            Route::controller(CustomerController::class)->group(function () {
-                // Route::get('/customer', 'index')->name('customer.index');
-                Route::get('/customer/list', 'getAll')->name('customer.getAll');
-                Route::post('/customer', 'store')->name('customer.store');
-                Route::get('/customer/{user}', 'show')->name('customer.show');
-                Route::put('/customer/{user}', 'update')->name('customer.update');
-                Route::delete('/customer/{user}', 'destroy')->name('customer.destroy');
-            });
-
             // Product
             Route::controller(ProductController::class)->group(function () {
                 Route::get('/product', 'index')->name('product.index');
@@ -159,7 +138,11 @@ Route::prefix('inventory')
 Route::prefix('pos')
     ->middleware(['auth', KasirMiddleware::class])
     ->group(function () {
-        Route::get('/', function () {
-            return view('pages.pos.index', ['title' => 'POS']);
-        })->name('pos.index');
+        // Route::get('/', function () {
+        //     return view('pages.pos.index', ['title' => 'POS']);
+        // })->name('pos.index');
+
+        Route::controller(PosController::class)->group(function () {
+            Route::get('/', 'index')->name('pos.index');
+        });
     });
