@@ -1,31 +1,26 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
+
     <div class="flex flex-col gap-3">
         {{-- Button More Information --}}
         <div class="grid grid-cols-3 justify-between items-center gap-3 w-full h-full">
             <div class="flex flex-col gap-1 border p-4 justify-between rounded-md h-24 col-span-3 md:col-span-1">
-                <h2 class="text-sm md:text-base font-semibold">Pelanggan <span class="text-gray-400">[CTRL+ALT+C]</span>
-                </h2>
+                <h2 class="text-sm md:text-base font-semibold">Pelanggan</h2>
                 <div class="flex w-full justify-between gap-2 items-center">
-                    <p id="customer" class="text-xs md:text-sm">-</p>
-                    <x-pages.pos.modal-customer></x-pages.pos.modal-customer>
+                    <select class="js-example-basic-single" id="customer_type" name="customer_type">
+                        <option value="Umum" selected>Umum</option>
+                        <option value="Rutin">Rutin</option>
+                        <option value="Karyawan">Karyawan</option>
+                    </select>
                 </div>
             </div>
-            <div class="flex flex-col gap-1 border p-4 justify-between rounded-md h-24 col-span-3 md:col-span-1">
-                <h2 class="text-sm md:text-base font-semibold">Dokter <span class="text-gray-400">[CTRL+ALT+D]</span>
-                </h2>
-                <div class="flex w-full justify-between gap-2 items-center">
-                    <p id="doctor" class="text-xs md:text-sm">-</p>
-                    <x-pages.pos.modal-doctor></x-pages.pos.modal-doctor>
-                </div>
-            </div>
-            <div class="flex flex-col gap-1 border p-4 justify-between rounded-md h-24 col-span-3 md:col-span-1">
+            <div class="flex flex-col gap-1 border p-4 justify-between rounded-md h-24 col-span-3 md:col-span-2">
                 <h2 class="text-sm md:text-base font-semibold">Resep <span class="text-gray-400">[CTRL+ALT+R]</span>
                 </h2>
                 <div class="flex w-full justify-between gap-2 items-center">
                     <p class="text-xs md:text-sm">Flu Batuk</p>
                     <div class="flex gap-1">
-                        <button id="btn-search-customer"
+                        <button id="btn-add-recipe" data-modal-target="modal-recipe" data-modal-toggle="modal-recipe"
                             class="delete-button font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md">
                             <i class="fa-solid fa-plus"></i>
                         </button>
@@ -228,7 +223,7 @@
     </div>
 
     {{-- Modal --}}
-    <x-pages.pos.modal-recipe></x-pages.pos.modal-recipe>
+    <x-pages.pos.modal-recipe :users="$users"></x-pages.pos.modal-recipe>
 </x-layout>
 
 <script>
@@ -241,6 +236,11 @@
 
         $("body").on('click', '#btn-payment', function() {
             const doctor_id = $('#doctor').attr('data-id');
+        });
+
+        $('.js-example-basic-single').select2({
+            width: '100%',
+            dropdownAutoWidth: true,
         });
     });
 </script>
