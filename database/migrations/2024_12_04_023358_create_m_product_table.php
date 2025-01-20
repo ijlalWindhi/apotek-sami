@@ -30,13 +30,14 @@ return new class extends Migration
             $table->integer('minimum_stock')->default(0);
             $table->integer('stock')->default(0);
             $table->boolean('is_active')->default(true);
-            $table->foreignId('supplier_id')->constrained('m_supplier');
-            $table->foreignId('unit_id')->constrained('m_unit');
+            $table->foreignId('supplier_id')->constrained('m_supplier')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('largest_unit')->constrained('m_unit')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('smallest_unit')->constrained('m_unit')->onDelete('cascade')->onUpdate('cascade');
+            $table->decimal('conversion_value', 12, 2);
             $table->text('description')->nullable();
             $table->decimal('purchase_price', 12, 2);
-            $table->boolean('show_margin')->default(false);
-            $table->decimal('margin_percentage', 5, 2)->nullable();
             $table->decimal('selling_price', 12, 2);
+            $table->decimal('margin_percentage', 5, 2);
         });
     }
 
