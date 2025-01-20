@@ -9,51 +9,28 @@ class ProductService
 {
     public function create(array $data): Product
     {
-        if ($data['show_margin']) {
+        $data['margin_percentage'] = $this->calculateMargin(
+            $data['purchase_price'],
+            $data['selling_price']
+        );
+
+        $product = Product::create($data);
+
+        return $product->load(['supplier', 'largestUnit', 'smallestUnit']);
+    }
+
+    public function update(Product $product, array $data): Product
+    {
+        if (isset($data['purchase_price']) && isset($data['selling_price'])) {
             $data['margin_percentage'] = $this->calculateMargin(
                 $data['purchase_price'],
                 $data['selling_price']
             );
         }
 
-        $product = Product::create($data);
-
-        // Simpan konversi unit jika ada
-        if (isset($data['unit_conversions'])) {
-            foreach ($data['unit_conversions'] as $conversion) {
-                $product->unitConversions()->create([
-                    'from_unit_id' => $conversion['from_unit_id'],
-                    'to_unit_id' => $conversion['to_unit_id'],
-                    'from_value' => $conversion['from_value'],
-                    'to_value' => $conversion['to_value']
-                ]);
-            }
-        }
-
-        return $product->load(['supplier', 'unit', 'unitConversions']);
-    }
-
-    public function update(Product $product, array $data): Product
-    {
         $product->update($data);
 
-        // Update konversi unit jika ada
-        if (isset($data['unit_conversions'])) {
-            // Hapus konversi yang lama
-            $product->unitConversions()->delete();
-
-            // Buat konversi baru
-            foreach ($data['unit_conversions'] as $conversion) {
-                $product->unitConversions()->create([
-                    'from_unit_id' => $conversion['from_unit_id'],
-                    'to_unit_id' => $conversion['to_unit_id'],
-                    'from_value' => $conversion['from_value'],
-                    'to_value' => $conversion['to_value']
-                ]);
-            }
-        }
-
-        return $product->fresh(['unitConversions']);
+        return $product->fresh(['supplier', 'largestUnit', 'smallestUnit']);
     }
 
     public function delete(Product $product): bool
@@ -76,14 +53,14 @@ class ProductService
         // Tambahkan pengurutan default
         $query->orderBy('name', 'asc');
 
-        // Include unit relationship
-        $query->with('unit');
+        // Include relationships
+        $query->with(['supplier', 'largestUnit', 'smallestUnit']);
 
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
     private function calculateMargin(float $purchasePrice, float $sellingPrice): float
     {
-        return ($sellingPrice - $purchasePrice) / $sellingPrice;
+        return (($sellingPrice - $purchasePrice) / $sellingPrice) * 100;
     }
 }
