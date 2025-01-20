@@ -81,7 +81,8 @@
                 data: {
                     search,
                     page,
-                    per_page: PER_PAGE
+                    per_page: PER_PAGE,
+                    is_active: 1,
                 },
                 success: async (response) => {
                     if (!response?.success) {
