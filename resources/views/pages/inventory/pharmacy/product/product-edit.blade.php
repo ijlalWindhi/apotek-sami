@@ -17,12 +17,8 @@
                     (SKU)
                     <span class="text-red-500">*</span></label>
                 <div class="flex w-full justify-between items-center gap-2">
-                    <input type="text" name="sku" id="sku" required placeholder="Kode Produk"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    <button type="button" id="btn-generate-sku"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        <i class="fa-solid fa-sync"></i>
-                    </button>
+                    <input type="text" name="sku" id="sku" required placeholder="Kode Produk" disabled
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
             </div>
             <div>
@@ -279,12 +275,6 @@
                 });
                 const formattedData = UtilsProduct.formatRequestData(formData);
                 dataServiceProduct.updateProduct(formattedData);
-            });
-
-            // Generate SKU
-            $('body').on('click', '#btn-generate-sku', function() {
-                const sku = `SKU-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-                $('#sku').val(sku);
             });
         },
     };
