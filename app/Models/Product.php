@@ -21,18 +21,18 @@ class Product extends Model
         'sku',
         'minimum_stock',
         'stock',
-        'supplier_id',
         'is_active',
-        'unit_id',
+        'supplier_id',
+        'largest_unit',
+        'smallest_unit',
+        'conversion_value',
         'description',
         'purchase_price',
-        'show_margin',
+        'selling_price',
         'margin_percentage',
-        'selling_price'
     ];
 
     protected $casts = [
-        'show_margin' => 'boolean',
         'purchase_price' => self::DECIMAL_CAST,
         'margin_percentage' => self::DECIMAL_CAST,
         'selling_price' => self::DECIMAL_CAST,
@@ -41,18 +41,19 @@ class Product extends Model
         'deleted_at' => 'datetime'
     ];
 
-    public function unit(): BelongsTo
+    public function largestUnit(): BelongsTo
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->belongsTo(Unit::class, 'largest_unit');
     }
+
+    public function smallestUnit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'smallest_unit');
+    }
+
 
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
-    }
-
-    public function unitConversions()
-    {
-        return $this->hasMany(ProductUnitConversion::class);
     }
 }

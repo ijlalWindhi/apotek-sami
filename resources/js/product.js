@@ -1,11 +1,8 @@
 export const SELECTORS = {
-    marginToggle: "#show_margin",
-    marginFields: ".margin-fields",
     purchasePrice: "#purchase_price",
     sellingPrice: "#selling_price",
     marginDisplay: "#margin_display",
     marginPercentage: "#margin_percentage",
-    tabButtons: ".tab-button",
     createProductForm: "#create-product",
 };
 
@@ -192,11 +189,6 @@ export const UIManager = {
             event.target.value = formattedValue;
         });
     },
-
-    toggleMarginFields: function (isChecked) {
-        const fields = document.querySelectorAll(SELECTORS.marginFields);
-        fields.forEach((field) => field.classList.toggle("hidden", !isChecked));
-    },
 };
 
 // Price Calculation Module
@@ -204,7 +196,7 @@ export const PriceCalculator = {
     calculateMargin: function (purchasePrice, sellingPrice) {
         // Margin = (Selling Price - Purchase Price) / Selling Price
         return purchasePrice && sellingPrice
-            ? (sellingPrice - purchasePrice) / sellingPrice
+            ? ((sellingPrice - purchasePrice) / sellingPrice) * 100
             : 0;
     },
 
@@ -224,19 +216,15 @@ export const PriceHandler = {
             SELECTORS.sellingPrice
         );
         const marginDisplay = document.querySelector(SELECTORS.marginDisplay);
-        const marginToggle = document.querySelector(SELECTORS.marginToggle);
 
         const purchasePrice = UIManager.parseCurrency(purchasePriceInput.value);
         const sellingPrice = UIManager.parseCurrency(sellingPriceInput.value);
 
-        if (marginToggle.checked) {
-            // Calculate and update margin
-            const margin = PriceCalculator.calculateMargin(
-                purchasePrice,
-                sellingPrice
-            );
-            marginDisplay.value = UIManager.formatPercentage(margin);
-        }
+        const margin = PriceCalculator.calculateMargin(
+            purchasePrice,
+            sellingPrice
+        );
+        marginDisplay.value = UIManager.formatPercentage(margin);
     },
 
     handleMarginChange: function () {
@@ -264,38 +252,6 @@ export const PriceHandler = {
     },
 };
 
-// Tab Management Module
-export const TabManager = {
-    init: function () {
-        const tabs = document.querySelectorAll(".tab-button");
-        const tabContents = {
-            info: document.getElementById("info"),
-            price: document.getElementById("price"),
-        };
-
-        tabs.forEach((tab) => {
-            tab.addEventListener("click", () => {
-                const tabId = tab.dataset.tab;
-                this.switchTab(tabs, tabContents, tabId);
-            });
-        });
-    },
-
-    switchTab: function (tabs, tabContents, tabId) {
-        tabs.forEach((tab) => {
-            const isSelected = tab.dataset.tab === tabId;
-            tab.classList.toggle("text-blue-600", isSelected);
-            tab.classList.toggle("border-blue-600", isSelected);
-            tab.setAttribute("aria-selected", isSelected);
-        });
-
-        Object.entries(tabContents).forEach(([id, content]) => {
-            content.classList.toggle("hidden", id !== tabId);
-            content.classList.toggle("block", id === tabId);
-        });
-    },
-};
-
 // Utils
 export const UtilsProduct = {
     /**
@@ -305,7 +261,6 @@ export const UtilsProduct = {
      */
     formatRequestData: (formData) => {
         let data = {};
-        let unitConversions = [];
 
         // Process basic fields first
         formData.forEach((item) => {
@@ -321,52 +276,24 @@ export const UtilsProduct = {
                     typeof item.value === "number"
                         ? item.value
                         : UIManager.parsePercentage(item.value);
-            } else if (item.name === "show_margin") {
-                data[item.name] = item.value === "1";
             } else if (
                 item.name === "supplier_id" ||
-                item.name === "unit_id" ||
+                item.name === "largest_unit" ||
+                item.name === "smallest_unit" ||
                 item.name === "minimum_stock"
             ) {
                 data[item.name] = parseInt(item.value);
-            } else if (!item.name.startsWith("additional_")) {
+            } else {
                 // Skip additional unit fields for now
                 data[item.name] = item.value;
             }
         });
-
-        // Process unit conversions
-        for (let i = 1; i <= unitCount; i++) {
-            const fromValue = parseInt(
-                $(`input[name="additional_conversion_${i}"]`).first().val()
-            );
-            const toValue = parseInt(
-                $(`input[name="additional_conversion_${i}"]`).last().val()
-            );
-            const toUnitId = parseInt(
-                $(`select[name="additional_unit_${i}"]`).val()
-            );
-
-            if (fromValue && toValue && toUnitId) {
-                unitConversions.push({
-                    from_unit_id: parseInt(data.unit_id), // Base unit ID
-                    to_unit_id: toUnitId,
-                    from_value: fromValue,
-                    to_value: toValue,
-                });
-            }
-        }
-
-        if (unitConversions.length > 0) {
-            data.unit_conversions = unitConversions;
-        }
 
         return data;
     },
 };
 
 export function initEventListeners() {
-    const marginToggle = document.querySelector(SELECTORS.marginToggle);
     const purchasePriceInput = document.querySelector(SELECTORS.purchasePrice);
     const sellingPriceInput = document.querySelector(SELECTORS.sellingPrice);
     const marginDisplay = document.querySelector(SELECTORS.marginDisplay);
@@ -381,26 +308,13 @@ export function initEventListeners() {
         UIManager.attachPercentageFormatting(input);
     });
 
-    // Toggle Margin Fields
-    marginToggle.addEventListener("change", function () {
-        UIManager.toggleMarginFields(this.checked);
-
-        if (this.checked) {
-            PriceHandler.updatePriceCalculations();
-        }
-    });
-
     // Price Change Listeners
     purchasePriceInput.addEventListener("input", () => {
-        if (marginToggle.checked) {
-            PriceHandler.updatePriceCalculations();
-        }
+        PriceHandler.updatePriceCalculations();
     });
 
     sellingPriceInput.addEventListener("input", () => {
-        if (marginToggle.checked) {
-            PriceHandler.updatePriceCalculations();
-        }
+        PriceHandler.updatePriceCalculations();
     });
 
     // Margin Change Listener
