@@ -11,7 +11,6 @@ import {
     SELECTORS,
     PriceCalculator,
     PriceHandler,
-    TabManager,
     UIManager,
     UtilsProduct,
     initEventListeners,
@@ -33,7 +32,6 @@ window.Swal = Swal;
 // expose product related classes to the global scope
 window.PriceCalculator = PriceCalculator;
 window.PriceHandler = PriceHandler;
-window.TabManager = TabManager;
 window.UIManager = UIManager;
 window.initEventListeners = initEventListeners;
 window.SELECTORS = SELECTORS;

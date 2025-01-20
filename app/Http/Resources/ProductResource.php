@@ -9,7 +9,7 @@ class ProductResource extends JsonResource
     public function toArray($request): array
     {
         // Load relations if they haven't been loaded
-        $this->load(['supplier', 'unit']);
+        $this->load(['supplier', 'largestUnit', 'smallestUnit']);
 
         return [
             'id' => $this->id,
@@ -23,15 +23,17 @@ class ProductResource extends JsonResource
                 return new SupplierResource($this->supplier);
             }),
             'is_active' => $this->is_active,
-            'unit' => $this->whenLoaded('unit', function () {
-                return new UnitResource($this->unit);
+            'largest_unit' => $this->whenLoaded('largestUnit', function () {
+                return new UnitResource($this->largestUnit);
             }),
+            'smallest_unit' => $this->whenLoaded('smallestUnit', function () {
+                return new UnitResource($this->smallestUnit);
+            }),
+            'conversion_value' => $this->conversion_value,
             'description' => $this->description,
             'purchase_price' => $this->purchase_price,
-            'show_margin' => $this->show_margin,
             'margin_percentage' => $this->margin_percentage,
             'selling_price' => $this->selling_price,
-            'unit_conversions' => ProductUnitConversionResource::collection($this->whenLoaded('unitConversions')),
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s')
         ];

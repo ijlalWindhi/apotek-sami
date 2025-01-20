@@ -23,11 +23,8 @@ class ProductController extends Controller
 
     public function index(): View
     {
-        $units = Unit::all();
-
         return view('pages.inventory.pharmacy.product.product', [
             'title' => 'Produk',
-            'units' => $units
         ]);
     }
 
@@ -75,7 +72,7 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
-        $product->load('unitConversions.fromUnit', 'unitConversions.toUnit');
+        $product->load(['supplier', 'largestUnit', 'smallestUnit']);
 
         return response()->json([
             'success' => true,
