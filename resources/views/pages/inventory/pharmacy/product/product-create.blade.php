@@ -143,7 +143,7 @@
                     <div class="tooltip-arrow" data-popper-arrow></div>
                 </div>
 
-                <input type="text" id="margin_display"
+                <input type="text" name="margin_display" id="margin_display"
                     class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
                 <input type="hidden" name="margin_percentage" id="margin_percentage">
             </div>
