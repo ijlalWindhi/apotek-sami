@@ -49,6 +49,9 @@ class ProductService
                     ->orWhere('sku', 'like', '%' . $filters['search'] . '%');
             });
         }
+        if (!empty($filters['is_active'])) {
+            $query->where('is_active', $filters['is_active']);
+        }
 
         // Tambahkan pengurutan default
         $query->orderBy('name', 'asc');
