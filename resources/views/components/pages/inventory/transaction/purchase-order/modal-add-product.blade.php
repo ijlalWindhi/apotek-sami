@@ -187,7 +187,7 @@
         `,
 
         tableRowProduct: (product) => `
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+            <tr id="list_product_${product.id}" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" class="px-3 py-2 font-medium text-gray-900">
                     ${utils.escapeHtml(product.name || '-')}
                 </th>
@@ -310,6 +310,15 @@
             // Add product button
             $(document).on('click', '#btn-add-product', function() {
                 const productId = $(this).data('id');
+                const existData = document.getElementById(`list_product_${productId}`)
+                if (existData) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Produk sudah ada',
+                        text: 'Produk sudah ada di daftar pembelian',
+                    });
+                    return;
+                }
                 dataServiceProduct.getDetail(productId);
             });
         },
