@@ -5,8 +5,8 @@
         <!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal header -->
-            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            <div class="flex items-center justify-between py-1 px-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="font-semibold text-gray-900 dark:text-white">
                     Cari Produk
                 </h3>
                 <button type="button"
@@ -17,13 +17,13 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <div class="w-full p-4">
+            <div class="w-full px-4 py-2">
                 <div class="relative sm:w-full md:w-1/2 lg:w-2/6">
                     <input type="search" id="search-name"
-                        class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+                        class="block px-2.5 py-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
                         placeholder="Cari nama, sku" />
                     <button type="button" id="search-button"
-                        class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        class="absolute top-0 end-0 px-2.5 py-1.5 text-xs font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <span class="sr-only">Search</span>
                     </button>
@@ -59,8 +59,6 @@
 
     // Constants
     const PAGINATION_DISPLAY_RANGE = 2;
-    const DEBOUNCE_DELAY = 500;
-    const PER_PAGE = 10;
     const TEXT_TRUNCATE_LENGTH = 40;
 
     /**
@@ -81,8 +79,7 @@
                 data: {
                     search,
                     page,
-                    per_page: PER_PAGE,
-                    is_active: 1,
+                    per_page: PER_PAGE
                 },
                 success: async (response) => {
                     if (!response?.success) {
@@ -139,23 +136,22 @@
                 return;
             }
 
-            document?.getElementById("label_empty_data")?.remove();
-            tbody.append(data.map((product) => templates.tableRowProduct(product)).join(""));
+            tbody.html(data.map((product) => templates.tableRowProduct(product)).join(""));
             debug.log("UpdateTable", "Table updated successfully");
         },
 
         tableRow: (product) => `
             <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <th scope="row" class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     ${utils.escapeHtml(product.name || '-')}
                 </th>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${utils.escapeHtml(product.type || '-')}
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${utils.escapeHtml(product.sku || '-')}
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <div class="flex flex-col justify-start items-start">
                         <div class="flex gap-2">
                             <p class="w-20">Harga Beli</p>
@@ -167,38 +163,28 @@
                         </div>
                     </div>
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                    <div class="flex gap-1">
-                        ${product.largest_stock || 0}
-                        <p class="w-20">${product.largest_unit.symbol}</p>
-                    </div>
-                    <div class="flex gap-1">
-                        ${product.smallest_stock || 0}
-                        <p class="w-20">${product.smallest_unit.symbol}</p>
-                    </div>
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    ${product.stock || 0}
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${product.is_active ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
                 </td>
-                <td class="px-6 py-4 flex gap-2 items-center">
+                <td class="px-3 py-2 flex gap-2 items-center">
                     ${templates.actionButtons(product.id)}
                 </td>
             </tr>
         `,
 
         tableRowProduct: (product) => `
-            <tr id="list_product_${product.id}" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-3 py-2 font-medium text-gray-900">
+            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <th scope="row" class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     ${utils.escapeHtml(product.name || '-')}
                 </th>
-                <td class="px-3 py-2 text-gray-500 dark:text-gray-400" id="product_description_${product.id}">
-                    ${utils.escapeHtml(product.description || '-')}
-                </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <div class="flex justify-center items-center gap-1">
                         <i class="fa-solid fa-minus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-minus-product-${product.id}"></i>
                         <input type="number" name="product_total_${product.id}" id="product_total_${product.id}"
-                            required min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                            required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Jumlah">
                         <i class="fa-solid fa-plus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-plus-product-${product.id}"></i>
@@ -209,14 +195,15 @@
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <select name="product_unit_${product.id}" id="product_unit_${product.id}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option value="${product.largest_unit.id}" selected>${product.largest_unit.symbol}</option>
-                        <option value="${product.smallest_unit.id}">${product.smallest_unit.symbol}</option>
+                        <option value="${product?.unit?.id}">${product?.unit?.name}</option>
+                        ${product.unit_conversions.map(unit => `<option value="${unit?.to_unit?.id}">${unit?.to_unit?.name}</option>`).join('')}
                     </select>
-                    <input type="hidden" name="product_conversion_${product.id}" id="product_conversion_${product.id}"
-                        value="${product.conversion_value}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    <input type="text" name="product_price_${product.id}" id="product_price_${product.id}"
+                    ${UIManager.formatCurrency(product.purchase_price)}
+                </td>
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    <input type="text" name="product_tuslah_${product.id}" id="product_tuslah_${product.id}"
                         required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Harga" value="${UIManager.formatCurrency(product.purchase_price)}">
@@ -247,7 +234,7 @@
         actionButtons: (id) => `
             <button
                 id="btn-add-product"
-                class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-6 w-6 rounded-md"
+                class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
                 data-id="${id}"
             >
                 <i class="fa-solid fa-plus"></i>
@@ -310,15 +297,6 @@
             // Add product button
             $(document).on('click', '#btn-add-product', function() {
                 const productId = $(this).data('id');
-                const existData = document.getElementById(`list_product_${productId}`)
-                if (existData) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Produk sudah ada',
-                        text: 'Produk sudah ada di daftar pembelian',
-                    });
-                    return;
-                }
                 dataServiceProduct.getDetail(productId);
             });
         },

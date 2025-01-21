@@ -120,6 +120,7 @@ class ProductController extends Controller
         try {
             $filters = [
                 'search' => $request->input('search'), // parameter pencarian
+                'is_active' => $request->input('is_active') // parameter is_active
             ];
 
             $page = $request->input('page', 1);

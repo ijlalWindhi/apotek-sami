@@ -17,12 +17,8 @@
                     (SKU)
                     <span class="text-red-500">*</span></label>
                 <div class="flex w-full justify-between items-center gap-2">
-                    <input type="text" name="sku" id="sku" required placeholder="Kode Produk"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    <button type="button" id="btn-generate-sku"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        <i class="fa-solid fa-sync"></i>
-                    </button>
+                    <input type="text" name="sku" id="sku" required placeholder="Kode Produk" readonly
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
             </div>
             <div>
@@ -75,10 +71,12 @@
                 </select>
             </div>
             <div>
-                <label for="minimum_stock" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Stok
+                <label for="minimum_smallest_stock"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Stok
                     Minimum (Satuan Terkecil)
                     <span class="text-red-500">*</span></label>
-                <input type="number" name="minimum_stock" id="minimum_stock"
+                <input type="number" name="minimum_smallest_stock" id="minimum_smallest_stock" min="0"
+                    step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Stok Minimum" required>
             </div>
@@ -117,7 +115,8 @@
                 <label for="conversion_value"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Koversi
                     <span class="text-red-500">*</span></label>
-                <input type="number" name="conversion_value" id="conversion_value" required placeholder="Koversi"
+                <input type="number" name="conversion_value" id="conversion_value" min="1" step="1"
+                    onkeypress="return event.charCode >= 48 && event.charCode <= 57" required placeholder="Koversi"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
             </div>
             <div>
@@ -193,7 +192,8 @@
                     form.find('input[name="sku"]').val(data.sku);
                     form.find('select[name="type"]').val(data.type);
                     form.find('select[name="drug_group"]').val(data.drug_group);
-                    form.find('input[name="minimum_stock"]').val(data.minimum_stock);
+                    form.find('input[name="minimum_smallest_stock"]').val(data
+                        .minimum_smallest_stock);
                     form.find('select[name="supplier_id"]').val(data.supplier?.id);
                     form.find('select[name="is_active"]').val(data.is_active ? 'true' : 'false');
                     form.find('input[name="description"]').val(data.description);
@@ -279,12 +279,6 @@
                 });
                 const formattedData = UtilsProduct.formatRequestData(formData);
                 dataServiceProduct.updateProduct(formattedData);
-            });
-
-            // Generate SKU
-            $('body').on('click', '#btn-generate-sku', function() {
-                const sku = `SKU-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-                $('#sku').val(sku);
             });
         },
     };

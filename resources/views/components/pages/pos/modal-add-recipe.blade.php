@@ -94,8 +94,8 @@
                 </div>
                 <div class="flex flex-col gap-3 max-h-[50vh] overflow-y-auto w-full my-2">
                     <h2 class="text-sm w-full bg-gray-100 py-1 rounded-md text-center font-semibold">Daftar Item</h2>
-                    <x-button color="blue" data-modal-target="modal-add-product" data-modal-toggle="modal-add-product"
-                        class="w-full">
+                    <x-button color="blue" size="sm" data-modal-target="modal-add-product"
+                        data-modal-toggle="modal-add-product" class="w-full">
                         <i class="fa-solid fa-plus"></i>
                         <span class="ms-2">Tambah</span>
                     </x-button>
@@ -103,10 +103,11 @@
                         <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th scope="col" class="px-3 py-1 w-52">Nama</th>
-                                    <th scope="col" class="px-3 py-1 min-w-40">Jumlah</th>
-                                    <th scope="col" class="px-3 py-1 min-w-14">Satuan</th>
+                                    <th scope="col" class="px-3 py-1 min-w-52">Nama</th>
+                                    <th scope="col" class="px-3 py-1 min-w-28">Jumlah</th>
+                                    <th scope="col" class="px-3 py-1 min-w-32">Satuan</th>
                                     <th scope="col" class="px-3 py-1 min-w-36">Harga</th>
+                                    <th scope="col" class="px-3 py-1 min-w-36">Tuslah</th>
                                     <th scope="col" class="px-3 py-1 min-w-36">Diskon<br />(Rp / %)</th>
                                     <th scope="col" class="px-3 py-1 min-w-36">Sub Total</th>
                                     <th scope="col" class="px-3 py-1">Aksi</th>
@@ -118,13 +119,13 @@
                         </table>
                     </div>
                 </div>
-                <button type="submit"
-                    class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <x-button color="blue" size="sm" type="submit">
                     Simpan
-                </button>
+                </x-button>
             </form>
         </div>
     </div>
+    <x-pages.pos.modal-add-product></x-pages.pos.modal-add-product>
 </div>
 
 <script>

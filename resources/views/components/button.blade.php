@@ -2,6 +2,7 @@
     'type' => 'button',
     'color' => 'blue',
     'rounded' => 'md',
+    'size' => 'md',
     'block' => false,
     'disabled' => false,
     'href' => null,
@@ -12,7 +13,7 @@
     {{ $attributes->merge([
         'type' => $type,
         'class' =>
-            'flex items-center justify-center px-4 h-10 text-sm font-medium text-white bg-' .
+            'flex items-center justify-center px-4 font-medium text-white bg-' .
             $color .
             '-700 rounded-lg border border-' .
             $color .
@@ -29,7 +30,9 @@
             '-800' .
             ($block ? ' w-full' : '') .
             ' ' .
-            ($rounded == 'full' ? 'rounded-full' : 'rounded-lg'),
+            ($rounded == 'full' ? 'rounded-full' : 'rounded-lg') .
+            ' ' .
+            ($size == 'sm' ? 'h-8 text-xs' : 'h-10 text-sm'),
         'disabled' => $disabled,
         'href' => $href,
         'onclick' => $onclick,
