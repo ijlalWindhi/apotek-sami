@@ -280,7 +280,7 @@ export const UtilsProduct = {
                 item.name === "supplier_id" ||
                 item.name === "largest_unit" ||
                 item.name === "smallest_unit" ||
-                item.name === "minimum_stock"
+                item.name === "minimum_smallest_stock"
             ) {
                 data[item.name] = parseInt(item.value);
             } else {
