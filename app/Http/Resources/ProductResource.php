@@ -17,8 +17,9 @@ class ProductResource extends JsonResource
             'type' => $this->type,
             'drug_group' => $this->drug_group,
             'sku' => $this->sku,
-            'minimum_stock' => $this->minimum_stock,
-            'stock' => $this->stock,
+            'minimum_smallest_stock' => $this->minimum_smallest_stock,
+            'smallest_stock' => $this->smallest_stock,
+            'largest_stock' => $this->largest_stock,
             'supplier' => $this->whenLoaded('supplier', function () {
                 return new SupplierResource($this->supplier);
             }),
