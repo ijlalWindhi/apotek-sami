@@ -212,6 +212,8 @@
                         <option value="${product.largest_unit.id}" selected>${product.largest_unit.symbol}</option>
                         <option value="${product.smallest_unit.id}">${product.smallest_unit.symbol}</option>
                     </select>
+                    <input type="hidden" name="product_conversion_${product.id}" id="product_conversion_${product.id}"
+                        value="${product.conversion_value}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_price_${product.id}" id="product_price_${product.id}"
