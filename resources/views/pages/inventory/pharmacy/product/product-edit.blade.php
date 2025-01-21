@@ -17,7 +17,7 @@
                     (SKU)
                     <span class="text-red-500">*</span></label>
                 <div class="flex w-full justify-between items-center gap-2">
-                    <input type="text" name="sku" id="sku" required placeholder="Kode Produk" disabled
+                    <input type="text" name="sku" id="sku" required placeholder="Kode Produk" readonly
                         class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
             </div>
