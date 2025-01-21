@@ -30,16 +30,16 @@
                 </div>
             </div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg pb-6">
-                <table class="w-full text-xs md:text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3">Nama</th>
-                            <th scope="col" class="px-6 py-3">Tipe</th>
-                            <th scope="col" class="px-6 py-3">SKU</th>
-                            <th scope="col" class="px-6 py-3 min-w-48">Harga</th>
-                            <th scope="col" class="px-6 py-3">Stok</th>
-                            <th scope="col" class="px-6 py-3">Status</th>
-                            <th scope="col" class="px-6 py-3">Aksi</th>
+                            <th scope="col" class="px-3 py-1">Nama</th>
+                            <th scope="col" class="px-3 py-1">Tipe</th>
+                            <th scope="col" class="px-3 py-1">SKU</th>
+                            <th scope="col" class="px-3 py-1 min-w-48">Harga</th>
+                            <th scope="col" class="px-3 py-1">Stok</th>
+                            <th scope="col" class="px-3 py-1">Status</th>
+                            <th scope="col" class="px-3 py-1">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="table-body-product">
@@ -139,7 +139,8 @@
                 return;
             }
 
-            tbody.html(data.map((product) => templates.tableRowProduct(product)).join(""));
+            document?.getElementById("label_empty_data")?.remove();
+            tbody.append(data.map((product) => templates.tableRowProduct(product)).join(""));
             debug.log("UpdateTable", "Table updated successfully");
         },
 
@@ -167,7 +168,14 @@
                     </div>
                 </td>
                 <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                    ${product.stock || 0}
+                    <div class="flex gap-1">
+                        ${product.largest_stock || 0}
+                        <p class="w-20">${product.largest_unit.symbol}</p>
+                    </div>
+                    <div class="flex gap-1">
+                        ${product.smallest_stock || 0}
+                        <p class="w-20">${product.smallest_unit.symbol}</p>
+                    </div>
                 </td>
                 <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
                     ${product.is_active ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
@@ -180,44 +188,48 @@
 
         tableRowProduct: (product) => `
             <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <th scope="row" class="px-3 py-2 font-medium text-gray-900">
                     ${utils.escapeHtml(product.name || '-')}
                 </th>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400" id="product_description_${product.id}">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400" id="product_description_${product.id}">
                     ${utils.escapeHtml(product.description || '-')}
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400 w-full">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <div class="flex justify-center items-center gap-1">
                         <i class="fa-solid fa-minus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-minus-product-${product.id}"></i>
                         <input type="number" name="product_total_${product.id}" id="product_total_${product.id}"
-                            required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            required min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Jumlah">
                         <i class="fa-solid fa-plus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-plus-product-${product.id}"></i>
                     </div>
                     <input type="hidden" name="product_id_${product.id}" id="product_id_${product.id}"
                         value="${product.id}">
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                    ${product.unit?.name || '-'}
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    <select name="product_unit_${product.id}" id="product_unit_${product.id}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <option value="${product.largest_unit.id}" selected>${product.largest_unit.symbol}</option>
+                        <option value="${product.smallest_unit.id}">${product.smallest_unit.symbol}</option>
+                    </select>
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_price_${product.id}" id="product_price_${product.id}"
                         required
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Harga" value="${UIManager.formatCurrency(product.purchase_price)}">
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_discount_${product.id}" id="product_discount_${product.id}"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Diskon">
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_subtotal_${product.id}" id="product_subtotal_${product.id}" required
-                        class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
                         placeholder="Sub Total" readonly>
                 </td>
-                <td class="px-6 py-4 flex gap-2 items-center">
+                <td class="px-3 py-2 flex gap-2 items-center">
                     <button
                         id="btn-delete-product-${product.id}"
                         class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
@@ -233,7 +245,7 @@
         actionButtons: (id) => `
             <button
                 id="btn-add-product"
-                class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
+                class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-6 w-6 rounded-md"
                 data-id="${id}"
             >
                 <i class="fa-solid fa-plus"></i>
