@@ -31,6 +31,7 @@
                         <th scope="col" class="px-6 py-3 min-w-40">Nama</th>
                         <th scope="col" class="px-6 py-3 min-w-36">SKU</th>
                         <th scope="col" class="px-6 py-3">Stok</th>
+                        <th scope="col" class="px-6 py-3">Konversi</th>
                         <th scope="col" class="px-6 py-3 min-w-40">Harga Pokok</th>
                         <th scope="col" class="px-6 py-3 min-w-36">Harga Jual</th>
                         <th scope="col" class="px-6 py-3">Margin</th>
@@ -53,8 +54,6 @@
 
     {{-- Modals --}}
     <span data-modal-target="modal-delete" data-modal-toggle="modal-delete" class="hidden"></span>
-    {{-- <span data-modal-target="modal-edit-product" data-modal-toggle="modal-edit-product" class="hidden"></span> --}}
-    {{-- <x-pages.inventory.pharmacy.product.modal-edit /> --}}
     <x-global.modal-delete name="pajak" />
 </x-layout>
 
@@ -170,7 +169,17 @@
                     ${product.sku || '-'}
                 </td>
                 <td class="px-6 py-4">
-                    ${(product.stock || '0')}
+                    <div class="flex gap-1">
+                        ${product.largest_stock || 0}
+                        <p class="w-20">${product.largest_unit.symbol}</p>
+                    </div>
+                    <div class="flex gap-1">
+                        ${product.smallest_stock || 0}
+                        <p class="w-20">${product.smallest_unit.symbol}</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    ${product.conversion_value || 0}
                 </td>
                 <td class="px-6 py-4">
                     ${product.purchase_price ? `Rp${new Intl.NumberFormat('id-ID').format(product.purchase_price)}` : '0'}
