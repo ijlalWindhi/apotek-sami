@@ -112,17 +112,17 @@
                 <span class="ms-2">Tambah</span>
             </x-button>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <table class="w-full text-xs md:text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3 w-52">Nama</th>
-                            <th scope="col" class="px-6 py-3 min-w-36">Deskripsi</th>
-                            <th scope="col" class="px-6 py-3 min-w-40">Jumlah</th>
-                            <th scope="col" class="px-6 py-3 min-w-14">Satuan</th>
-                            <th scope="col" class="px-6 py-3 min-w-36">Harga</th>
-                            <th scope="col" class="px-6 py-3 min-w-36">Diskon<br />(Rp / %)</th>
-                            <th scope="col" class="px-6 py-3 min-w-36">Sub Total</th>
-                            <th scope="col" class="px-6 py-3">Aksi</th>
+                            <th scope="col" class="px-3 py-1 min-w-48">Nama</th>
+                            <th scope="col" class="px-3 py-1 min-w-40">Deskripsi</th>
+                            <th scope="col" class="px-3 py-1 min-w-32">Jumlah</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Satuan</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Harga</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Diskon<br />(Rp / %)</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Sub Total</th>
+                            <th scope="col" class="px-3 py-1">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -510,13 +510,55 @@
                     if ($('#table-body tr').length === 0) {
                         $('#table-body').html(`
                         <tr>
-                            <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            <td id="label_empty_data" colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                 Tidak ada produk yang dipilih
                             </td>
                         </tr>
                     `);
                     }
                 }
+            });
+
+            // Handle unit changes
+            $(document).on('change', '[id^="product_unit_"]', function() {
+                const productId = this.id.split('product_unit_')[1];
+                const unitId = $(this).val();
+                const unitName = $(this).find('option:selected').text();
+                const conversionValue = parseInt($(`#product_conversion_${productId}`).val()) || 1;
+
+                // Get the selected option's parent select element
+                const selectElement = $(this);
+                const isLargestUnit = selectElement.find('option:first-child').val() === unitId;
+
+                // Get current price input element
+                const priceInput = $(`#product_price_${productId}`);
+
+                // Get or store original price
+                let originalPrice;
+                if (!priceInput.data('original-price')) {
+                    // If original price is not stored yet, store current price
+                    originalPrice = parseInt(priceInput.val()?.replace(/[^\d]/g, '')) || 0;
+                    priceInput.data('original-price', originalPrice);
+                } else {
+                    // Get stored original price
+                    originalPrice = priceInput.data('original-price');
+                }
+
+                // Calculate new price based on unit selection
+                let newPrice;
+                if (isLargestUnit) {
+                    // If largest unit is selected, use original price
+                    newPrice = originalPrice;
+                } else {
+                    // If smallest unit is selected, divide original price by conversion value
+                    newPrice = Math.floor(originalPrice / conversionValue);
+                }
+
+                // Update price field with new calculated price
+                priceInput.val(UIManager.formatCurrency(newPrice));
+
+                // Recalculate subtotal with new price
+                productCalculations.calculateSubtotal(productId);
             });
         },
 
@@ -566,7 +608,7 @@
         // Add initial empty row
         $('#table-body').html(`
             <tr>
-                <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                <td id="label_empty_data" colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     Tidak ada produk yang dipilih
                 </td>
             </tr>`);
