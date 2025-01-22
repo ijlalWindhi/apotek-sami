@@ -103,13 +103,13 @@
                         <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th scope="col" class="px-3 py-1 min-w-52">Nama</th>
-                                    <th scope="col" class="px-3 py-1 min-w-28">Jumlah</th>
-                                    <th scope="col" class="px-3 py-1 min-w-32">Satuan</th>
-                                    <th scope="col" class="px-3 py-1 min-w-36">Harga</th>
-                                    <th scope="col" class="px-3 py-1 min-w-36">Tuslah</th>
-                                    <th scope="col" class="px-3 py-1 min-w-36">Diskon<br />(Rp / %)</th>
-                                    <th scope="col" class="px-3 py-1 min-w-36">Sub Total</th>
+                                    <th scope="col" class="px-3 py-1 min-w-48">Nama</th>
+                                    <th scope="col" class="px-3 py-1 min-w-32">Jumlah</th>
+                                    <th scope="col" class="px-3 py-1 min-w-28">Satuan</th>
+                                    <th scope="col" class="px-3 py-1 min-w-28">Harga</th>
+                                    <th scope="col" class="px-3 py-1 min-w-28">Tuslah</th>
+                                    <th scope="col" class="px-3 py-1 min-w-28">Diskon<br />(Rp / %)</th>
+                                    <th scope="col" class="px-3 py-1 min-w-28">Sub Total</th>
                                     <th scope="col" class="px-3 py-1">Aksi</th>
                                 </tr>
                             </thead>
