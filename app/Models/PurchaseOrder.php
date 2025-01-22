@@ -22,14 +22,16 @@ class PurchaseOrder extends Model
         'description',
         'payment_type_id',
         'payment_term',
+        'payment_status',
         'payment_include_tax',
         'qty_total',
         'discount',
         'discount_type',
+        'nominal_discount',
         'total_before_tax_discount',
         'tax_total',
         'discount_total',
-        'total'
+        'total',
     ];
 
     protected $casts = [

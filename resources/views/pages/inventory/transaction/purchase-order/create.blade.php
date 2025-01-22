@@ -145,7 +145,7 @@
                 <div>
                     <label for="discount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Diskon
                         (Rp / %)</label>
-                    <input type="text" name="discount" id="discount" required
+                    <input type="text" name="discount" id="discount"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                 </div>
                 <div>
@@ -228,7 +228,6 @@
                 const price = parseInt(row.find(`input[id^="product_price_${productId}"]`).val()?.replace(
                     /[^\d]/g, '')) || 0;
                 const discountInput = row.find(`input[id^="product_discount_${productId}"]`).val();
-                const description = row.find(`td[id^="product_description_${productId}"]`).text();
                 const subtotal = parseInt(row.find(`input[id^="product_subtotal_${productId}"]`).val()?.replace(
                     /[^\d]/g, '')) || 0;
 
@@ -237,10 +236,10 @@
 
                 if (discountInput) {
                     if (discountInput.endsWith('%')) {
-                        discount = parseFloat(discountInput);
+                        discount = parseFloat(discountInput || 0);
                         discountType = 'Percentage';
                     } else {
-                        discount = parseInt(discountInput.replace(/[^\d]/g, '')) || 0;
+                        discount = parseInt(discountInput?.replace(/[^\d]/g, '') || 0);
                     }
                 }
 
@@ -250,8 +249,8 @@
                     price: price,
                     discount: discount,
                     discount_type: discountType,
-                    description: description,
                     subtotal: subtotal,
+                    unit: row.find(`select[id^="product_unit_${productId}"]`).val(),
                 });
             }
         });
@@ -262,6 +261,7 @@
             const [day, month, year] = dateStr.split('-');
             return `${year}-${month}-${day} 00:00:00`;
         };
+        console.log(formDataObj.payment_term);
 
         // Build the final request object
         const requestData = {
@@ -275,18 +275,19 @@
             description: formDataObj.description,
             payment_type_id: formDataObj.payment_type_id,
             payment_term: formDataObj.payment_term,
-            payment_status: formDataObj.payment_term === 'Tunai' ? 'Lunas' : 'Belum Terbayar',
             payment_include_tax: formDataObj.payment_include_tax === '1',
-            discount: parseFloat(formDataObj.discount) || 0,
-            qty_total: Number(formDataObj.qty_total),
-            discount: formDataObj.discount?.endsWith('%') ? parseFloat(formDataObj.discount) : parseInt(formDataObj
-                .discount?.replace(/[^\d]/g, '')) || 0,
+            discount: parseFloat(formDataObj.discount || 0),
+            qty_total: Number(formDataObj.qty_total || 0),
+            discount: formDataObj.discount?.endsWith('%') ? parseFloat(formDataObj?.discount || 0) : parseInt(
+                formDataObj
+                .discount?.replace(/[^\d]/g, '') || 0),
             discount_type: formDataObj.discount?.endsWith('%') ? 'Percentage' : 'Nominal',
-            nominal_discount: formDataObj.nominal_discount || 0,
-            total_before_tax_discount: parseFloat(formDataObj.total_before_tax_discount.replace(/[^\d]/g, '')),
-            tax_total: parseFloat(formDataObj.tax_total.replace(/[^\d]/g, '')),
-            discount_total: parseFloat(formDataObj.discount_total.replace(/[^\d]/g, '')),
-            total: parseFloat(formDataObj.total.replace(/[^\d]/g, '')),
+            nominal_discount: parseFloat((formDataObj.nominal_discount || '0').replace(/[^\d]/g, '')),
+            total_before_tax_discount: parseFloat((formDataObj.total_before_tax_discount || '0').replace(/[^\d]/g,
+                '')),
+            tax_total: parseFloat((formDataObj.tax_total || '0').replace(/[^\d]/g, '')),
+            discount_total: parseFloat((formDataObj.discount_total || '0').replace(/[^\d]/g, '')),
+            total: parseFloat((formDataObj.total || '0').replace(/[^\d]/g, '')),
             products: products,
         };
 

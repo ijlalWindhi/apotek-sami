@@ -107,16 +107,16 @@
         <div class="flex flex-col gap-3">
             <h2 class="w-full bg-gray-100 p-4 rounded-md text-center font-semibold">Daftar Item</h2>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <table class="w-full text-xs md:text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3 w-52">Nama</th>
-                            <th scope="col" class="px-6 py-3 min-w-36">Deskripsi</th>
-                            <th scope="col" class="px-6 py-3 min-w-40">Jumlah</th>
-                            <th scope="col" class="px-6 py-3 min-w-14">Satuan</th>
-                            <th scope="col" class="px-6 py-3 min-w-36">Harga</th>
-                            <th scope="col" class="px-6 py-3 min-w-36">Diskon<br />(Rp / %)</th>
-                            <th scope="col" class="px-6 py-3 min-w-36">Sub Total</th>
+                            <th scope="col" class="px-3 py-1 min-w-48">Nama</th>
+                            <th scope="col" class="px-3 py-1 min-w-40">Deskripsi</th>
+                            <th scope="col" class="px-3 py-1 min-w-32">Jumlah</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Satuan</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Harga</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Diskon<br />(Rp / %)</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Sub Total</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -322,26 +322,26 @@
                     UIManager.formatCurrency(product.discount);
 
                 const row = `
-                <tr>
-                    <td class="px-6 py-4">
-                        ${product.product.name || '-'}
+                <tr id="list_product_${product.id}" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                    <td class="px-3 py-2">
+                        ${product?.product?.name || '-'}
                     </td>
-                    <td class="px-6 py-4" id="product_description_${product.product.id}">
-                        ${product.description || '-'}
+                    <td class="px-3 py-2" id="product_description_${product.product.id}">
+                        ${product?.product?.description || '-'}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-3 py-2">
                         ${product.qty || 0}
                     </td>
-                    <td class="px-6 py-4">
-                        ${product.product.unit.name || 0}
+                    <td class="px-3 py-2">
+                        ${product?.unit?.symbol || "-"}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-3 py-2">
                         ${UIManager.formatCurrency(product?.price)}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-3 py-2">
                         ${discount}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-3 py-2">
                         ${UIManager.formatCurrency(product.subtotal)}
                     </td>
                 </tr>`;
