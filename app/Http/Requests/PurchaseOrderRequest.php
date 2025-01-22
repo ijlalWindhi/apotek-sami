@@ -33,7 +33,6 @@ class PurchaseOrderRequest extends FormRequest
             'description' => 'nullable|string',
             'payment_type_id' => 'required|exists:m_payment_type,id',
             'payment_term' => ['required', Rule::in(['Tunai', '1 Hari', '7 Hari', '14 Hari', '21 Hari', '30 Hari', '45 Hari'])],
-            'payment_status' => ['required', Rule::in(['Lunas', 'Belum Terbayar'])],
             'payment_include_tax' => 'boolean',
             'qty_total' => 'required|integer|min:0',
             'discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
