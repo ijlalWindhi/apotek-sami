@@ -261,6 +261,7 @@
             const [day, month, year] = dateStr.split('-');
             return `${year}-${month}-${day} 00:00:00`;
         };
+        console.log(formDataObj.payment_term);
 
         // Build the final request object
         const requestData = {
@@ -281,7 +282,7 @@
             discount: formDataObj.discount?.endsWith('%') ? parseFloat(formDataObj.discount) : parseInt(formDataObj
                 .discount?.replace(/[^\d]/g, '')) || 0,
             discount_type: formDataObj.discount?.endsWith('%') ? 'Percentage' : 'Nominal',
-            nominal_discount: formDataObj.nominal_discount || 0,
+            nominal_discount: parseFloat(formDataObj.nominal_discount).replace(/[^\d]/g, '') || 0,
             total_before_tax_discount: parseFloat(formDataObj.total_before_tax_discount.replace(/[^\d]/g, '')),
             tax_total: parseFloat(formDataObj.tax_total.replace(/[^\d]/g, '')),
             discount_total: parseFloat(formDataObj.discount_total.replace(/[^\d]/g, '')),
@@ -349,9 +350,9 @@
                     });
 
                     // Redirect to page list
-                    setTimeout(() => {
-                        window.location.href = '/inventory/transaction/purchase-order';
-                    }, 300);
+                    // setTimeout(() => {
+                    //     window.location.href = '/inventory/transaction/purchase-order';
+                    // }, 300);
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
