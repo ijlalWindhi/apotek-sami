@@ -11,87 +11,94 @@ export const priceCalculationsPO = {
 
     updateAllTotals: () => {
         const isIncludeTax = $("#payment_include_tax").val();
-        const totals = priceCalculationsPO.calculateProductTotals();
+        const totals = priceCalculationsPO.calculateProductTotals(isIncludeTax);
 
         // Update quantity total
         $("#qty_total").val(totals.quantityTotal);
 
-        let totalBeforeTaxDiscount = totals.totalBeforeTaxDiscount;
-
-        // Jika harga termasuk pajak, hitung harga sebelum pajak
-        if (isIncludeTax === "1") {
-            totalBeforeTaxDiscount = Math.round(
-                totals.totalBeforeTaxDiscount / (1 + taxPercentage / 100)
-            );
-        }
-
         // Update total before tax and discount
         $("#total_before_tax_discount").val(
-            UIManager.formatCurrency(totalBeforeTaxDiscount)
+            UIManager.formatCurrency(totals.totalBeforeTaxDiscount)
         );
 
-        // Hitung diskon
+        // Calculate discount
         const discount = priceCalculationsPO.calculateMainDiscount(
-            totalBeforeTaxDiscount
+            totals.totalBeforeTaxDiscount
         );
         $("#nominal_discount").val(
             UIManager.formatCurrency(discount.nominalDiscount)
         );
 
-        // Update total discount (product discounts + main discount)
-        const totalDiscount =
-            totals.productDiscountsTotal + discount.nominalDiscount;
-        $("#discount_total").val(UIManager.formatCurrency(totalDiscount));
+        // Update total discount
+        $("#discount_total").val(
+            UIManager.formatCurrency(discount.nominalDiscount)
+        );
 
-        // Hitung pajak berdasarkan total setelah diskon
-        const totalAfterDiscount = totalBeforeTaxDiscount - totalDiscount;
-        const tax = priceCalculationsPO.calculateTax(totalAfterDiscount);
+        // Calculate tax
+        const totalAfterDiscount =
+            totals.totalBeforeTaxDiscount - discount.nominalDiscount;
+        const tax = priceCalculationsPO.calculateTax(
+            totalAfterDiscount,
+            isIncludeTax
+        );
         $("#tax_total").val(UIManager.formatCurrency(tax));
 
-        // Update final total
+        // Calculate final total
         let finalTotal;
         if (isIncludeTax === "1") {
-            finalTotal = totals.totalBeforeTaxDiscount - totalDiscount;
+            // If price includes tax, we add back the tax component
+            finalTotal = totalAfterDiscount + tax;
         } else {
+            // If price excludes tax, we add the calculated tax
             finalTotal = totalAfterDiscount + tax;
         }
         $("#total").val(UIManager.formatCurrency(finalTotal));
     },
 
-    calculateProductTotals: () => {
+    calculateProductTotals: (isIncludeTax) => {
         let quantityTotal = 0;
         let totalBeforeTaxDiscount = 0;
-        let productDiscountsTotal = 0;
 
-        // Iterate through all products in the table
-        $("#table-body tr").each(function () {
-            const quantity =
-                parseInt($(this).find('input[id^="product_total_"]').val()) ||
-                0;
-            const price =
-                parseInt(
-                    $(this)
-                        .find('input[id^="product_price_"]')
-                        .val()
-                        ?.replace(/[^\d]/g, "")
-                ) || 0;
-            const subtotal =
-                parseInt(
-                    $(this)
-                        .find('input[id^="product_subtotal_"]')
-                        .val()
-                        ?.replace(/[^\d]/g, "")
-                ) || 0;
+        // Iterate through all product rows
+        $("#table-body tr")
+            .not(":has(td[colspan])")
+            .each(function () {
+                const quantity =
+                    parseInt(
+                        $(this).find('input[id^="product_total_"]').val()
+                    ) || 0;
+                const price =
+                    parseInt(
+                        $(this)
+                            .find('input[id^="product_price_"]')
+                            .val()
+                            ?.replace(/[^\d]/g, "")
+                    ) || 0;
+                const subtotal =
+                    parseInt(
+                        $(this)
+                            .find('input[id^="product_subtotal_"]')
+                            .val()
+                            ?.replace(/[^\d]/g, "")
+                    ) || 0;
 
-            quantityTotal += quantity;
-            totalBeforeTaxDiscount += quantity * price;
-            productDiscountsTotal += quantity * price - subtotal;
-        });
+                quantityTotal += quantity;
+
+                if (isIncludeTax === "1") {
+                    // If price includes tax, we need to remove tax component
+                    const priceBeforeTax = Math.round(
+                        subtotal / (1 + taxPercentage / 100)
+                    );
+                    totalBeforeTaxDiscount += priceBeforeTax;
+                } else {
+                    // If price excludes tax, use subtotal directly
+                    totalBeforeTaxDiscount += subtotal;
+                }
+            });
 
         return {
             quantityTotal,
             totalBeforeTaxDiscount,
-            productDiscountsTotal,
         };
     },
 
@@ -101,32 +108,30 @@ export const priceCalculationsPO = {
 
         if (discountInput) {
             if (discountInput.endsWith("%")) {
-                // Percentage discount
                 const discountPercentage = parseFloat(discountInput) || 0;
-                nominalDiscount = total * (discountPercentage / 100);
+                nominalDiscount = Math.round(
+                    total * (discountPercentage / 100)
+                );
             } else {
-                // Fixed amount discount
                 nominalDiscount =
                     parseInt(discountInput?.replace(/[^\d]/g, "")) || 0;
             }
         }
 
         return {
-            nominalDiscount: Math.min(nominalDiscount, total), // Ensure discount doesn't exceed total
+            nominalDiscount: Math.min(nominalDiscount, total),
         };
     },
 
-    calculateTax: (totalAfterDiscount) => {
-        const isIncludeTax = $("#payment_include_tax").val();
+    calculateTax: (totalAfterDiscount, isIncludeTax) => {
+        if (!taxPercentage || totalAfterDiscount <= 0) return 0;
 
         if (isIncludeTax === "1") {
-            // Jika harga termasuk pajak, pajak dihitung dari total / 1.11 * 0.11
+            // If price includes tax, calculate tax component from the total
             return Math.round(totalAfterDiscount * (taxPercentage / 100));
-        } else if (isIncludeTax === "0") {
-            // Jika harga tidak termasuk pajak, pajak dihitung langsung
+        } else {
+            // If price excludes tax, calculate tax as additional
             return Math.round(totalAfterDiscount * (taxPercentage / 100));
         }
-
-        return 0; // Default case, no tax
     },
 };

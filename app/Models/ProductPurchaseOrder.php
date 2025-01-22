@@ -14,12 +14,12 @@ class ProductPurchaseOrder extends Model
     protected $fillable = [
         'purchase_order_id',
         'product_id',
+        'unit_id',
         'qty',
         'price',
         'discount',
         'discount_type',
         'subtotal',
-        'description'
     ];
 
     protected $casts = [
@@ -37,5 +37,10 @@ class ProductPurchaseOrder extends Model
     public function purchaseOrder()
     {
         return $this->belongsTo(PurchaseOrder::class);
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

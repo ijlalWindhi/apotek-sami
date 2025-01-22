@@ -163,7 +163,7 @@
                         </div>
                         <div class="flex gap-2">
                             <p class="w-20">Harga Jual</p>
-                            ${product.purchase_price ? `: Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
+                            ${product.selling_price ? `: Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
                         </div>
                     </div>
                 </td>
