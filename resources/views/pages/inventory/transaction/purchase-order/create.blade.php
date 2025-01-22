@@ -351,9 +351,9 @@
                     });
 
                     // Redirect to page list
-                    // setTimeout(() => {
-                    //     window.location.href = '/inventory/transaction/purchase-order';
-                    // }, 300);
+                    setTimeout(() => {
+                        window.location.href = '/inventory/transaction/purchase-order';
+                    }, 300);
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
