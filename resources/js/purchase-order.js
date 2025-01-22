@@ -128,9 +128,7 @@ export const priceCalculationsPO = {
 
         if (isIncludeTax === "1") {
             // If price includes tax, calculate tax component from the total
-            return Math.round(
-                totalAfterDiscount * (taxPercentage / (100 + taxPercentage))
-            );
+            return Math.round(totalAfterDiscount * (taxPercentage / 100));
         } else {
             // If price excludes tax, calculate tax as additional
             return Math.round(totalAfterDiscount * (taxPercentage / 100));
