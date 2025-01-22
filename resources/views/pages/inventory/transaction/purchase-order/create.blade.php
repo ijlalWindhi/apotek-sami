@@ -228,7 +228,6 @@
                 const price = parseInt(row.find(`input[id^="product_price_${productId}"]`).val()?.replace(
                     /[^\d]/g, '')) || 0;
                 const discountInput = row.find(`input[id^="product_discount_${productId}"]`).val();
-                const description = row.find(`td[id^="product_description_${productId}"]`).text();
                 const subtotal = parseInt(row.find(`input[id^="product_subtotal_${productId}"]`).val()?.replace(
                     /[^\d]/g, '')) || 0;
 
@@ -250,8 +249,8 @@
                     price: price,
                     discount: discount,
                     discount_type: discountType,
-                    description: description,
                     subtotal: subtotal,
+                    unit: row.find(`select[id^="product_unit_${productId}"]`).val(),
                 });
             }
         });
