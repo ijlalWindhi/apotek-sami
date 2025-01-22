@@ -36,7 +36,7 @@
                             <th scope="col" class="px-3 py-1">Nama</th>
                             <th scope="col" class="px-3 py-1">Tipe</th>
                             <th scope="col" class="px-3 py-1">SKU</th>
-                            <th scope="col" class="px-3 py-1 min-w-48">Harga</th>
+                            <th scope="col" class="px-3 py-1 min-w-52">Harga</th>
                             <th scope="col" class="px-3 py-1">Stok</th>
                             <th scope="col" class="px-3 py-1">Status</th>
                             <th scope="col" class="px-3 py-1">Aksi</th>
@@ -159,12 +159,19 @@
                         </div>
                         <div class="flex gap-2">
                             <p class="w-20">Harga Jual</p>
-                            ${product.purchase_price ? `: Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
+                            ${product.selling_price ? `: Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
                         </div>
                     </div>
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    ${product.stock || 0}
+                    <div class="flex gap-1">
+                        ${product.largest_stock || 0}
+                        <p class="w-20">${product.largest_unit.symbol}</p>
+                    </div>
+                    <div class="flex gap-1">
+                        ${product.smallest_stock || 0}
+                        <p class="w-20">${product.smallest_unit.symbol}</p>
+                    </div>
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${product.is_active ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
