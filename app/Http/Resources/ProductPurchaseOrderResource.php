@@ -10,7 +10,7 @@ class ProductPurchaseOrderResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'purchase_order' => $this->purchase_order,
+            'purchase_order_id' => $this->purchase_order_id,
             'product' => new ProductResource($this->whenLoaded('product')),
             'unit' => new UnitResource($this->whenLoaded('unit')),
             'qty' => $this->qty,
