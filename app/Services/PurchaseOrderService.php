@@ -5,43 +5,44 @@ namespace App\Services;
 use App\Models\PurchaseOrder;
 use App\Models\ProductPurchaseOrder;
 use App\Models\Product;
-use App\Models\Unit;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PurchaseOrderService
 {
     public function create(array $data): PurchaseOrder
     {
-        $purchaseOrder = PurchaseOrder::create($data);
+        try {
+            return DB::transaction(function () use ($data) {
+                $data['payment_status'] = $data['payment_term'] == "Tunai" ? "Lunas" : "Belum Terbayar";
+                $purchaseOrder = PurchaseOrder::create($data);
 
-        // Simpan produk jika ada
-        if (isset($data['products'])) {
-            foreach ($data['products'] as $product) {
-                ProductPurchaseOrder::create([
-                    'purchase_order_id' => $purchaseOrder->id,
-                    'product_id' => $product['product'],
-                    'unit_id' => $product['unit'],
-                    'qty' => $product['qty'],
-                    'price' => $product['price'],
-                    'discount' => $product['discount'],
-                    'discount_type' => $product['discount_type'],
-                    'subtotal' => $product['subtotal'],
-                ]);
+                // Simpan produk jika ada
+                if (!empty($data['products'])) {
+                    foreach ($data['products'] as $product) {
+                        ProductPurchaseOrder::create([
+                            'purchase_order_id' => $purchaseOrder->id,
+                            'product_id' => $product['product'],
+                            'unit_id' => $product['unit'],
+                            'qty' => $product['qty'],
+                            'price' => $product['price'],
+                            'discount' => $product['discount'],
+                            'discount_type' => $product['discount_type'],
+                            'subtotal' => $product['subtotal'],
+                        ]);
 
-                // Update stok produk
-                $productModel = Product::find($product['product']);
-                if ($productModel->largest_unit == $product['unit']) {
-                    $productModel->largest_stock += $product['qty'];
-                    $productModel->smallest_stock += ($product['qty'] * $productModel->conversion_value);
-                } else {
-                    $productModel->smallest_stock += $product['qty'];
-                    $productModel->largest_stock += ($product['qty'] / $productModel->conversion_value);
+                        // Update stok produk
+                        $this->updateProductStock($product);
+                    }
                 }
-                $productModel->save();
-            }
-        }
 
-        return $purchaseOrder;
+                return $purchaseOrder;
+            });
+        } catch (\Exception $e) {
+            Log::error('Failed to create purchase order: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function updatePaymentStatus(PurchaseOrder $purchaseOrder): PurchaseOrder
@@ -80,5 +81,30 @@ class PurchaseOrderService
         $query->with(['supplier', 'tax', 'paymentType', 'productPurchaseOrders.product', 'productPurchaseOrders.unit']);
 
         return $query->paginate($perPage, ['*'], 'page', $page);
+    }
+
+    private function updateProductStock(array $productData): void
+    {
+        $product = Product::findOrFail($productData['product']);
+
+        if ($product->largest_unit == $productData['unit']) {
+            $this->updateLargestUnitStock($product, $productData['qty']);
+        } else {
+            $this->updateSmallestUnitStock($product, $productData['qty']);
+        }
+
+        $product->save();
+    }
+
+    private function updateLargestUnitStock(Product $product, float $qty): void
+    {
+        $product->largest_stock += $qty;
+        $product->smallest_stock += ($qty * $product->conversion_value);
+    }
+
+    private function updateSmallestUnitStock(Product $product, float $qty): void
+    {
+        $product->smallest_stock += $qty;
+        $product->largest_stock += ($qty / $product->conversion_value);
     }
 }
