@@ -47,11 +47,11 @@ class PurchaseOrderRequest extends FormRequest
             // Validasi untuk products
             'products' => 'required|array|min:1',
             'products.*.product' => 'required|exists:m_product,id',
+            'products.*.unit' => 'required|exists:m_unit,id',
             'products.*.qty' => 'required|integer|min:1',
             'products.*.price' => self::NUMERIC_MIN_ZERO,
             'products.*.discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'products.*.discount_type' => ['required', Rule::in(['Percentage', 'Nominal'])],
-            'products.*.description' => 'nullable|string',
             'products.*.subtotal' => self::NUMERIC_MIN_ZERO,
         ];
     }
@@ -89,6 +89,8 @@ class PurchaseOrderRequest extends FormRequest
             'products.required' => 'Minimal harus ada 1 produk.',
             'products.*.product.required' => 'Produk wajib dipilih.',
             'products.*.product.exists' => 'Produk yang dipilih tidak valid.',
+            'products.*.unit.required' => 'Satuan wajib dipilih.',
+            'products.*.unit.exists' => 'Satuan yang dipilih tidak valid.',
             'products.*.qty.required' => 'Quantity wajib diisi.',
             'products.*.qty.min' => 'Quantity minimal 1.',
             'products.*.price.required' => 'Harga wajib diisi.',
