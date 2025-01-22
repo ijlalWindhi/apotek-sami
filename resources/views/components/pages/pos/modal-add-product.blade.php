@@ -136,7 +136,8 @@
                 return;
             }
 
-            tbody.html(data.map((product) => templates.tableRowProduct(product)).join(""));
+            document?.getElementById("label_empty_data")?.remove();
+            tbody.append(data.map((product) => templates.tableRowProduct(product)).join(""));
             debug.log("UpdateTable", "Table updated successfully");
         },
 
@@ -218,17 +219,17 @@
                     <input type="text" name="product_tuslah_${product.id}" id="product_tuslah_${product.id}"
                         required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Harga" value="${UIManager.formatCurrency(product.purchase_price)}">
+                        placeholder="Harga" value="0">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_discount_${product.id}" id="product_discount_${product.id}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Diskon">
+                        placeholder="Diskon" value="0">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_subtotal_${product.id}" id="product_subtotal_${product.id}" required
-                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
-                        placeholder="Sub Total" readonly>
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Sub Total" readonly value="0">
                 </td>
                 <td class="px-3 py-2 flex gap-2 items-center">
                     <button
