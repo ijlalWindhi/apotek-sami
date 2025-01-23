@@ -1,8 +1,9 @@
 @props(['users'])
 
 {{-- Button Add --}}
-<x-button color="blue" data-modal-target="modal-add-recipe" data-modal-toggle="modal-add-recipe" id="btn-add-customer">
-    <i class="fa-solid fa-plus"></i><span class="ms-2">Tambah</span>
+<x-button color="blue" data-modal-target="modal-add-recipe" data-modal-toggle="modal-add-recipe" id="btn-add-customer"
+    size="sm">
+    <i class="fa-solid fa-plus"></i><span class="ms-1 text-xs">Tambah</span>
 </x-button>
 
 {{-- Modal --}}
@@ -29,7 +30,7 @@
                 <div class="grid grid-cols-8 gap-2 items-end">
                     <div class="col-span-8 md:col-span-3 p-2 border rounded-md shadow-sm">
                         <h2 class="font-semibold text-sm mb-1.5">Informasi</h2>
-                        <div class="flex gap-2 w-full">
+                        <div class="flex gap-2 w-full items-end">
                             <div class="w-full">
                                 <label for="name" class="block text-xs  text-gray-900 dark:text-white">Nama
                                     Resep <span class="text-red-500">*</span></label>
@@ -58,7 +59,7 @@
                     </div>
                     <div class="col-span-8 md:col-span-3 p-2 border rounded-md shadow-sm">
                         <h2 class="font-semibold text-sm mb-1.5">Pelanggan</h2>
-                        <div class="flex gap-2 w-full">
+                        <div class="flex gap-2 w-full items-end">
                             <div class="w-full">
                                 <label for="customer_name" class="block text-xs  text-gray-900 dark:text-white">Nama
                                     <span class="text-red-500">*</span></label>
@@ -85,7 +86,7 @@
                     </div>
                     <div class="col-span-8 md:col-span-2 p-2 border rounded-md shadow-sm">
                         <h2 class="font-semibold text-sm mb-1.5">Dokter</h2>
-                        <div class="flex gap-2 w-full">
+                        <div class="flex gap-2 w-full items-end">
                             <div class="w-full">
                                 <label for="doctor_name" class="block text-xs  text-gray-900 dark:text-white">Nama
                                     <span class="text-red-500">*</span></label>
@@ -142,195 +143,172 @@
 </div>
 
 <script>
-    // Handle form submission
-    $('#modal-add-recipe form').on('submit', function(e) {
-        e.preventDefault();
-
-        let formData = $(this).serializeArray();
-        let data = {};
-
-        $.each(formData, function() {
-            data[this.name] = this.value;
+    /**
+     * Add Recipe Modal
+     * Handles all JavaScript functionalities for the Add Recipe modal
+     */
+    function formattedData(formData) {
+        // Convert formData array to object
+        const formDataObj = {};
+        formData.forEach(item => {
+            formDataObj[item.name] = item.value;
         });
 
-        // Show loading icon
-        $('#modal-add-recipe form').prepend(uiManager.showLoadingModal);
-        $.ajax({
-            url: `/inventory/pharmacy/customer`,
-            type: "POST",
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            processData: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-            },
-            success: function(response) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Berhasil menambahkan data",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+        // Initialize products array
+        const products = [];
+        const productRows = $('#table-body tr').not(':has(td[colspan])');
 
-                // Close modal
-                document.querySelector('[data-modal-target="modal-add-recipe"]').click();
-                dataServiceCustomer.fetchData(1);
-            },
-            error: (xhr, status, error) => {
-                handleFetchError(xhr, status, error);
-            },
-            complete: function() {
-                // Hide loading icon
-                $('#modal-add-recipe form .absolute').remove();
+        // Process each product row
+        productRows.each(function() {
+            const row = $(this);
+            const productId = row.find('input[id^="product_id_"]').val();
+
+            if (productId) {
+                const qty = parseInt(row.find(`input[id^="product_total_${productId}"]`).val()) || 0;
+                const price = parseInt(row.find(`input[id^="product_price_${productId}"]`).val()?.replace(
+                    /[^\d]/g, '')) || 0;
+                const tuslah = parseInt(row.find(`input[id^="product_tuslah_${productId}"]`).val()?.replace(
+                    /[^\d]/g, '')) || 0;
+                const discountInput = row.find(`input[id^="product_discount_${productId}"]`).val();
+                const subtotal = parseInt(row.find(`input[id^="product_subtotal_${productId}"]`).val()?.replace(
+                    /[^\d]/g, '')) || 0;
+
+                let discount = 0;
+                let discountType = 'Nominal';
+
+                if (discountInput) {
+                    if (discountInput.endsWith('%')) {
+                        discount = parseFloat(discountInput || 0);
+                        discountType = 'Percentage';
+                    } else {
+                        discount = parseInt(discountInput?.replace(/[^\d]/g, '') || 0);
+                    }
+                }
+
+                products.push({
+                    product: productId,
+                    qty: qty,
+                    price: price,
+                    tuslah: tuslah,
+                    discount: discount,
+                    discount_type: discountType,
+                    subtotal: subtotal,
+                    unit: row.find(`select[id^="product_unit_${productId}"]`).val(),
+                });
             }
         });
-    });
 
-    const productCalculations = {
-        init: () => {
-            // Handle plus button clicks
-            $(document).on('click', '[id^="btn-plus-product-"]', function() {
-                const productId = this.id.split('btn-plus-product-')[1];
-                const inputElement = $(`#product_total_${productId}`);
-                inputElement.val((parseInt(inputElement.val()) || 0) + 1);
-                productCalculations.calculateSubtotal(productId);
-            });
+        // Build the final request object
+        const requestData = {
+            ...formDataObj,
+            products: products,
+        };
 
-            // Handle minus button clicks
-            $(document).on('click', '[id^="btn-minus-product-"]', function() {
-                const productId = this.id.split('btn-minus-product-')[1];
-                const inputElement = $(`#product_total_${productId}`);
-                const currentValue = parseInt(inputElement.val()) || 0;
-                if (currentValue > 0) {
-                    inputElement.val(currentValue - 1);
-                    productCalculations.calculateSubtotal(productId);
-                }
-            });
+        return requestData;
+    }
 
-            // Handle manual quantity input
-            $(document).on('input', '[id^="product_total_"]', function() {
-                const productId = this.id.split('product_total_')[1];
-                productCalculations.calculateSubtotal(productId);
-            });
+    /**
+     * Data Fetching and Processing
+     */
+    const dataServiceAddRecipe = {
+        createRecipe: (data) => {
+            $('#modal-add-recipe form').prepend(templates.loadingModal);
 
-            // Handle discount changes
-            $(document).on('input', '[id^="product_discount_"]', function() {
-                const productId = this.id.split('product_discount_')[1];
-                productCalculations.calculateSubtotal(productId);
-            });
+            $.ajax({
+                url: '/pos/recipe',
+                method: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: async (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
+                    }
 
-            // Handle delete button clicks
-            $(document).on('click', '[id^="btn-delete-product-"]', function() {
-                const productId = this.id.split('btn-delete-product-')[1];
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil menambahkan data",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                // Remove the entire row
-                $(`tr:has(#btn-delete-product-${productId})`).remove();
-
-                // Trigger custom event for total calculations
-                $(document).trigger('subtotalUpdated');
-
-                // Check if table is empty and show empty state if needed
-                if ($('#table-body tr').length === 0) {
-                    $('#table-body').html(`
-                        <tr>
-                            <td id="label_empty_data" colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                Tidak ada produk yang dipilih
-                            </td>
-                        </tr>
-                    `);
-                }
-            });
-
-            // Handle unit changes
-            $(document).on('change', '[id^="product_unit_"]', function() {
-                const productId = this.id.split('product_unit_')[1];
-                const unitId = $(this).val();
-                const unitName = $(this).find('option:selected').text();
-                const conversionValue = parseInt($(`#product_conversion_${productId}`).val()) || 1;
-
-                // Get the selected option's parent select element
-                const selectElement = $(this);
-                const isLargestUnit = selectElement.find('option:first-child').val() === unitId;
-
-                // Get current price input element
-                const priceInput = $(`#product_price_${productId}`);
-
-                // Get or store original price
-                let originalPrice;
-                if (!priceInput.data('original-price')) {
-                    // If original price is not stored yet, store current price
-                    originalPrice = parseInt(priceInput.val()?.replace(/[^\d]/g, '')) || 0;
-                    priceInput.data('original-price', originalPrice);
-                } else {
-                    // Get stored original price
-                    originalPrice = priceInput.data('original-price');
-                }
-
-                // Calculate new price based on unit selection
-                let newPrice;
-                if (isLargestUnit) {
-                    // If largest unit is selected, use original price
-                    newPrice = originalPrice;
-                } else {
-                    // If smallest unit is selected, divide original price by conversion value
-                    newPrice = Math.floor(originalPrice / conversionValue);
-                }
-
-                // Update price field with new calculated price
-                priceInput.val(UIManager.formatCurrency(newPrice));
-
-                // Recalculate subtotal with new price
-                productCalculations.calculateSubtotal(productId);
-            });
-
-            // Handle tuslah changes
-            $(document).on('input', '[id^="product_tuslah_"]', function() {
-                const productId = this.id.split('product_tuslah_')[1];
-                const rawValue = $(this).val().replace(/[^\d]/g, '');
-                $(this).val(UIManager.formatCurrency(rawValue));
-                productCalculations.calculateSubtotal(productId);
+                    // Close modal
+                    dataServiceRecipe.fetchData();
+                    document.querySelector('[data-modal-target="modal-add-recipe"]').click();
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                },
             });
         },
-
-        calculateSubtotal: (productId) => {
-            const quantity = parseInt($(`#product_total_${productId}`).val()) || 0;
-            const price = parseInt($(`#product_price_${productId}`).val()?.replace(/[^\d]/g, '')) || 0;
-            const tuslah = parseInt($(`#product_tuslah_${productId}`).val()?.replace(/[^\d]/g, '')) || 0;
-            const discountInput = $(`#product_discount_${productId}`).val();
-
-            let subtotal = quantity * price;
-            subtotal += quantity * tuslah;
-
-            // Handle discount calculation
-            if (discountInput) {
-                // Check if discount is a percentage (ends with %)
-                if (discountInput.endsWith('%')) {
-                    const discountPercentage = parseFloat(discountInput) || 0;
-                    subtotal = subtotal * (1 - (discountPercentage / 100));
-                } else {
-                    // Assume it's a fixed amount
-                    const discountAmount = parseInt(discountInput?.replace(/[^\d]/g, '')) || 0;
-                    subtotal = subtotal - discountAmount;
-                }
-            }
-
-            // Ensure subtotal is not negative
-            subtotal = Math.max(0, subtotal);
-
-            // Update subtotal field with formatted currency
-            $(`#product_subtotal_${productId}`).val(UIManager.formatCurrency(subtotal));
-
-            // Update price field with formatted currency
-            $(`#product_price_${productId}`).val(UIManager.formatCurrency(price));
-
-            // Trigger custom event for total calculations
-            $(document).trigger('subtotalUpdated');
-        }
     };
+
+    /**
+     * Event Handlers
+     */
+    const eventHandlerAddRecipe = {
+        init: () => {
+            // Submit form
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                const formData = $(this).serializeArray();
+                const data = formattedData(formData);
+                dataServiceAddRecipe.createRecipe(data);
+            });
+        },
+    };
+
+    // Handle form submission
+    // $('#modal-add-recipe form').on('submit', function(e) {
+    //     e.preventDefault();
+
+    //     let formData = $(this).serializeArray();
+    //     let data = {};
+
+    //     $.each(formData, function() {
+    //         data[this.name] = this.value;
+    //     });
+
+    //     // Show loading icon
+    //     $('#modal-add-recipe form').prepend(uiManager.showLoadingModal);
+    //     $.ajax({
+    //         url: `/inventory/pharmacy/customer`,
+    //         type: "POST",
+    //         data: JSON.stringify(data),
+    //         contentType: "application/json",
+    //         processData: false,
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+    //         },
+    //         success: function(response) {
+    //             Swal.fire({
+    //                 icon: "success",
+    //                 title: "Berhasil menambahkan data",
+    //                 showConfirmButton: false,
+    //                 timer: 1500
+    //             });
+
+    //             // Close modal
+    //             document.querySelector('[data-modal-target="modal-add-recipe"]').click();
+    //             dataServiceCustomer.fetchData(1);
+    //         },
+    //         error: (xhr, status, error) => {
+    //             handleFetchError(xhr, status, error);
+    //         },
+    //         complete: function() {
+    //             // Hide loading icon
+    //             $('#modal-add-recipe form .absolute').remove();
+    //         }
+    //     });
+    // });
 
     $(document).ready(() => {
         // Initialize all modules
-        productCalculations.init();
+        productRecipeCalculations.init();
+        eventHandlerAddRecipe.init();
 
         // Add initial empty row
         $('#table-body').html(`
