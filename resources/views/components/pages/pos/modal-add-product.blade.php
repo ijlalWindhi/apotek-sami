@@ -36,7 +36,7 @@
                             <th scope="col" class="px-3 py-1">Nama</th>
                             <th scope="col" class="px-3 py-1">Tipe</th>
                             <th scope="col" class="px-3 py-1">SKU</th>
-                            <th scope="col" class="px-3 py-1 min-w-48">Harga</th>
+                            <th scope="col" class="px-3 py-1 min-w-52">Harga</th>
                             <th scope="col" class="px-3 py-1">Stok</th>
                             <th scope="col" class="px-3 py-1">Status</th>
                             <th scope="col" class="px-3 py-1">Aksi</th>
@@ -136,7 +136,8 @@
                 return;
             }
 
-            tbody.html(data.map((product) => templates.tableRowProduct(product)).join(""));
+            document?.getElementById("label_empty_data")?.remove();
+            tbody.append(data.map((product) => templates.tableRowProduct(product)).join(""));
             debug.log("UpdateTable", "Table updated successfully");
         },
 
@@ -159,12 +160,19 @@
                         </div>
                         <div class="flex gap-2">
                             <p class="w-20">Harga Jual</p>
-                            ${product.purchase_price ? `: Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
+                            ${product.selling_price ? `: Rp${new Intl.NumberFormat('id-ID').format(product.selling_price)}` : '0'}
                         </div>
                     </div>
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    ${product.stock || 0}
+                    <div class="flex gap-1">
+                        ${product.largest_stock || 0}
+                        <p class="w-20">${product.largest_unit.symbol}</p>
+                    </div>
+                    <div class="flex gap-1">
+                        ${product.smallest_stock || 0}
+                        <p class="w-20">${product.smallest_unit.symbol}</p>
+                    </div>
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${product.is_active ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
@@ -176,7 +184,7 @@
         `,
 
         tableRowProduct: (product) => `
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+            <tr id="list_product_${product.id}" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     ${utils.escapeHtml(product.name || '-')}
                 </th>
@@ -184,7 +192,7 @@
                     <div class="flex justify-center items-center gap-1">
                         <i class="fa-solid fa-minus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-minus-product-${product.id}"></i>
                         <input type="number" name="product_total_${product.id}" id="product_total_${product.id}"
-                            required
+                            required min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Jumlah">
                         <i class="fa-solid fa-plus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-plus-product-${product.id}"></i>
@@ -195,28 +203,33 @@
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <select name="product_unit_${product.id}" id="product_unit_${product.id}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option value="${product?.unit?.id}">${product?.unit?.name}</option>
-                        ${product.unit_conversions.map(unit => `<option value="${unit?.to_unit?.id}">${unit?.to_unit?.name}</option>`).join('')}
+                        <option value="${product.largest_unit.id}" selected>${product.largest_unit.symbol}</option>
+                        <option value="${product.smallest_unit.id}">${product.smallest_unit.symbol}</option>
                     </select>
+                    <input type="hidden" name="product_conversion_${product.id}" id="product_conversion_${product.id}"
+                        value="${product.conversion_value}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    ${UIManager.formatCurrency(product.purchase_price)}
+                    <input type="text" name="product_price_${product.id}" id="product_price_${product.id}"
+                        required readonly
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Harga" value="${UIManager.formatCurrency(product.purchase_price)}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_tuslah_${product.id}" id="product_tuslah_${product.id}"
                         required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Harga" value="${UIManager.formatCurrency(product.purchase_price)}">
+                        placeholder="Tuslah" value="0">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_discount_${product.id}" id="product_discount_${product.id}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Diskon">
+                        placeholder="Diskon" value="0">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_subtotal_${product.id}" id="product_subtotal_${product.id}" required
-                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
-                        placeholder="Sub Total" readonly>
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Sub Total" readonly value="0">
                 </td>
                 <td class="px-3 py-2 flex gap-2 items-center">
                     <button
