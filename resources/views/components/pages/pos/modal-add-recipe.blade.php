@@ -26,8 +26,37 @@
             <!-- Modal body -->
             <form class="px-4 py-2" id="create" method="POST">
                 @csrf
-                <div class="grid grid-cols-7 gap-2 items-end">
-                    <div class="col-span-5 md:col-span-3 p-2 border rounded-md shadow-sm">
+                <div class="grid grid-cols-8 gap-2 items-end">
+                    <div class="col-span-8 md:col-span-3 p-2 border rounded-md shadow-sm">
+                        <h2 class="font-semibold text-sm mb-1.5">Informasi</h2>
+                        <div class="flex gap-2 w-full">
+                            <div class="w-full">
+                                <label for="name" class="block text-xs  text-gray-900 dark:text-white">Nama
+                                    Resep <span class="text-red-500">*</span></label>
+                                <input name="name" id="name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Nama resep" required>
+                            </div>
+                            <div class="w-full select-small">
+                                <label for="status" class="block text-xs  text-gray-900 dark:text-white">Status
+                                    <span class="text-red-500">*</span></label>
+                                <select class="js-example-basic-single" id="status" name="status">
+                                    <option value="Proses" selected>Proses</option>
+                                    <option value="Tunda">Tunda</option>
+                                </select>
+                            </div>
+                            <div class="w-full select-small">
+                                <label for="staff_id" class="block text-xs  text-gray-900 dark:text-white">Karyawan
+                                    <span class="text-red-500">*</span></label>
+                                <select class="js-example-basic-single" id="staff_id" name="staff_id">
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-8 md:col-span-3 p-2 border rounded-md shadow-sm">
                         <h2 class="font-semibold text-sm mb-1.5">Pelanggan</h2>
                         <div class="flex gap-2 w-full">
                             <div class="w-full">
@@ -40,7 +69,8 @@
                             <div class="w-full">
                                 <label for="customer_age" class="block text-xs  text-gray-900 dark:text-white">Usia
                                     <span class="text-red-500">*</span></label>
-                                <input type="number" name="customer_age" id="customer_age"
+                                <input type="number" name="customer_age" id="customer_age" min="1"
+                                    step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Usia pelanggan" required>
                             </div>
@@ -49,11 +79,11 @@
                                     class="block text-xs  text-gray-900 dark:text-white">Alamat</label>
                                 <input type="text" name="customer_address" id="customer_address"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Nama pelanggan">
+                                    placeholder="Alamat pelanggan">
                             </div>
                         </div>
                     </div>
-                    <div class="col-span-5 md:col-span-2 p-2 border rounded-md shadow-sm">
+                    <div class="col-span-8 md:col-span-2 p-2 border rounded-md shadow-sm">
                         <h2 class="font-semibold text-sm mb-1.5">Dokter</h2>
                         <div class="flex gap-2 w-full">
                             <div class="w-full">
@@ -70,25 +100,6 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Nomor SIP">
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-span-5 md:col-span-2 flex gap-2 p-2 border rounded-md shadow-sm h-full items-end">
-                        <div class="w-full select-small">
-                            <label for="status" class="block text-xs  text-gray-900 dark:text-white">Status
-                                <span class="text-red-500">*</span></label>
-                            <select class="js-example-basic-single" id="status" name="status">
-                                <option value="Proses" selected>Proses</option>
-                                <option value="Tunda">Tunda</option>
-                            </select>
-                        </div>
-                        <div class="w-full select-small">
-                            <label for="staff_id" class="block text-xs  text-gray-900 dark:text-white">Karyawan
-                                <span class="text-red-500">*</span></label>
-                            <select class="js-example-basic-single" id="staff_id" name="staff_id">
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                 </div>
