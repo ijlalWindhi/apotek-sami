@@ -73,7 +73,7 @@
                         </div>
                     </div>
                     <div class="col-span-5 md:col-span-2 flex gap-2 p-2 border rounded-md shadow-sm h-full items-end">
-                        <div class="w-full">
+                        <div class="w-full select-small">
                             <label for="status" class="block text-xs  text-gray-900 dark:text-white">Status
                                 <span class="text-red-500">*</span></label>
                             <select class="js-example-basic-single" id="status" name="status">
@@ -81,7 +81,7 @@
                                 <option value="Tunda">Tunda</option>
                             </select>
                         </div>
-                        <div class="w-full">
+                        <div class="w-full select-small">
                             <label for="staff_id" class="block text-xs  text-gray-900 dark:text-white">Karyawan
                                 <span class="text-red-500">*</span></label>
                             <select class="js-example-basic-single" id="staff_id" name="staff_id">
@@ -119,9 +119,11 @@
                         </table>
                     </div>
                 </div>
-                <x-button color="blue" size="sm" type="submit">
-                    Simpan
-                </x-button>
+                <div class="w-full flex justify-end">
+                    <x-button color="blue" size="sm" type="submit">
+                        Simpan
+                    </x-button>
+                </div>
             </form>
         </div>
     </div>
