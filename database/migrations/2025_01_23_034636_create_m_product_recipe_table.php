@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained('m_unit')->onDelete('cascade');
             $table->integer('qty')->default(0)->check('qty >= 0');
             $table->decimal('price', 12, 2)->check('price > 0');
-            $table->decimal('tuslah', 12, 2);
+            $table->decimal('tuslah', 12, 2)->default(0);
             $table->decimal('discount', 12, 2)->default(0)->check('discount >= 0');
             $table->enum('discount_type', ['Percentage', 'Nominal'])->default('Percentage');
             $table->decimal('subtotal', 12, 2);
