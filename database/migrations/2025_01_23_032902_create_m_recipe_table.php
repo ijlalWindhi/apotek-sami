@@ -20,9 +20,9 @@ return new class extends Migration
             $table->foreignId('staff_id')->constrained('users')->onDelete('cascade');
             $table->string('customer_name');
             $table->integer('customer_age');
-            $table->string('customer_address');
+            $table->string('customer_address')->nullable();
             $table->string('doctor_name');
-            $table->string('doctor_sip');
+            $table->string('doctor_sip')->nullable();
             $table->index(['staff_id']);
         });
     }
