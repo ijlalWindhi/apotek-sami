@@ -11,6 +11,7 @@ use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\RecipeController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -138,11 +139,15 @@ Route::prefix('inventory')
 Route::prefix('pos')
     ->middleware(['auth', KasirMiddleware::class])
     ->group(function () {
-        // Route::get('/', function () {
-        //     return view('pages.pos.index', ['title' => 'POS']);
-        // })->name('pos.index');
-
         Route::controller(PosController::class)->group(function () {
             Route::get('/', 'index')->name('pos.index');
+            Route::prefix('recipe')->group(function () {
+                // Recipe
+                Route::controller(RecipeController::class)->group(function () {
+                    Route::get('/list', 'getAll')->name('recipe.getAll');
+                    Route::post('', 'store')->name('recipe.store');
+                    Route::get('{recipe}', 'show')->name('recipe.show');
+                });
+            });
         });
     });
