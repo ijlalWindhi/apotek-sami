@@ -261,50 +261,6 @@
         },
     };
 
-    // Handle form submission
-    // $('#modal-add-recipe form').on('submit', function(e) {
-    //     e.preventDefault();
-
-    //     let formData = $(this).serializeArray();
-    //     let data = {};
-
-    //     $.each(formData, function() {
-    //         data[this.name] = this.value;
-    //     });
-
-    //     // Show loading icon
-    //     $('#modal-add-recipe form').prepend(uiManager.showLoadingModal);
-    //     $.ajax({
-    //         url: `/inventory/pharmacy/customer`,
-    //         type: "POST",
-    //         data: JSON.stringify(data),
-    //         contentType: "application/json",
-    //         processData: false,
-    //         headers: {
-    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-    //         },
-    //         success: function(response) {
-    //             Swal.fire({
-    //                 icon: "success",
-    //                 title: "Berhasil menambahkan data",
-    //                 showConfirmButton: false,
-    //                 timer: 1500
-    //             });
-
-    //             // Close modal
-    //             document.querySelector('[data-modal-target="modal-add-recipe"]').click();
-    //             dataServiceCustomer.fetchData(1);
-    //         },
-    //         error: (xhr, status, error) => {
-    //             handleFetchError(xhr, status, error);
-    //         },
-    //         complete: function() {
-    //             // Hide loading icon
-    //             $('#modal-add-recipe form .absolute').remove();
-    //         }
-    //     });
-    // });
-
     $(document).ready(() => {
         // Initialize all modules
         productRecipeCalculations.init();
