@@ -17,7 +17,7 @@
                 <div class="border p-2 rounded-md col-span-3 md:col-span-1">
                     <h2 class="text-sm font-semibold">Resep <span class="text-gray-400">[CTRL+ALT+R]</span></h2>
                     <div class="flex w-full justify-between gap-2 items-center">
-                        <p class="text-xs md:text-sm" id="recipe">-</p>
+                        <p class="text-xs data-recipe" id="recipe">-</p>
                         <div class="flex gap-1">
                             <button id="btn-add-recipe" data-modal-target="modal-recipe"
                                 data-modal-toggle="modal-recipe"
