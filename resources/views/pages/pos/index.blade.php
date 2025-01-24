@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <div class="flex flex-col h-[80vh]">
+    <div class="flex flex-col h-[85vh]">
         {{-- Top Section: Customer and Recipe Information --}}
         <div class="p-3">
             <div class="grid grid-cols-3 justify-between items-center gap-2 md:gap-3 w-full">
@@ -33,14 +33,6 @@
                 </x-button>
             </div>
         </div>
-
-        {{-- Add Product Button --}}
-        {{-- <div class="px-3 pb-3">
-            <x-button color="blue" class="w-full space-x-1">
-                <i class="fa-solid fa-plus"></i>
-                <span class="ms-2">Tambah</span><span class="text-gray-300">[CTRL+ALT+A]</span>
-            </x-button>
-        </div> --}}
 
         {{-- Product Table with Scrollable Container --}}
         <div class="flex-grow overflow-auto px-3">
@@ -147,9 +139,9 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <span class="ms-2">Cari Transaksi</span><span class="text-gray-300">[CTRL+ALT+S]</span>
                 </x-button>
-                <x-button color="green" class="w-full h-12 space-x-1" id="btn-payment">
+                <x-button color="green" class="w-full space-x-1" id="btn-payment">
                     <i class="fa-solid fa-floppy-disk"></i>
-                    <span class="ms-2">Bayar</span><span class="text-gray-300">[F9]</span>
+                    <span class="ms-2">Simpan Transaksi</span><span class="text-gray-300">[F9]</span>
                 </x-button>
             </div>
         </div>
