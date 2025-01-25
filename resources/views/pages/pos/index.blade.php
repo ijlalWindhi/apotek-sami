@@ -50,7 +50,12 @@
                             <th scope="col" class="px-3 py-1">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body">
+                    <tbody id="table-body-product-recipe">
+                        <tr>
+                            <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                Tidak ada produk yang dipilih
+                            </td>
+                        </tr>
                         {{-- Table content will be inserted here --}}
                     </tbody>
                 </table>
