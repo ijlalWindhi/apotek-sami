@@ -52,8 +52,7 @@
                     </thead>
                     <tbody id="table-body-product-recipe">
                         <tr>
-                            <td id="label_empty_data" colspan="8"
-                                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                 Tidak ada produk yang dipilih
                             </td>
                         </tr>
