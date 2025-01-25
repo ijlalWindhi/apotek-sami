@@ -47,6 +47,7 @@
      * Recipe Modal
      * Handles all JavaScript functionalities for the Recipe modal
      */
+    let LIST_DATA = [];
 
     /**
      * Data Fetching and Processing
@@ -71,6 +72,7 @@
                     if (!response?.success) {
                         throw new Error('Invalid response format');
                     }
+                    LIST_DATA = response.data;
 
                     // Clear existing recipe list
                     const recipeContainer = $('#recipe-list-container');
@@ -95,7 +97,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <x-button color="blue" size="sm" data-recipe-id="${recipe.id}">
+                                    <x-button color="blue" size="sm" data-recipe-id="${recipe.id}" id="btn-select-recipe">
                                         Pilih
                                     </x-button>
                                 </div>
@@ -149,6 +151,43 @@
             // Modal open handler
             $('[data-modal-target="modal-recipe"]').on('click', function() {
                 dataServiceRecipe.fetchData();
+            });
+
+            // Select recipe handler
+            $('#recipe-list-container').on('click', '#btn-select-recipe', function() {
+                const recipeId = $(this).attr('data-recipe-id');
+                const selectedData = LIST_DATA.find(data => data.id == recipeId);
+
+                // Validate stock product with selected recipe
+                const products = selectedData?.products;
+                const unit = selectedData?.unit?.id;
+                const invalidProducts = (products || []).filter(product => {
+                    if (product?.largest_unit === unit) {
+                        return product.qty > product.product.largest_stock;
+                    } else {
+                        return product.qty > product.product.stock;
+                    }
+                });
+
+                if (invalidProducts.length === 0) {
+                    // Trigger event to add recipe to the list
+                    $('#recipe').attr('data-id', recipeId).text(selectedData?.name);
+
+                    document.querySelector('[data-modal-target="modal-recipe"]').click();
+                } else {
+                    // Show warning modal
+                    Swal.fire({
+                        title: 'Peringatan',
+                        html: `
+                            <p class="text-sm">Beberapa produk pada resep ini melebihi stok yang ada.</p>
+                            <ul class="text-left text-xs my-1">
+                                ${invalidProducts.map(product => `<li>- ${product.product.name} (${product.qty} ${product.unit.name})</li>`).join('')}
+                            </ul>
+                            <p class="text-sm">Silahkan anda membuat resep baru!</p>
+                        `,
+                        icon: 'warning',
+                    })
+                }
             });
 
             // Open modal on Ctrl + Alt + R

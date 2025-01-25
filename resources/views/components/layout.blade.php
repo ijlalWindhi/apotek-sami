@@ -34,7 +34,7 @@
 
     <x-layout.header></x-layout.header>
 
-    <main class="p-4 mt-14 sm:mt-16 md:mt-[4.5rem] {{ request()->is('inventory*') ? 'sm:ml-64' : '' }}">
+    <main class="mt-14 sm:mt-16 md:mt-[4.5rem] {{ request()->is('inventory*') ? 'sm:ml-64 p-4' : '' }}">
         {{ $slot }}
     </main>
 
