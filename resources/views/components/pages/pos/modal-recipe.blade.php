@@ -101,7 +101,7 @@
                     <input type="text" name="product_price_${product.product.id}" id="product_price_${product.product.id}"
                         required readonly
                         class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Harga" value="${UIManager.formatCurrency(product.product.purchase_price)}">
+                        placeholder="Harga" value="${UIManager.formatCurrency(product.price)}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <input type="text" name="product_tuslah_${product.product.id}" id="product_tuslah_${product.product.id}"
