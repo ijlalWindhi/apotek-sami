@@ -161,17 +161,19 @@
         // Process each product row
         productRows.each(function() {
             const row = $(this);
-            const productId = row.find('input[id^="product_id_"]').val();
+            const productId = row.find('input[id^="product_recipeid_"]').val();
 
             if (productId) {
-                const qty = parseInt(row.find(`input[id^="product_total_${productId}"]`).val()) || 0;
-                const price = parseInt(row.find(`input[id^="product_price_${productId}"]`).val()?.replace(
+                const qty = parseInt(row.find(`input[id^="product_recipetotal_${productId}"]`).val()) || 0;
+                const price = parseInt(row.find(`input[id^="product_recipeprice_${productId}"]`).val()?.replace(
                     /[^\d]/g, '')) || 0;
-                const tuslah = parseInt(row.find(`input[id^="product_tuslah_${productId}"]`).val()?.replace(
-                    /[^\d]/g, '')) || 0;
-                const discountInput = row.find(`input[id^="product_discount_${productId}"]`).val();
-                const subtotal = parseInt(row.find(`input[id^="product_subtotal_${productId}"]`).val()?.replace(
-                    /[^\d]/g, '')) || 0;
+                const tuslah = parseInt(row.find(`input[id^="product_recipetuslah_${productId}"]`).val()
+                    ?.replace(
+                        /[^\d]/g, '')) || 0;
+                const discountInput = row.find(`input[id^="product_recipediscount_${productId}"]`).val();
+                const subtotal = parseInt(row.find(`input[id^="product_recipesubtotal_${productId}"]`).val()
+                    ?.replace(
+                        /[^\d]/g, '')) || 0;
 
                 let discount = 0;
                 let discountType = 'Nominal';
@@ -193,7 +195,7 @@
                     discount: discount,
                     discount_type: discountType,
                     subtotal: subtotal,
-                    unit: row.find(`select[id^="product_unit_${productId}"]`).val(),
+                    unit: row.find(`select[id^="product_recipe_unit_${productId}"]`).val(),
                 });
             }
         });
