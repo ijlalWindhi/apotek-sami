@@ -87,8 +87,12 @@
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <select name="product_unit_${product.product.id}" id="product_unit_${product.product.id}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option value="${product.product.largest_unit.id}" selected>${product.product.largest_unit.symbol}</option>
-                        <option value="${product.product.smallest_unit.id}">${product.product.smallest_unit.symbol}</option>
+                        <option value="${product.product.largest_unit.id}" ${
+                            product.product.largest_unit.id === product.unit?.id ? 'selected' : ''
+                        }>${product.product.largest_unit.symbol}</option>
+                        <option value="${product.product.smallest_unit.id}"
+                            ${product.product.smallest_unit.id === product.unit?.id ? 'selected' : ''}
+                        >${product.product.smallest_unit.symbol}</option>
                     </select>
                     <input type="hidden" name="product_conversion_${product.product.id}" id="product_conversion_${product.product.id}"
                         value="${product.product.conversion_value}">
@@ -262,6 +266,7 @@
                     $('#recipe').attr('data-id', recipeId).text(selectedData?.name);
                     document.querySelector('[data-modal-target="modal-recipe"]').click();
                     templatesRecipe.updateTableListItem(products);
+                    priceCalculationsPOS.calculateAllProductRows(products);
                 } else {
                     Swal.fire({
                         title: 'Peringatan',
