@@ -103,26 +103,18 @@
             {{-- Financial Summary --}}
             <div class="grid grid-cols-4 justify-between items-center gap-3 w-full mb-3">
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1">
-                    <label for="discount" class="text-sm font-semibold">Diskon<span
-                            class="text-red-500">*</span></label>
-                    <div class="flex items-center">
-                        <span class="text-xl font-semibold">Rp</span>
-                        <input type="number" name="discount" id="discount" step="1" value="0"
-                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                            class="bg-transparent border-transparent text-gray-900 text-xl font-semibold focus:ring-transparent focus:border-transparent block w-full p-0"
-                            required>
-                    </div>
+                    <label for="discount" class="text-sm font-semibold">Diskon (Rp / %)</label>
+                    <input type="number" name="discount" id="discount" step="1" value="0"
+                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                        class="bg-transparent border-transparent text-gray-900 text-xl font-semibold focus:ring-transparent focus:border-transparent block w-full p-0">
                 </div>
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1">
-                    <label for="customer_payment" class="text-sm font-semibold">Dibayarkan<span
+                    <label for="customer_payment" class="text-sm font-semibold">Dibayarkan (Rp / %)<span
                             class="text-red-500">*</span></label>
-                    <div class="flex items-center">
-                        <span class="text-xl font-semibold">Rp</span>
-                        <input type="number" name="customer_payment" id="customer_payment" step="1"
-                            value="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                            class="bg-transparent border-transparent text-gray-900 text-xl font-semibold focus:ring-transparent focus:border-transparent block w-full p-0"
-                            required>
-                    </div>
+                    <input type="number" name="customer_payment" id="customer_payment" step="1"
+                        value="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                        class="bg-transparent border-transparent text-gray-900 text-xl font-semibold focus:ring-transparent focus:border-transparent block w-full p-0"
+                        required>
                 </div>
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1 text-red-500">
                     <h2 class="text-sm font-semibold">Kembalian</h2>
