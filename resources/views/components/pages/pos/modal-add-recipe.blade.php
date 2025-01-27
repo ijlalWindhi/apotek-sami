@@ -161,17 +161,18 @@
         // Process each product row
         productRows.each(function() {
             const row = $(this);
-            const productId = row.find('input[id^="product_recipeid_"]').val();
+            const productId = row.find('input[id^="product_recipe_id_"]').val();
 
             if (productId) {
-                const qty = parseInt(row.find(`input[id^="product_recipetotal_${productId}"]`).val()) || 0;
-                const price = parseInt(row.find(`input[id^="product_recipeprice_${productId}"]`).val()?.replace(
-                    /[^\d]/g, '')) || 0;
-                const tuslah = parseInt(row.find(`input[id^="product_recipetuslah_${productId}"]`).val()
+                const qty = parseInt(row.find(`input[id^="product_recipe_total_${productId}"]`).val()) || 0;
+                const price = parseInt(row.find(`input[id^="product_recipe_price_${productId}"]`).val()
                     ?.replace(
                         /[^\d]/g, '')) || 0;
-                const discountInput = row.find(`input[id^="product_recipediscount_${productId}"]`).val();
-                const subtotal = parseInt(row.find(`input[id^="product_recipesubtotal_${productId}"]`).val()
+                const tuslah = parseInt(row.find(`input[id^="product_recipe_tuslah_${productId}"]`).val()
+                    ?.replace(
+                        /[^\d]/g, '')) || 0;
+                const discountInput = row.find(`input[id^="product_recipe_discount_${productId}"]`).val();
+                const subtotal = parseInt(row.find(`input[id^="product_recipe_subtotal_${productId}"]`).val()
                     ?.replace(
                         /[^\d]/g, '')) || 0;
 

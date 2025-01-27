@@ -3,7 +3,7 @@ export const productRecipeCalculations = {
         // Handle plus button clicks
         $(document).on("click", '[id^="btn-plus-product-"]', function () {
             const productId = this.id.split("btn-plus-product-")[1];
-            const inputElement = $(`#product_recipetotal_${productId}`);
+            const inputElement = $(`#product_recipe_total_${productId}`);
             inputElement.val((parseInt(inputElement.val()) || 0) + 1);
             productRecipeCalculations.calculateSubtotal(productId);
         });
@@ -11,7 +11,7 @@ export const productRecipeCalculations = {
         // Handle minus button clicks
         $(document).on("click", '[id^="btn-minus-product-"]', function () {
             const productId = this.id.split("btn-minus-product-")[1];
-            const inputElement = $(`#product_recipetotal_${productId}`);
+            const inputElement = $(`#product_recipe_total_${productId}`);
             const currentValue = parseInt(inputElement.val()) || 0;
             if (currentValue > 0) {
                 inputElement.val(currentValue - 1);
@@ -20,16 +20,20 @@ export const productRecipeCalculations = {
         });
 
         // Handle manual quantity input
-        $(document).on("input", '[id^="product_recipetotal_"]', function () {
-            const productId = this.id.split("product_recipetotal_")[1];
+        $(document).on("input", '[id^="product_recipe_total_"]', function () {
+            const productId = this.id.split("product_recipe_total_")[1];
             productRecipeCalculations.calculateSubtotal(productId);
         });
 
         // Handle discount changes
-        $(document).on("input", '[id^="product_recipediscount_"]', function () {
-            const productId = this.id.split("product_recipediscount_")[1];
-            productRecipeCalculations.calculateSubtotal(productId);
-        });
+        $(document).on(
+            "input",
+            '[id^="product_recipe_discount_"]',
+            function () {
+                const productId = this.id.split("product_recipe_discount_")[1];
+                productRecipeCalculations.calculateSubtotal(productId);
+            }
+        );
 
         // Handle delete button clicks
         $(document).on("click", '[id^="btn-delete-product-"]', function () {
@@ -59,7 +63,7 @@ export const productRecipeCalculations = {
             const unitId = $(this).val();
             const unitName = $(this).find("option:selected").text();
             const conversionValue =
-                parseInt($(`#product_recipeconversion_${productId}`).val()) ||
+                parseInt($(`#product_recipe_conversion_${productId}`).val()) ||
                 1;
 
             // Get the selected option's parent select element
@@ -68,7 +72,7 @@ export const productRecipeCalculations = {
                 selectElement.find("option:first-child").val() === unitId;
 
             // Get current price input element
-            const priceInput = $(`#product_recipeprice_${productId}`);
+            const priceInput = $(`#product_recipe_price_${productId}`);
 
             // Get or store original price
             let originalPrice;
@@ -100,8 +104,8 @@ export const productRecipeCalculations = {
         });
 
         // Handle tuslah changes
-        $(document).on("input", '[id^="product_recipetuslah_"]', function () {
-            const productId = this.id.split("product_recipetuslah_")[1];
+        $(document).on("input", '[id^="product_recipe_tuslah_"]', function () {
+            const productId = this.id.split("product_recipe_tuslah_")[1];
             const rawValue = $(this).val().replace(/[^\d]/g, "");
             $(this).val(UIManager.formatCurrency(rawValue));
             productRecipeCalculations.calculateSubtotal(productId);
@@ -110,20 +114,20 @@ export const productRecipeCalculations = {
 
     calculateSubtotal: (productId) => {
         const quantity =
-            parseInt($(`#product_recipetotal_${productId}`).val()) || 0;
+            parseInt($(`#product_recipe_total_${productId}`).val()) || 0;
         const price =
             parseInt(
-                $(`#product_recipeprice_${productId}`)
+                $(`#product_recipe_price_${productId}`)
                     .val()
                     ?.replace(/[^\d]/g, "")
             ) || 0;
         const tuslah =
             parseInt(
-                $(`#product_recipetuslah_${productId}`)
+                $(`#product_recipe_tuslah_${productId}`)
                     .val()
                     ?.replace(/[^\d]/g, "")
             ) || 0;
-        const discountInput = $(`#product_recipediscount_${productId}`).val();
+        const discountInput = $(`#product_recipe_discount_${productId}`).val();
 
         let subtotal = quantity * price;
         subtotal += quantity * tuslah;
@@ -146,12 +150,12 @@ export const productRecipeCalculations = {
         subtotal = Math.max(0, subtotal);
 
         // Update subtotal field with formatted currency
-        $(`#product_recipesubtotal_${productId}`).val(
+        $(`#product_recipe_subtotal_${productId}`).val(
             UIManager.formatCurrency(subtotal)
         );
 
         // Update price field with formatted currency
-        $(`#product_recipeprice_${productId}`).val(
+        $(`#product_recipe_price_${productId}`).val(
             UIManager.formatCurrency(price)
         );
 
