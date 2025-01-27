@@ -126,11 +126,11 @@
                 </div>
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1 text-red-500">
                     <h2 class="text-sm font-semibold">Kembalian</h2>
-                    <p class="text-xl font-semibold mt-1">Rp5.000</p>
+                    <p class="text-xl font-semibold mt-1">Rp0</p>
                 </div>
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1 text-green-500">
                     <h2 class="text-sm font-semibold">Total</h2>
-                    <p class="text-xl font-semibold mt-1">Rp25.000</p>
+                    <p class="text-xl font-semibold mt-1">Rp0</p>
                 </div>
             </div>
 
