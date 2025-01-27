@@ -155,6 +155,7 @@
 
     $(document).ready(() => {
         debug.log('Ready', 'Document ready, initializing...');
+        priceCalculationsPOS.init();
 
         $("body").on('click', '#btn-payment', function() {
             const doctor_id = $('#doctor').attr('data-id');
