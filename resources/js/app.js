@@ -17,6 +17,7 @@ import {
 } from "./product.js";
 import { priceCalculationsPO } from "./purchase-order.js";
 import { productRecipeCalculations } from "./recipe.js";
+import { priceCalculationsPOS } from "./pos.js";
 import Swal from "sweetalert2";
 
 window.Alpine = Alpine;
@@ -43,5 +44,8 @@ window.priceCalculationsPO = priceCalculationsPO;
 
 // expose recipe related functions to the global scope
 window.productRecipeCalculations = productRecipeCalculations;
+
+// expose pos related functions to the global scope
+window.priceCalculationsPOS = priceCalculationsPOS;
 
 Alpine.start();
