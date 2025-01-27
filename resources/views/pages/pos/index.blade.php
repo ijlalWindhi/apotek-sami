@@ -153,8 +153,8 @@
 
 <script>
     // Constants
-    // const DEBOUNCE_DELAY = 500;
-    // const PER_PAGE = 999999;
+    const DEBOUNCE_DELAY = 500;
+    const PER_PAGE = 999999;
 
     $(document).ready(() => {
         debug.log('Ready', 'Document ready, initializing...');
