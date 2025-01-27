@@ -76,9 +76,10 @@
                     <label for="payment_type" class="text-sm font-semibold">Metode Pembayaran<span
                             class="text-red-500">*</span></label>
                     <select class="js-example-basic-single" id="payment_type" name="payment_type">
-                        <option value="Terbayar" selected>Terbayar</option>
-                        <option value="Belum Lunas">Belum Lunas</option>
-                        <option value="Tertunda">Tertunda</option>
+                        <option value="" selected disabled hidden>Pilih Tipe Pembayaran</option>
+                        @foreach ($paymentTypes as $payment)
+                            <option value="{{ $payment->id }}">{{ $payment->name }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="border p-2 rounded-md col-span-4 md:col-span-1 select-small">
@@ -91,12 +92,11 @@
                     </select>
                 </div>
                 <div class="border p-2 rounded-md col-span-4 md:col-span-1">
-                    <label for="customer_payment" class="text-sm font-semibold">Dibayarkan<span
+                    <label for="code" class="text-sm font-semibold">No. Invoice<span
                             class="text-red-500">*</span></label>
-                    <input type="number" name="customer_payment" id="customer_payment" step="1"
-                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5"
-                        placeholder="Jumlah dibayarkan pelanggan" required>
+                    <input type="text" name="code" id="code"
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5"
+                        placeholder="Terisi otomatis" readonly>
                 </div>
             </div>
 
