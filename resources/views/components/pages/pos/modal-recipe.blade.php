@@ -234,6 +234,7 @@
             // Modal open handler
             $('[data-modal-target="modal-recipe"]').on('click', () => {
                 dataServiceRecipe.fetchData();
+                $('#search-recipe').val('');
             });
 
             // Select recipe handler with improved validation
