@@ -57,10 +57,6 @@
      * Handles the modal for adding product to purchase order
      */
 
-    // Constants
-    const PAGINATION_DISPLAY_RANGE = 2;
-    const TEXT_TRUNCATE_LENGTH = 40;
-
     /**
      * Data Fetching and Processing
      */
