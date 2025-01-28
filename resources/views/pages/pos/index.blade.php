@@ -6,8 +6,8 @@
         <div class="p-3">
             <div class="grid grid-cols-3 justify-between items-center gap-2 md:gap-3 w-full">
                 <div class="border p-2 rounded-md col-span-3 md:col-span-1 select-small">
-                    <label for="customer_type" class="text-sm font-semibold">Pelanggan <span
-                            class="text-gray-500">[CTRL+ALT+C]</span><span class="text-red-500">*</span></label>
+                    <label for="customer_type" class="text-sm font-semibold">Pelanggan<span class="text-red-500">*</span>
+                        <span class="text-gray-500">[CTRL+ALT+C]</span></label>
                     <select class="js-example-basic-single" id="customer_type" name="customer_type">
                         <option value="Umum" selected>Umum</option>
                         <option value="Rutin">Rutin</option>
@@ -74,8 +74,8 @@
                         placeholder="Catatan transaksi">
                 </div>
                 <div class="border p-2 rounded-md col-span-4 md:col-span-1 select-small">
-                    <label for="payment_type" class="text-sm font-semibold">Metode Pembayaran <span
-                            class="text-gray-500">[CTRL+ALT+P]</span><span class="text-red-500">*</span></label>
+                    <label for="payment_type" class="text-sm font-semibold">Metode Pembayaran<span
+                            class="text-red-500">*</span> <span class="text-gray-500">[CTRL+ALT+P]</span></label>
                     <select class="js-example-basic-single" id="payment_type" name="payment_type">
                         <option value="" selected disabled hidden>Pilih Tipe Pembayaran</option>
                         @foreach ($paymentTypes as $payment)
@@ -84,8 +84,8 @@
                     </select>
                 </div>
                 <div class="border p-2 rounded-md col-span-4 md:col-span-1 select-small">
-                    <label for="status_transaction" class="text-sm font-semibold">Status <span
-                            class="text-gray-500">[CTRL+ALT+T]</span><span class="text-red-500">*</span></label>
+                    <label for="status_transaction" class="text-sm font-semibold">Status<span
+                            class="text-red-500">*</span> <span class="text-gray-500">[CTRL+ALT+T]</span></label>
                     <select class="js-example-basic-single" id="status_transaction" name="status_transaction">
                         <option value="Terbayar" selected>Terbayar</option>
                         <option value="Belum Lunas">Belum Lunas</option>
