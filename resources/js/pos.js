@@ -57,7 +57,7 @@ export const priceCalculationsPOS = {
         });
 
         // Delete product
-        $(document).on("click", '[id^="btn-delete-product-"]', function () {
+        $(document).on("click", '[id^="btn-delete-product-pos-"]', function () {
             const productId = this.id.split("btn-delete-product-")[1];
             $(`tr:has(#btn-delete-product-${productId})`).remove();
 

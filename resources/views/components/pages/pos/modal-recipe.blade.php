@@ -125,7 +125,7 @@
                 </td>
                 <td class="px-3 py-2 flex gap-2 items-center">
                     <button
-                        id="btn-delete-product-${product.product.id}"
+                        id="btn-delete-product-pos-${product.product.id}"
                         class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
                         data-id="${product.product.id}"
                         type="button"
