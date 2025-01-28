@@ -6,8 +6,8 @@
         <div class="p-3">
             <div class="grid grid-cols-3 justify-between items-center gap-2 md:gap-3 w-full">
                 <div class="border p-2 rounded-md col-span-3 md:col-span-1 select-small">
-                    <label for="customer_type" class="text-sm font-semibold">Pelanggan<span
-                            class="text-red-500">*</span></label>
+                    <label for="customer_type" class="text-sm font-semibold">Pelanggan <span
+                            class="text-gray-500">[CTRL+ALT+C]</span><span class="text-red-500">*</span></label>
                     <select class="js-example-basic-single" id="customer_type" name="customer_type">
                         <option value="Umum" selected>Umum</option>
                         <option value="Rutin">Rutin</option>
@@ -208,6 +208,13 @@
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 't') {
                     $('#status_transaction').select2('open');
+                }
+            });
+
+            // Focus on input customer type
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 'c') {
+                    $('#customer_type').select2('open');
                 }
             });
         },
