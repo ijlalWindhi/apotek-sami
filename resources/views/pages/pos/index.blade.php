@@ -84,8 +84,8 @@
                     </select>
                 </div>
                 <div class="border p-2 rounded-md col-span-4 md:col-span-1 select-small">
-                    <label for="status_transaction" class="text-sm font-semibold">Status<span
-                            class="text-red-500">*</span></label>
+                    <label for="status_transaction" class="text-sm font-semibold">Status <span
+                            class="text-gray-500">[CTRL+ALT+T]</span><span class="text-red-500">*</span></label>
                     <select class="js-example-basic-single" id="status_transaction" name="status_transaction">
                         <option value="Terbayar" selected>Terbayar</option>
                         <option value="Belum Lunas">Belum Lunas</option>
@@ -201,6 +201,13 @@
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 'p') {
                     $('#payment_type').select2('open');
+                }
+            });
+
+            // Focus on input status transaction
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 't') {
+                    $('#status_transaction').select2('open');
                 }
             });
         },
