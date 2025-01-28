@@ -54,14 +54,13 @@
      */
     const templatesRecipe = {
         updateTableListItem: (data) => {
-            const tbody = $("#table-body-product-recipe");
+            const tbody = $("#table-body-product-pos");
 
             if (!Array.isArray(data) || data?.length === 0) {
                 tbody.html(table.emptyTable());
                 return;
             }
 
-            $("#label_empty_data")?.remove();
             tbody.empty();
             tbody.append(data.map((product) => templatesRecipe.tableRowProduct(product)).join(""));
             debug.log("UpdateTable", "Table updated successfully");
