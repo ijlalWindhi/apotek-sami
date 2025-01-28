@@ -132,7 +132,7 @@
             <div class="grid grid-cols-3 justify-between items-center gap-3 w-full">
                 <x-button color="red" id="btn-clear-form" class="w-full space-x-1">
                     <i class="fa-solid fa-trash"></i>
-                    <span class="ms-2">Bersihkan List</span><span class="text-gray-300">[CTRL+ALT+W]</span>
+                    <span class="ms-2">Bersihkan Form</span><span class="text-gray-300">[CTRL+ALT+W]</span>
                 </x-button>
                 <x-button color="gray" class="w-full space-x-1">
                     <i class="fa-solid fa-magnifying-glass"></i>
