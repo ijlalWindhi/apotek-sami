@@ -61,8 +61,8 @@ export const priceCalculationsPOS = {
             const productId = this.id.split("btn-delete-product-")[1];
             $(`tr:has(#btn-delete-product-${productId})`).remove();
 
-            if ($("#table-body-product-recipe tr").length === 0) {
-                $("#table-body-product-recipe").html(`
+            if ($("#table-body-product-pos tr").length === 0) {
+                $("#table-body-product-pos").html(`
                     <tr>
                         <td colspan="8" class="px-6 py-4 text-center text-gray-500">
                             Tidak ada produk yang dipilih
@@ -175,7 +175,7 @@ export const priceCalculationsPOS = {
     calculateProductTotals: () => {
         let subtotalBeforeDiscount = 0;
 
-        $("#table-body-product-recipe tr")
+        $("#table-body-product-pos tr")
             .not(":has(td[colspan])")
             .each(function () {
                 const subtotal =
