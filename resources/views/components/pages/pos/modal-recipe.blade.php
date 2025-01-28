@@ -68,24 +68,24 @@
         },
 
         tableRowProduct: (product) => `
-            <tr id="list_product_${product.product.id}" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+            <tr id="list_product_pos_${product.product.id}" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     ${utils.escapeHtml(product.product.name || '-')}
                 </th>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <div class="flex justify-center items-center gap-1">
                         <i class="fa-solid fa-minus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-minus-product-${product.product.id}"></i>
-                        <input type="number" name="product_total_${product.product.id}" id="product_total_${product.product.id}"
+                        <input type="number" name="product_pos_total_${product.product.id}" id="product_pos_total_${product.product.id}"
                             required min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Jumlah" value="${product.qty}">
                         <i class="fa-solid fa-plus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-plus-product-${product.product.id}"></i>
                     </div>
-                    <input type="hidden" name="product_id_${product.product.id}" id="product_id_${product.product.id}"
+                    <input type="hidden" name="product_pos_id_${product.product.id}" id="product_pos_id_${product.product.id}"
                         value="${product.product.id}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    <select name="product_unit_${product.product.id}" id="product_unit_${product.product.id}"
+                    <select name="product_pos_unit_${product.product.id}" id="product_pos_unit_${product.product.id}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                         <option value="${product.product.largest_unit.id}" ${
                             product.product.largest_unit.id === product.unit?.id ? 'selected' : ''
@@ -94,23 +94,23 @@
                             ${product.product.smallest_unit.id === product.unit?.id ? 'selected' : ''}
                         >${product.product.smallest_unit.symbol}</option>
                     </select>
-                    <input type="hidden" name="product_conversion_${product.product.id}" id="product_conversion_${product.product.id}"
+                    <input type="hidden" name="product_pos_conversion_${product.product.id}" id="product_pos_conversion_${product.product.id}"
                         value="${product.product.conversion_value}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    <input type="text" name="product_price_${product.product.id}" id="product_price_${product.product.id}"
+                    <input type="text" name="product_pos_price_${product.product.id}" id="product_pos_price_${product.product.id}"
                         required readonly
                         class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Harga" value="${UIManager.formatCurrency(product.price)}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    <input type="text" name="product_tuslah_${product.product.id}" id="product_tuslah_${product.product.id}"
+                    <input type="text" name="product_pos_tuslah_${product.product.id}" id="product_pos_tuslah_${product.product.id}"
                         required readonly
                         class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Tuslah" value="${UIManager.formatCurrency(product.tuslah)}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    <input type="text" name="product_discount_${product.product.id}" id="product_discount_${product.product.id}"
+                    <input type="text" name="product_pos_discount_${product.product.id}" id="product_pos_discount_${product.product.id}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Diskon" value="${
                             product.discount_type === 'Percentage' ?
@@ -119,7 +119,7 @@
                         }">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    <input type="text" name="product_subtotal_${product.product.id}" id="product_subtotal_${product.product.id}" required
+                    <input type="text" name="product_pos_subtotal_${product.product.id}" id="product_pos_subtotal_${product.product.id}" required
                         class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Sub Total" readonly value="${UIManager.formatCurrency(product.subtotal)}">
                 </td>

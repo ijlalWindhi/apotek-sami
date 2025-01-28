@@ -3,14 +3,14 @@ export const priceCalculationsPOS = {
         // Product quantity changes
         $(document).on("click", '[id^="btn-plus-product-"]', function () {
             const productId = this.id.split("btn-plus-product-")[1];
-            const inputElement = $(`#product_total_${productId}`);
+            const inputElement = $(`#product_pos_total_${productId}`);
             inputElement.val((parseInt(inputElement.val()) || 0) + 1);
             priceCalculationsPOS.calculateProductRow(productId);
         });
 
         $(document).on("click", '[id^="btn-minus-product-"]', function () {
             const productId = this.id.split("btn-minus-product-")[1];
-            const inputElement = $(`#product_total_${productId}`);
+            const inputElement = $(`#product_pos_total_${productId}`);
             const currentValue = parseInt(inputElement.val()) || 0;
             if (currentValue > 0) {
                 inputElement.val(currentValue - 1);
@@ -19,8 +19,8 @@ export const priceCalculationsPOS = {
         });
 
         // Handle product discount input
-        $(document).on("input", '[id^="product_discount_"]', function () {
-            const productId = this.id.split("product_discount_")[1];
+        $(document).on("input", '[id^="product_pos_discount_"]', function () {
+            const productId = this.id.split("product_pos_discount_")[1];
             const value = $(this).val();
 
             // Allow percentage symbol
@@ -75,15 +75,15 @@ export const priceCalculationsPOS = {
         });
 
         // Handle unit change
-        $(document).on("change", '[id^="product_unit_"]', function () {
-            const productId = this.id.split("product_unit_")[1];
+        $(document).on("change", '[id^="product_pos_unit_"]', function () {
+            const productId = this.id.split("product_pos_unit_")[1];
             const unitId = $(this).val();
             const conversionValue =
-                parseInt($(`#product_conversion_${productId}`).val()) || 1;
+                parseInt($(`#product_pos_conversion_${productId}`).val()) || 1;
             const isLargestUnit =
                 $(this).find("option:first-child").val() === unitId;
 
-            const priceInput = $(`#product_price_${productId}`);
+            const priceInput = $(`#product_pos_price_${productId}`);
             let originalPrice = priceInput.data("original-price");
 
             if (!originalPrice) {
@@ -110,16 +110,21 @@ export const priceCalculationsPOS = {
     },
 
     calculateProductRow: (productId) => {
-        const quantity = parseInt($(`#product_total_${productId}`).val()) || 0;
+        const quantity =
+            parseInt($(`#product_pos_total_${productId}`).val()) || 0;
         const price =
             parseInt(
-                $(`#product_price_${productId}`).val()?.replace(/[^\d]/g, "")
+                $(`#product_pos_price_${productId}`)
+                    .val()
+                    ?.replace(/[^\d]/g, "")
             ) || 0;
         const tuslah =
             parseInt(
-                $(`#product_tuslah_${productId}`).val()?.replace(/[^\d]/g, "")
+                $(`#product_pos_tuslah_${productId}`)
+                    .val()
+                    ?.replace(/[^\d]/g, "")
             ) || 0;
-        const discountInput = $(`#product_discount_${productId}`).val();
+        const discountInput = $(`#product_pos_discount_${productId}`).val();
 
         let subtotal = quantity * price;
         subtotal += quantity * tuslah;
@@ -136,11 +141,15 @@ export const priceCalculationsPOS = {
         }
 
         subtotal = Math.max(0, Math.round(subtotal));
-        $(`#product_subtotal_${productId}`).val(
+        $(`#product_pos_subtotal_${productId}`).val(
             UIManager.formatCurrency(subtotal)
         );
-        $(`#product_price_${productId}`).val(UIManager.formatCurrency(price));
-        $(`#product_tuslah_${productId}`).val(UIManager.formatCurrency(tuslah));
+        $(`#product_pos_price_${productId}`).val(
+            UIManager.formatCurrency(price)
+        );
+        $(`#product_pos_tuslah_${productId}`).val(
+            UIManager.formatCurrency(tuslah)
+        );
 
         priceCalculationsPOS.updateAllTotals();
     },
@@ -172,7 +181,7 @@ export const priceCalculationsPOS = {
                 const subtotal =
                     parseInt(
                         $(this)
-                            .find('input[id^="product_subtotal_"]')
+                            .find('input[id^="product_pos_subtotal_"]')
                             .val()
                             ?.replace(/[^\d]/g, "")
                     ) || 0;
