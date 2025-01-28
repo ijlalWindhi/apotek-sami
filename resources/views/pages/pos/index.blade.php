@@ -104,7 +104,8 @@
             {{-- Financial Summary --}}
             <div class="grid grid-cols-4 justify-between items-center gap-3 w-full mb-3">
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1">
-                    <label for="discount" class="text-sm font-semibold">Diskon (Rp / %)</label>
+                    <label for="discount" class="text-sm font-semibold">Diskon (Rp / %) <span
+                            class="text-gray-500">[CTRL+ALT+D]</span></label>
                     <input type="text" name="discount" id="discount" value="0"
                         class="bg-transparent border-transparent text-gray-900 text-xl font-semibold focus:ring-transparent focus:border-transparent block w-full p-0">
                 </div>
@@ -215,6 +216,14 @@
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 'c') {
                     $('#customer_type').select2('open');
+                }
+            });
+
+            // Focus on input discount
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 'd') {
+                    document.getElementById('discount').value = '';
+                    document.getElementById('discount').focus();
                 }
             });
         },
