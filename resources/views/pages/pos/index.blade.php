@@ -111,7 +111,7 @@
                 </div>
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1">
                     <label for="customer_payment" class="text-sm font-semibold">Dibayarkan<span
-                            class="text-red-500">*</span></label>
+                            class="text-red-500">*</span> <span class="text-gray-500">[CTRL+ALT+G]</span></label>
                     <div class="flex items-center">
                         <p class="text-xl font-semibold">Rp</p>
                         <input type="number" name="customer_payment" id="customer_payment" step="1"
@@ -224,6 +224,14 @@
                 if (event.ctrlKey && event.altKey && event.key === 'd') {
                     document.getElementById('discount').value = '';
                     document.getElementById('discount').focus();
+                }
+            });
+
+            // Focus on input customer payment
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 'g') {
+                    document.getElementById('customer_payment').value = '';
+                    document.getElementById('customer_payment').focus();
                 }
             });
         },
