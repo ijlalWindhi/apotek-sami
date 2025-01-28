@@ -275,6 +275,7 @@
             // Modal open
             $('[data-modal-target="modal-add-product"]').on('click', () => {
                 dataServiceProduct.fetchData();
+                $('#search-product-recipe').val('');
             });
 
             // Add product button
