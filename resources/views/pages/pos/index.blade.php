@@ -130,7 +130,7 @@
 
             {{-- Transaction Buttons --}}
             <div class="grid grid-cols-3 justify-between items-center gap-3 w-full">
-                <x-button color="red" class="w-full space-x-1">
+                <x-button color="red" id="btn-clear-form" class="w-full space-x-1">
                     <i class="fa-solid fa-trash"></i>
                     <span class="ms-2">Bersihkan List</span><span class="text-gray-300">[CTRL+ALT+W]</span>
                 </x-button>
@@ -155,9 +155,47 @@
     const DEBOUNCE_DELAY = 500;
     const PER_PAGE = 999999;
 
+    function resetForm() {
+        event.preventDefault();
+        // Clear product list
+        document.getElementById('table-body-product-recipe').innerHTML = `
+                        <tr>
+                            <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                Tidak ada produk yang dipilih
+                            </td>
+                        </tr>`;
+        // Reset all form fields to 0
+        document.getElementById('description').value = '';
+        document.getElementById('discount').value = '0';
+        document.getElementById('customer_payment').value = '0';
+        $('#payment_type').val(null).trigger('change.select2');
+        $('#status_transaction').val('Terbayar').trigger('change.select2');
+        document.querySelector('.text-red-500 p').innerText = 'Rp0';
+        document.querySelector('.text-green-500 p').innerText = 'Rp0';
+        document.getElementById('recipe').innerText = '-';
+        document.getElementById('recipe').removeAttribute('data-id');
+    }
+
+    /**
+     * Event Handlers
+     */
+    const eventHandlerPos = {
+        init: () => {
+            // Clear Form
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 'w') {
+                    resetForm();
+                }
+            });
+
+            $('body').on('click', '#btn-clear-form', resetForm);
+        },
+    };
+
     $(document).ready(() => {
         debug.log('Ready', 'Document ready, initializing...');
         priceCalculationsPOS.init();
+        eventHandlerPos.init();
 
         $("body").on('click', '#btn-payment', function() {
             const doctor_id = $('#doctor').attr('data-id');
