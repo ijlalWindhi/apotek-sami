@@ -287,6 +287,7 @@ Modal
             // Modal open
             $(document).on('click', '[data-modal-toggle="modal-select-product"]', function() {
                 dataServiceSelectedProduct.fetchData();
+                $('#search-select-product').val('');
             });
 
             // Add product button
