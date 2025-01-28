@@ -134,11 +134,11 @@
                     <i class="fa-solid fa-trash"></i>
                     <span class="ms-2">Bersihkan Form</span><span class="text-gray-300">[CTRL+ALT+W]</span>
                 </x-button>
-                <x-button color="gray" class="w-full space-x-1">
+                <x-button color="gray" id="btn-search-transaction" class="w-full space-x-1">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <span class="ms-2">Cari Transaksi</span><span class="text-gray-300">[CTRL+ALT+S]</span>
                 </x-button>
-                <x-button color="green" class="w-full space-x-1" id="btn-payment">
+                <x-button color="green" id="btn-save-transaction" class="w-full space-x-1" id="btn-payment">
                     <i class="fa-solid fa-floppy-disk"></i>
                     <span class="ms-2">Simpan Transaksi</span><span class="text-gray-300">[F9]</span>
                 </x-button>
