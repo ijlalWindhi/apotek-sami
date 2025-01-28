@@ -19,10 +19,10 @@
             <!-- Modal body -->
             <div class="w-full px-4 py-2">
                 <div class="relative sm:w-full md:w-1/2 lg:w-2/6">
-                    <input type="search" id="search-name"
+                    <input type="search" id="search-product-recipe" name="search-product-recipe"
                         class="block px-2.5 py-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
                         placeholder="Cari nama, sku" />
-                    <button type="button" id="search-button"
+                    <button type="button" id="btn-search-product-recipe"
                         class="absolute top-0 end-0 px-2.5 py-1.5 text-xs font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <span class="sr-only">Search</span>
@@ -263,44 +263,18 @@
         init: () => {
             // Search input handler with debounce
             let searchTimeout;
-            $('#search-name').on('input', function() {
-                const searchValue = $(this).val();
+            $('#search-product-recipe').on('input', function() {
                 clearTimeout(searchTimeout);
-
                 searchTimeout = setTimeout(() => {
                     debug.log('Search', 'Triggering search...');
-                    urlManager.updateParams({
-                        search: searchValue,
-                        page: 1
-                    });
+                    const searchValue = $(this).val();
                     dataServiceProduct.fetchData(1, searchValue);
                 }, DEBOUNCE_DELAY);
             });
 
-            // Pagination click handler
-            $(document).on('click', '.pagination a', function(e) {
-                e.preventDefault();
-                const page = $(this).attr('href').split('page=')[1];
-                const currentSearch = $('#search-name').val();
-
-                debug.log('Pagination', `Changing to page ${page}`);
-                urlManager.updateParams({
-                    page,
-                    search: currentSearch
-                });
-                dataServiceProduct.fetchData(page, currentSearch);
-            });
-
-            // Browser navigation handler
-            window.addEventListener('popstate', function() {
-                const params = urlManager.getParams();
-                $('#search-name').val(params.search);
-                dataServiceProduct.fetchData(params.page, params.search);
-            });
-
             // Modal open
-            $(document).on('click', '[data-modal-toggle="modal-add-product"]', function() {
-                initProductTable();
+            $('[data-modal-target="modal-add-product"]').on('click', () => {
+                dataServiceProduct.fetchData();
             });
 
             // Add product button
@@ -310,16 +284,6 @@
             });
         },
     };
-
-    /**
-     * Initialize the product table functionality
-     */
-    function initProductTable() {
-        debug.log('Init', 'Initializing product table...');
-        const params = urlManager.getParams();
-        $('#search-name').val(params.search);
-        dataServiceProduct.fetchData(params.page, params.search);
-    }
 
     // Initialize when document is ready
     $(document).ready(() => {
