@@ -27,7 +27,8 @@
                         </div>
                     </div>
                 </div>
-                <x-button color="blue" class="w-full h-full space-x-1">
+                <x-button color="blue" class="w-full h-full space-x-1" data-modal-target="modal-select-product"
+                    data-modal-toggle="modal-select-product">
                     <i class="fa-solid fa-plus"></i>
                     <span class="ms-2">Tambah Produk</span><span class="text-gray-300">[CTRL+ALT+A]</span>
                 </x-button>
@@ -50,9 +51,10 @@
                             <th scope="col" class="px-3 py-1">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body-product-recipe">
+                    <tbody id="table-body-product-pos">
                         <tr>
-                            <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                                id="table-body-product-pos-empty">
                                 Tidak ada produk yang dipilih
                             </td>
                         </tr>
@@ -150,6 +152,7 @@
 
     {{-- Modal --}}
     <x-pages.pos.modal-recipe :users="$users"></x-pages.pos.modal-recipe>
+    <x-pages.pos.modal-select-product></x-pages.pos.modal-select-product>
 </x-layout>
 
 <script>
@@ -160,7 +163,7 @@
     function resetForm() {
         event.preventDefault();
         // Clear product list
-        document.getElementById('table-body-product-recipe').innerHTML = `
+        document.getElementById('table-body-product-pos').innerHTML = `
                         <tr>
                             <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                 Tidak ada produk yang dipilih
@@ -196,6 +199,14 @@
                 if (event.ctrlKey && event.altKey && event.key === 'r') {
                     event.preventDefault();
                     document.querySelector('[data-modal-target="modal-recipe"]').click();
+                }
+            });
+
+            // Open Select Product Modal
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 'a') {
+                    event.preventDefault();
+                    document.querySelector('[data-modal-target="modal-select-product"]').click();
                 }
             });
 
