@@ -181,6 +181,79 @@
         document.getElementById('recipe').removeAttribute('data-id');
     }
 
+    function formatDate(date) {
+        const pad = (num) => String(num).padStart(2, '0');
+
+        const day = pad(date.getDate());
+        const month = pad(date.getMonth() + 1);
+        const year = date.getFullYear();
+        const hours = pad(date.getHours());
+        const minutes = pad(date.getMinutes());
+        const seconds = pad(date.getSeconds());
+
+        return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+    }
+
+    function printReceipt() {
+        // Open receipt in new window
+        const receiptWindow = window.open('{{ route('pos.receipt') }}', 'Receipt', 'width=400,height=600');
+
+        receiptWindow.onload = function() {
+            // Get data from the main form
+            const invoiceNumber = document.getElementById('code').value;
+            const total = document.querySelector('.text-green-500 p').innerText.replace('Rp', '');
+            const discount = document.getElementById('discount').value;
+            const cashAmount = document.getElementById('customer_payment').value;
+            const changeAmount = document.querySelector('.text-red-500 p')?.innerText?.replace('Rp', '');
+
+            // Get all products from the table
+            const products = [];
+            const rows = document.querySelectorAll('#table-body-product-pos tr');
+            rows.forEach(row => {
+                if (!row.querySelector('#table-body-product-pos-empty')) {
+                    const name = row.querySelector('th:nth-child(1)').innerText;
+                    const quantity = row.querySelector('td:nth-child(2) input').value;
+                    const subtotal = row.querySelector('td:nth-child(7) input').value;
+                    products.push({
+                        name,
+                        quantity,
+                        subtotal
+                    });
+                }
+            });
+
+            // Update receipt content
+            const doc = receiptWindow.document;
+            doc.getElementById('invoice-number').innerText = invoiceNumber;
+            doc.getElementById('transaction-date').innerText = formatDate(new Date());
+            doc.getElementById('cashier-name').innerText = '{{ auth()->user()->name }}';
+
+            // Update products table
+            const tbody = doc.querySelector('#items-table tbody');
+            tbody.innerHTML = products.map(product => `
+            <tr>
+                <td>${product.name}</td>
+                <td>${product.quantity}</td>
+                <td class="amount-column">Rp${product.subtotal}</td>
+            </tr>
+        `).join('');
+
+            // Update totals
+            doc.getElementById('subtotal').innerText = `Rp${total}`;
+            doc.getElementById('discount').innerText = `Rp${discount}`;
+            doc.getElementById('total').innerText = `Rp${total}`;
+            doc.getElementById('cash-amount').innerText = `Rp${cashAmount}`;
+            doc.getElementById('change-amount').innerText = `Rp${changeAmount}`;
+
+            // Print the receipt
+            setTimeout(() => {
+                receiptWindow.print();
+                // Close the window after printing (optional)
+                receiptWindow.close();
+            }, 500);
+        };
+    }
+
     /**
      * Event Handlers
      */
@@ -258,6 +331,20 @@
                     document.getElementById('customer_payment').value = '';
                     document.getElementById('customer_payment').focus();
                 }
+            });
+
+            // Save Transaction
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'F9') {
+                    event.preventDefault();
+                    document.getElementById('btn-payment').click();
+                }
+            });
+            $("body").on('click', '#btn-payment', function() {
+                // Your existing payment logic here
+
+                // After successful payment, print the receipt
+                printReceipt();
             });
         },
     };
