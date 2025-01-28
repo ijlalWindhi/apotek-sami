@@ -67,7 +67,8 @@
             {{-- Transaction Details --}}
             <div class="grid grid-cols-4 justify-between items-center gap-3 w-full mb-3">
                 <div class="border p-2 rounded-md col-span-4 md:col-span-1">
-                    <label for="description" class="text-sm font-semibold">Catatan</label>
+                    <label for="description" class="text-sm font-semibold">Catatan <span
+                            class="text-gray-500">[CTRL+ALT+N]</span></label>
                     <input type="text" name="description" id="description"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5"
                         placeholder="Catatan transaksi">
@@ -187,8 +188,14 @@
                     resetForm();
                 }
             });
-
             $('body').on('click', '#btn-clear-form', resetForm);
+
+            // Focus on input description
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 'n') {
+                    document.getElementById('description').focus();
+                }
+            });
         },
     };
 
