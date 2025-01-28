@@ -74,8 +74,8 @@
                         placeholder="Catatan transaksi">
                 </div>
                 <div class="border p-2 rounded-md col-span-4 md:col-span-1 select-small">
-                    <label for="payment_type" class="text-sm font-semibold">Metode Pembayaran<span
-                            class="text-red-500">*</span></label>
+                    <label for="payment_type" class="text-sm font-semibold">Metode Pembayaran <span
+                            class="text-gray-500">[CTRL+ALT+P]</span><span class="text-red-500">*</span></label>
                     <select class="js-example-basic-single" id="payment_type" name="payment_type">
                         <option value="" selected disabled hidden>Pilih Tipe Pembayaran</option>
                         @foreach ($paymentTypes as $payment)
@@ -194,6 +194,13 @@
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 'n') {
                     document.getElementById('description').focus();
+                }
+            });
+
+            // Focus on input payment type
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 'p') {
+                    $('#payment_type').select2('open');
                 }
             });
         },
