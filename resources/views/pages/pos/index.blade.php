@@ -201,6 +201,8 @@
             // Focus on input payment type
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 'p') {
+                    $('#customer_type').select2('close');
+                    $('#status_transaction').select2('close');
                     $('#payment_type').select2('open');
                 }
             });
@@ -208,6 +210,8 @@
             // Focus on input status transaction
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 't') {
+                    $('#payment_type').select2('close');
+                    $('#customer_type').select2('close');
                     $('#status_transaction').select2('open');
                 }
             });
@@ -215,6 +219,8 @@
             // Focus on input customer type
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 'c') {
+                    $('#payment_type').select2('close');
+                    $('#status_transaction').select2('close');
                     $('#customer_type').select2('open');
                 }
             });
