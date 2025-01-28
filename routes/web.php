@@ -141,6 +141,10 @@ Route::prefix('pos')
     ->group(function () {
         Route::controller(PosController::class)->group(function () {
             Route::get('/', 'index')->name('pos.index');
+            Route::get('/receipt', function () {
+                return view('pages.pos.receipt');
+            })->name('pos.receipt');
+
             Route::prefix('recipe')->group(function () {
                 // Recipe
                 Route::controller(RecipeController::class)->group(function () {
