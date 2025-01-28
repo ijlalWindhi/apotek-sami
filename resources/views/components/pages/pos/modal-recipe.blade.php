@@ -281,14 +281,6 @@
                     });
                 }
             });
-
-            // Keyboard shortcut handler
-            document.addEventListener('keydown', function(event) {
-                if (event.ctrlKey && event.altKey && event.key === 'r') {
-                    event.preventDefault();
-                    document.querySelector('[data-modal-target="modal-recipe"]').click();
-                }
-            });
         },
     };
 

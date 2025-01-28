@@ -191,6 +191,14 @@
             });
             $('body').on('click', '#btn-clear-form', resetForm);
 
+            // Open Recipe Modal
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 'r') {
+                    event.preventDefault();
+                    document.querySelector('[data-modal-target="modal-recipe"]').click();
+                }
+            });
+
             // Focus on input description
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 'n') {
