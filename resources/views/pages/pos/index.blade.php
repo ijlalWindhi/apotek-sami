@@ -181,19 +181,11 @@
         document.getElementById('recipe').removeAttribute('data-id');
     }
 
-    function printReceipt({
-        invoiceNumber = '-'
-    }) {
+    function printReceipt(data) {
         // Open receipt in new window
         const receiptWindow = window.open('{{ route('pos.receipt') }}', 'Receipt', 'width=400,height=600');
 
         receiptWindow.onload = function() {
-            // Get data from the main form
-            const total = document.querySelector('.text-green-500 p')?.innerText?.replace('Rp', '');
-            const discount = document.getElementById('discount').value;
-            const cashAmount = document.getElementById('paid_amount').value;
-            const changeAmount = document.querySelector('.text-red-500 p')?.innerText?.replace('Rp', '');
-
             // Get all products from the table
             const products = [];
             const productRows = $("#table-body-product-pos tr").not(
@@ -218,7 +210,7 @@
 
             // Update receipt content
             const doc = receiptWindow.document;
-            doc.getElementById('invoice-number').innerText = invoiceNumber;
+            doc.getElementById('invoice-number').innerText = data?.invoice_number || '-';
             doc.getElementById('transaction-date').innerText = formatDatePrint(new Date());
             doc.getElementById('cashier-name').innerText = '{{ auth()->user()->name }}';
 
@@ -233,11 +225,14 @@
         `).join('');
 
             // Update totals
-            doc.getElementById('subtotal').innerText = `Rp${total}`;
-            doc.getElementById('discount').innerText = `Rp${discount}`;
-            doc.getElementById('total').innerText = `Rp${total}`;
-            doc.getElementById('cash-amount').innerText = `Rp${cashAmount}`;
-            doc.getElementById('change-amount').innerText = `Rp${changeAmount}`;
+            doc.getElementById('subtotal').innerText = `Rp${UIManager?.formatCurrency(data?.total_amount || 0)}`;
+            doc.getElementById('discount').innerText = data?.discount_type === 'Nominal' ?
+                `Rp${UIManager?.formatCurrency(data?.discount) || 0}` :
+                `${data?.discount || 0}%`;
+            doc.getElementById('total').innerText = `Rp${UIManager?.formatCurrency(data?.total_amount) || 0}`;
+            doc.getElementById('cash-amount').innerText = `Rp${UIManager?.formatCurrency(data?.paid_amount) || 0}`;
+            doc.getElementById('change-amount').innerText =
+                `Rp${UIManager?.formatCurrency(data?.change_amount) || 0}`;
 
             // Print the receipt
             setTimeout(() => {
@@ -281,9 +276,7 @@
                     });
 
                     // Print receipt
-                    printReceipt({
-                        invoiceNumber: response?.data?.invoice_number
-                    });
+                    printReceipt(response?.data);
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
