@@ -25,9 +25,11 @@ class TransactionRequest extends FormRequest
             'status' => ['required', Rule::in(['Terbayar', 'Belum Lunas', 'Tertunda'])],
             'discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'discount_type' => ['required', Rule::in(['Percentage', 'Nominal'])],
+            'nominal_discount' => self::NUMERIC_MIN_ZERO,
             'paid_amount' => self::NUMERIC_MIN_ZERO,
             'change_amount' => self::NUMERIC_MIN_ZERO,
             'total_amount' => self::NUMERIC_MIN_ZERO,
+            'total_before_discount' => self::NUMERIC_MIN_ZERO,
             'created_by' => 'required|exists:users,id',
 
             // Validasi untuk products
@@ -60,6 +62,9 @@ class TransactionRequest extends FormRequest
             'discount.min' => 'Diskon minimal 0.',
             'discount_type.required' => 'Tipe diskon wajib dipilih.',
             'discount_type.in' => 'Tipe diskon tidak valid.',
+            'nominal_discount.required' => 'Nominal diskon wajib diisi.',
+            'nominal_discount.numeric' => 'Nominal diskon harus berupa angka.',
+            'nominal_discount.min' => 'Nominal diskon minimal 0.',
             'paid_amount.required' => 'Jumlah yang dibayar wajib diisi.',
             'paid_amount.numeric' => 'Jumlah yang dibayar harus berupa angka.',
             'paid_amount.min' => 'Jumlah yang dibayar minimal 0.',
@@ -69,6 +74,9 @@ class TransactionRequest extends FormRequest
             'total_amount.required' => 'Total wajib diisi.',
             'total_amount.numeric' => 'Total harus berupa angka.',
             'total_amount.min' => 'Total minimal 0.',
+            'total_before_discount.required' => 'Total sebelum diskon wajib diisi.',
+            'total_before_discount.numeric' => 'Total sebelum diskon harus berupa angka.',
+            'total_before_discount.min' => 'Total sebelum diskon minimal 0.',
             'created_by.required' => 'Staff wajib dipilih.',
             'created_by.exists' => 'Staff yang dipilih tidak valid.',
 
