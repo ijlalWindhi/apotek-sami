@@ -317,10 +317,7 @@ export function formattedDataTransaction({ created_by }) {
                 }
             }
 
-            // Calculate row total
-            const rowTotal = qty * price + qty * tuslah;
-            total_before_discount += rowTotal;
-
+            total_before_discount += subtotal;
             products.push({
                 product: productId,
                 qty: qty,
