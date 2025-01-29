@@ -28,8 +28,8 @@ return new class extends Migration
             ]);
             $table->string('sku')->unique();
             $table->integer('minimum_smallest_stock')->default(0);
-            $table->integer('smallest_stock')->default(0);
-            $table->integer('largest_stock')->default(0);
+            $table->decimal('smallest_stock', 12, 2)->default(0);
+            $table->decimal('largest_stock', 12, 2)->default(0);
             $table->boolean('is_active')->default(true);
             $table->foreignId('supplier_id')->constrained('m_supplier')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('largest_unit')->constrained('m_unit')->onDelete('cascade')->onUpdate('cascade');
