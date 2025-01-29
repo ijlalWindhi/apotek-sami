@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <form method="POST" class="flex flex-col h-[85vh]">
+    <form method="POST" class="flex flex-col h-[85vh]" id="form-transaction">
         @csrf
         {{-- Top Section: Customer and Recipe Information --}}
         <div class="p-3">
@@ -143,8 +143,7 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <span class="ms-2">Cari Transaksi</span><span class="text-gray-300">[CTRL+ALT+S]</span>
                 </x-button>
-                <x-button color="green" id="btn-save-transaction" class="w-full space-x-1" id="btn-payment"
-                    type="submit">
+                <x-button color="green" id="btn-save-transaction" class="w-full space-x-1" type="submit">
                     <i class="fa-solid fa-floppy-disk"></i>
                     <span class="ms-2">Simpan Transaksi</span><span class="text-gray-300">[F9]</span>
                 </x-button>
@@ -166,7 +165,7 @@
         // Clear product list
         document.getElementById('table-body-product-pos').innerHTML = `
                         <tr>
-                            <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400" id="table-body-product-pos-empty">
                                 Tidak ada produk yang dipilih
                             </td>
                         </tr>`;
@@ -182,26 +181,33 @@
         document.getElementById('recipe').removeAttribute('data-id');
     }
 
-    function printReceipt() {
+    function printReceipt({
+        invoiceNumber = '-'
+    }) {
         // Open receipt in new window
         const receiptWindow = window.open('{{ route('pos.receipt') }}', 'Receipt', 'width=400,height=600');
 
         receiptWindow.onload = function() {
             // Get data from the main form
-            const invoiceNumber = document.getElementById('code').value;
-            const total = document.querySelector('.text-green-500 p').innerText.replace('Rp', '');
+            const total = document.querySelector('.text-green-500 p')?.innerText?.replace('Rp', '');
             const discount = document.getElementById('discount').value;
             const cashAmount = document.getElementById('paid_amount').value;
             const changeAmount = document.querySelector('.text-red-500 p')?.innerText?.replace('Rp', '');
 
             // Get all products from the table
             const products = [];
-            const rows = document.querySelectorAll('#table-body-product-pos tr');
-            rows.forEach(row => {
-                if (!row.querySelector('#table-body-product-pos-empty')) {
-                    const name = row.querySelector('th:nth-child(1)').innerText;
-                    const quantity = row.querySelector('td:nth-child(2) input').value;
-                    const subtotal = row.querySelector('td:nth-child(7) input').value;
+            const productRows = $("#table-body-product-pos tr").not(
+                ":has(td[colspan])"
+            );
+            productRows.each(function() {
+                const row = $(this);
+                const productId = row.find('input[id^="product_pos_id_"]').val();
+
+                if (productId) {
+                    const name = row.find(`td[id^="product_pos_name_${productId}"]`).text();
+                    const quantity = row.find(`input[id^="product_pos_total_${productId}"]`).val()
+                    const subtotal = row.find(`input[id^="product_pos_subtotal_${productId}"]`).val()
+
                     products.push({
                         name,
                         quantity,
@@ -275,7 +281,9 @@
                     });
 
                     // Print receipt
-                    printReceipt();
+                    printReceipt({
+                        invoiceNumber: response?.data?.invoice_number
+                    });
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
@@ -375,10 +383,10 @@
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'F9') {
                     event.preventDefault();
-                    document.getElementById('btn-payment').click();
+                    document.getElementById('btn-save-transaction').click();
                 }
             });
-            $("form").on('submit', function(event) {
+            $("form#form-transaction").on('submit', function(event) {
                 event.preventDefault();
                 const data = formattedDataTransaction({
                     created_by: '{{ auth()->user()->id }}'
