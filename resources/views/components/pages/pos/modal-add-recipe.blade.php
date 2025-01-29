@@ -263,7 +263,7 @@
     const eventHandlerAddRecipe = {
         init: () => {
             // Submit form
-            $('form').on('submit', function(e) {
+            $('form#create').on('submit', function(e) {
                 e.preventDefault();
                 const formData = $(this).serializeArray();
                 const data = formattedData(formData);
