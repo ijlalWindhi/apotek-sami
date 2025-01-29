@@ -14,6 +14,9 @@ class TransactionService
     {
         try {
             return DB::transaction(function () use ($data) {
+                $latestTransaction = Transaction::orderBy('id', 'desc')->first();
+                $nextNumber = $latestTransaction ? intval(substr($latestTransaction->invoice_number, -3)) + 1 : 1;
+                $data['invoice_number'] = 'ST-' . date('dmmyy') . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
                 $transaction = Transaction::create($data);
 
                 // Simpan produk jika ada
