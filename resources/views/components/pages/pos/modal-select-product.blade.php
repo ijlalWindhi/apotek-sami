@@ -204,9 +204,9 @@
 
         tableRowProduct: (product) => `
             <tr id="list_product_pos_${product.id}" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     ${utils.escapeHtml(product.name || '-')}
-                </th>
+                </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <div class="flex justify-center items-center gap-1">
                         <i class="fa-solid fa-minus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-minus-product-${product.id}"></i>
