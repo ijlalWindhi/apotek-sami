@@ -214,3 +214,135 @@ export const priceCalculationsPOS = {
         };
     },
 };
+
+export function formatDatePrint(date) {
+    const pad = (num) => String(num).padStart(2, "0");
+
+    const day = pad(date.getDate());
+    const month = pad(date.getMonth() + 1);
+    const year = date.getFullYear();
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
+    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+}
+
+export function formattedDataTransaction() {
+    const formDataObj = {};
+    let discount = 0;
+    let discountType = "Nominal";
+    const paid_amount =
+        parseInt($("#paid_amount").val()?.replace(/[^\d]/g, "")) || 0;
+    const change_amount =
+        parseInt(
+            $("#change_amount").text()?.replace("Rp", "")?.replace(/[^\d]/g, "")
+        ) || 0;
+    const total_amount =
+        parseInt(
+            $("#total_amount").text()?.replace("Rp", "")?.replace(/[^\d]/g, "")
+        ) || 0;
+
+    if ($("#discount").val()) {
+        if ($("#discount").val().endsWith("%")) {
+            discount = parseFloat($("#discount").val() || 0);
+            discountType = "Percentage";
+        } else {
+            discount = parseInt(
+                $("#discount").val()?.replace(/[^\d]/g, "") || 0
+            );
+        }
+    }
+
+    formDataObj["customer_type"] = $("#customer_type").val();
+    formDataObj["recipe_id"] = $("#recipe").attr("data-id");
+    formDataObj["notes"] = $("#notes").val();
+    formDataObj["payment_type_id"] = $("#payment_type").val();
+    formDataObj["status"] = $("#status_transaction").val();
+    formDataObj["discount"] = discount;
+    formDataObj["discount_type"] = discountType;
+    formDataObj["paid_amount"] = paid_amount;
+    formDataObj["change_amount"] = change_amount;
+    formDataObj["total_amount"] = total_amount;
+    formDataObj["created_by"] = "{{ auth()->user()->id }}";
+
+    // Initialize products array
+    const products = [];
+    const productRows = $("#table-body-product-pos tr").not(
+        ":has(td[colspan])"
+    );
+
+    // Process each product row
+    productRows.each(function () {
+        const row = $(this);
+        const productId = row.find('input[id^="product_pos_id_"]').val();
+
+        if (productId) {
+            const qty =
+                parseInt(
+                    row
+                        .find(`input[id^="product_pos_total_${productId}"]`)
+                        .val()
+                ) || 0;
+            const price =
+                parseInt(
+                    row
+                        .find(`input[id^="product_pos_price_${productId}"]`)
+                        .val()
+                        ?.replace(/[^\d]/g, "")
+                ) || 0;
+            const tuslah =
+                parseInt(
+                    row
+                        .find(`input[id^="product_pos_tuslah_${productId}"]`)
+                        .val()
+                        ?.replace(/[^\d]/g, "")
+                ) || 0;
+            const discountInput = row
+                .find(`input[id^="product_pos_discount_${productId}"]`)
+                .val();
+            const subtotal =
+                parseInt(
+                    row
+                        .find(`input[id^="product_pos_subtotal_${productId}"]`)
+                        .val()
+                        ?.replace(/[^\d]/g, "")
+                ) || 0;
+
+            let discount = 0;
+            let discountType = "Nominal";
+
+            if (discountInput) {
+                if (discountInput.endsWith("%")) {
+                    discount = parseFloat(discountInput || 0);
+                    discountType = "Percentage";
+                } else {
+                    discount = parseInt(
+                        discountInput?.replace(/[^\d]/g, "") || 0
+                    );
+                }
+            }
+
+            products.push({
+                product: productId,
+                qty: qty,
+                price: price,
+                tuslah: tuslah,
+                discount: discount,
+                discount_type: discountType,
+                subtotal: subtotal,
+                unit: row
+                    .find(`select[id^="product_pos_unit_${productId}"]`)
+                    .val(),
+            });
+        }
+    });
+
+    // Build the final request object
+    const requestData = {
+        ...formDataObj,
+        products: products,
+    };
+
+    return requestData;
+}
