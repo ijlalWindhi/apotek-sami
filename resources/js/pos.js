@@ -232,6 +232,8 @@ export function formattedDataTransaction({ created_by }) {
     const formDataObj = {};
     let discount = 0;
     let discountType = "Nominal";
+    let total_before_discount = 0;
+    let nominal_discount = 0;
     const paid_amount =
         parseInt($("#paid_amount").val()?.replace(/[^\d]/g, "")) || 0;
     const change_amount =
@@ -247,24 +249,16 @@ export function formattedDataTransaction({ created_by }) {
         if ($("#discount").val().endsWith("%")) {
             discount = parseFloat($("#discount").val() || 0);
             discountType = "Percentage";
+            nominal_discount = Math.round(
+                total_before_discount * (discount / 100)
+            );
         } else {
             discount = parseInt(
                 $("#discount").val()?.replace(/[^\d]/g, "") || 0
             );
+            nominal_discount = discount;
         }
     }
-
-    formDataObj["customer_type"] = $("#customer_type").val();
-    formDataObj["recipe_id"] = $("#recipe").attr("data-id");
-    formDataObj["notes"] = $("#notes").val();
-    formDataObj["payment_type_id"] = $("#payment_type").val();
-    formDataObj["status"] = $("#status_transaction").val();
-    formDataObj["discount"] = discount;
-    formDataObj["discount_type"] = discountType;
-    formDataObj["paid_amount"] = paid_amount;
-    formDataObj["change_amount"] = change_amount;
-    formDataObj["total_amount"] = total_amount;
-    formDataObj["created_by"] = created_by;
 
     // Initialize products array
     const products = [];
@@ -323,6 +317,10 @@ export function formattedDataTransaction({ created_by }) {
                 }
             }
 
+            // Calculate row total
+            const rowTotal = qty * price + qty * tuslah;
+            total_before_discount += rowTotal;
+
             products.push({
                 product: productId,
                 qty: qty,
@@ -337,6 +335,20 @@ export function formattedDataTransaction({ created_by }) {
             });
         }
     });
+
+    formDataObj["customer_type"] = $("#customer_type").val();
+    formDataObj["recipe_id"] = $("#recipe").attr("data-id");
+    formDataObj["notes"] = $("#notes").val();
+    formDataObj["payment_type_id"] = $("#payment_type").val();
+    formDataObj["status"] = $("#status_transaction").val();
+    formDataObj["discount"] = discount;
+    formDataObj["discount_type"] = discountType;
+    formDataObj["nominal_discount"] = nominal_discount;
+    formDataObj["paid_amount"] = paid_amount;
+    formDataObj["change_amount"] = change_amount;
+    formDataObj["total_amount"] = total_amount;
+    formDataObj["total_before_discount"] = total_before_discount;
+    formDataObj["created_by"] = created_by;
 
     // Build the final request object
     const requestData = {
