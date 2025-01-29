@@ -218,6 +218,10 @@
                     </div>
                     <input type="hidden" name="product_pos_id_${product.id}" id="product_pos_id_${product.id}"
                         value="${product.id}">
+                    <input type="hidden" name="product_pos_smallest_stock_${product.id}" id="product_pos_smallest_stock_${product.id}"
+                        value="${product.smallest_stock}">
+                    <input type="hidden" name="product_pos_largest_stock_${product.id}" id="product_pos_largest_stock_${product.id}"
+                        value="${product.largest_stock}">
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <select name="product_pos_unit_${product.id}" id="product_pos_unit_${product.id}"
