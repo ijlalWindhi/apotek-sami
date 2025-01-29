@@ -14,9 +14,12 @@ class TransactionService
     {
         try {
             return DB::transaction(function () use ($data) {
-                $latestTransaction = Transaction::orderBy('id', 'desc')->first();
+                $today = date('dmY');
+                $latestTransaction = Transaction::where('invoice_number', 'like', "ST-{$today}%")
+                    ->orderBy('invoice_number', 'desc')
+                    ->first();
                 $nextNumber = $latestTransaction ? intval(substr($latestTransaction->invoice_number, -3)) + 1 : 1;
-                $data['invoice_number'] = 'ST-' . date('dmmyy') . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+                $data['invoice_number'] = 'ST-' . $today . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
                 $transaction = Transaction::create($data);
 
                 // Simpan produk jika ada
