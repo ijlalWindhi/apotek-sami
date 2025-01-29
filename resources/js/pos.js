@@ -4,8 +4,16 @@ export const priceCalculationsPOS = {
         $(document).on("click", '[id^="btn-plus-product-"]', function () {
             const productId = this.id.split("btn-plus-product-")[1];
             const inputElement = $(`#product_pos_total_${productId}`);
-            inputElement.val((parseInt(inputElement.val()) || 0) + 1);
-            priceCalculationsPOS.calculateProductRow(productId);
+
+            if (
+                priceCalculationsPOS.validateStockAvailability(
+                    productId,
+                    parseInt(inputElement.val()) + 1
+                )
+            ) {
+                inputElement.val((parseInt(inputElement.val()) || 0) + 1);
+                priceCalculationsPOS.calculateProductRow(productId);
+            }
         });
 
         $(document).on("click", '[id^="btn-minus-product-"]', function () {
@@ -13,7 +21,28 @@ export const priceCalculationsPOS = {
             const inputElement = $(`#product_pos_total_${productId}`);
             const currentValue = parseInt(inputElement.val()) || 0;
             if (currentValue > 0) {
-                inputElement.val(currentValue - 1);
+                if (
+                    priceCalculationsPOS.validateStockAvailability(
+                        productId,
+                        currentValue - 1
+                    )
+                ) {
+                    inputElement.val(currentValue - 1);
+                    priceCalculationsPOS.calculateProductRow(productId);
+                }
+            }
+        });
+
+        $(document).on("input", '[id^="product_pos_total_"]', function () {
+            const productId = this.id.split("product_pos_total_")[1];
+            const inputValue = parseFloat($(this).val()) || 0;
+
+            if (
+                priceCalculationsPOS.validateStockAvailability(
+                    productId,
+                    inputValue
+                )
+            ) {
                 priceCalculationsPOS.calculateProductRow(productId);
             }
         });
@@ -101,6 +130,74 @@ export const priceCalculationsPOS = {
         });
     },
 
+    validateStockAvailability: (productId, requestedQty) => {
+        const selectedUnitId = $(`#product_pos_unit_${productId}`).val();
+        const smallestStock =
+            parseFloat($(`#product_pos_smallest_stock_${productId}`).val()) ||
+            0;
+        const largestStock =
+            parseFloat($(`#product_pos_largest_stock_${productId}`).val()) || 0;
+        const conversionValue =
+            parseInt($(`#product_pos_conversion_${productId}`).val()) || 1;
+        const productName = $(`#product_pos_name_${productId}`).text().trim();
+        const selectedUnit = $(`#product_pos_unit_${productId} option:selected`)
+            .text()
+            .trim();
+
+        let availableStock;
+        let requestedStockInSmallestUnit;
+
+        // Convert requested quantity to smallest unit for comparison
+        if (
+            selectedUnitId ===
+            $(`#product_pos_unit_${productId} option:first-child`).val()
+        ) {
+            // If largest unit is selected
+            requestedStockInSmallestUnit = requestedQty * conversionValue;
+            availableStock = largestStock * conversionValue;
+        } else {
+            // If smallest unit is selected
+            requestedStockInSmallestUnit = requestedQty;
+            availableStock = smallestStock;
+        }
+
+        if (requestedStockInSmallestUnit > availableStock) {
+            // Calculate available stock in the selected unit
+            let displayStock;
+            if (
+                selectedUnitId ===
+                $(`#product_pos_unit_${productId} option:first-child`).val()
+            ) {
+                displayStock = (availableStock / conversionValue).toFixed(2);
+            } else {
+                displayStock = availableStock.toFixed(2);
+            }
+
+            // Reset input to previous valid value or 0
+            const previousValue =
+                $(`#product_pos_total_${productId}`).data("lastValidValue") ||
+                0;
+            $(`#product_pos_total_${productId}`).val(previousValue);
+
+            // Show alert
+            Swal.fire({
+                icon: "error",
+                title: "Stock Tidak Mencukupi",
+                text: `Stock ${productName} yang tersedia adalah ${displayStock} ${selectedUnit}`,
+                confirmButtonText: "OK",
+            });
+
+            return false;
+        }
+
+        // Store last valid value
+        $(`#product_pos_total_${productId}`).data(
+            "lastValidValue",
+            requestedQty
+        );
+        return true;
+    },
+
     calculateAllProductRows: (products) => {
         products.forEach((product) => {
             const productId = product.product.id;
@@ -111,7 +208,7 @@ export const priceCalculationsPOS = {
 
     calculateProductRow: (productId) => {
         const quantity =
-            parseInt($(`#product_pos_total_${productId}`).val()) || 0;
+            parseFloat($(`#product_pos_total_${productId}`).val()) || 0;
         const price =
             parseInt(
                 $(`#product_pos_price_${productId}`)
