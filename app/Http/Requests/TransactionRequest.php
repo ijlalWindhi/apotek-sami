@@ -23,12 +23,6 @@ class TransactionRequest extends FormRequest
             'notes' => 'nullable|string',
             'payment_type_id' => 'required|exists:m_payment_type,id',
             'status' => ['required', Rule::in(['Terbayar', 'Belum Lunas', 'Tertunda'])],
-            'invoice_number' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('m_transaction')->ignore($this->route('transaction')),
-            ],
             'discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'discount_type' => ['required', Rule::in(['Percentage', 'Nominal'])],
             'paid_amount' => self::NUMERIC_MIN_ZERO,
