@@ -21,9 +21,11 @@ class Transaction extends Model
         'invoice_number',
         'discount',
         'discount_type',
+        'nominal_discount',
         'paid_amount',
         'change_amount',
         'total_amount',
+        'total_before_discount',
         'created_by'
     ];
 
