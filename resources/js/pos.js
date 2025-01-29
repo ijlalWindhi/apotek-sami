@@ -113,17 +113,13 @@ export const priceCalculationsPOS = {
                 $(this).find("option:first-child").val() === unitId;
 
             const priceInput = $(`#product_pos_price_${productId}`);
-            let originalPrice = priceInput.data("original-price");
-
-            if (!originalPrice) {
-                originalPrice =
-                    parseInt(priceInput.val()?.replace(/[^\d]/g, "")) || 0;
-                priceInput.data("original-price", originalPrice);
-            }
+            const sellingPrice = $(
+                `#product_pos_selling_price_${productId}`
+            ).val();
 
             const newPrice = isLargestUnit
-                ? originalPrice
-                : Math.floor(originalPrice / conversionValue);
+                ? sellingPrice
+                : Math.floor(sellingPrice / conversionValue);
             priceInput.val(UIManager.formatCurrency(newPrice));
 
             priceCalculationsPOS.calculateProductRow(productId);
