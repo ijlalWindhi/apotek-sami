@@ -245,21 +245,6 @@ export function formattedDataTransaction({ created_by }) {
             $("#total_amount").text()?.replace("Rp", "")?.replace(/[^\d]/g, "")
         ) || 0;
 
-    if ($("#discount").val()) {
-        if ($("#discount").val().endsWith("%")) {
-            discount = parseFloat($("#discount").val() || 0);
-            discountType = "Percentage";
-            nominal_discount = Math.round(
-                total_before_discount * (discount / 100)
-            );
-        } else {
-            discount = parseInt(
-                $("#discount").val()?.replace(/[^\d]/g, "") || 0
-            );
-            nominal_discount = discount;
-        }
-    }
-
     // Initialize products array
     const products = [];
     const productRows = $("#table-body-product-pos tr").not(
@@ -332,6 +317,22 @@ export function formattedDataTransaction({ created_by }) {
             });
         }
     });
+
+    // Calculate discount and discount type
+    if ($("#discount").val()) {
+        if ($("#discount").val().endsWith("%")) {
+            discount = parseFloat($("#discount").val() || 0);
+            discountType = "Percentage";
+            nominal_discount = Math.round(
+                total_before_discount * (discount / 100)
+            );
+        } else {
+            discount = parseInt(
+                $("#discount").val()?.replace(/[^\d]/g, "") || 0
+            );
+            nominal_discount = discount;
+        }
+    }
 
     formDataObj["customer_type"] = $("#customer_type").val();
     formDataObj["recipe_id"] = $("#recipe").attr("data-id");
