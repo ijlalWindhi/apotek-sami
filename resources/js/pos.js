@@ -228,7 +228,7 @@ export function formatDatePrint(date) {
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 }
 
-export function formattedDataTransaction() {
+export function formattedDataTransaction({ created_by }) {
     const formDataObj = {};
     let discount = 0;
     let discountType = "Nominal";
@@ -264,7 +264,7 @@ export function formattedDataTransaction() {
     formDataObj["paid_amount"] = paid_amount;
     formDataObj["change_amount"] = change_amount;
     formDataObj["total_amount"] = total_amount;
-    formDataObj["created_by"] = "{{ auth()->user()->id }}";
+    formDataObj["created_by"] = created_by;
 
     // Initialize products array
     const products = [];
