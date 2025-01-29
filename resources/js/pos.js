@@ -50,7 +50,7 @@ export const priceCalculationsPOS = {
         });
 
         // Handle payment input (Rp only)
-        $("#customer_payment").on("input", function () {
+        $("#paid_amount").on("input", function () {
             let value = $(this).val().replace(/[^\d]/g, "");
             $(this).val(UIManager.formatCurrency(value));
             priceCalculationsPOS.updateAllTotals();
@@ -165,7 +165,7 @@ export const priceCalculationsPOS = {
         );
 
         const customerPayment =
-            parseInt($("#customer_payment").val()?.replace(/[^\d]/g, "")) || 0;
+            parseInt($("#paid_amount").val()?.replace(/[^\d]/g, "")) || 0;
         const change = Math.max(0, customerPayment - finalTotal);
 
         $(".text-red-500 p").text(UIManager.formatCurrency(change));
