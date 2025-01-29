@@ -225,7 +225,8 @@
         `).join('');
 
             // Update totals
-            doc.getElementById('subtotal').innerText = `Rp${UIManager?.formatCurrency(data?.total_amount || 0)}`;
+            doc.getElementById('subtotal').innerText =
+                `Rp${UIManager?.formatCurrency(data?.total_before_discount || 0)}`;
             doc.getElementById('discount').innerText = data?.discount_type === 'Nominal' ?
                 `Rp${UIManager?.formatCurrency(data?.discount) || 0}` :
                 `${data?.discount || 0}%`;
