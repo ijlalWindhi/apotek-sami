@@ -23,9 +23,11 @@ return new class extends Migration
             $table->string('invoice_number')->unique();
             $table->decimal('discount', 12, 2)->default(0);
             $table->enum('discount_type', ['Percentage', 'Nominal'])->default('Percentage');
+            $table->decimal('nominal_discount', 12, 2);
             $table->decimal('paid_amount', 12, 2);
             $table->decimal('change_amount', 12, 2);
             $table->decimal('total_amount', 12, 2);
+            $table->decimal('total_before_discount', 12, 2);
             $table->foreignId('created_by')->constrained('users');
         });
     }
