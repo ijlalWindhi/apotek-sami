@@ -1,7 +1,8 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <div class="flex flex-col h-[85vh]">
+    <form method="POST" class="flex flex-col h-[85vh]">
+        @csrf
         {{-- Top Section: Customer and Recipe Information --}}
         <div class="p-3">
             <div class="grid grid-cols-3 justify-between items-center gap-2 md:gap-3 w-full">
@@ -19,7 +20,7 @@
                     <div class="flex w-full justify-between gap-2 items-center">
                         <p class="text-xs data-recipe" id="recipe">-</p>
                         <div class="flex gap-1">
-                            <button id="btn-add-recipe" data-modal-target="modal-recipe"
+                            <button id="btn-add-recipe" type="button" data-modal-target="modal-recipe"
                                 data-modal-toggle="modal-recipe"
                                 class="delete-button font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md">
                                 <i class="fa-solid fa-plus"></i>
@@ -78,7 +79,7 @@
                 <div class="border p-2 rounded-md col-span-4 md:col-span-1 select-small">
                     <label for="payment_type" class="text-sm font-semibold">Metode Pembayaran<span
                             class="text-red-500">*</span> <span class="text-gray-500">[CTRL+ALT+P]</span></label>
-                    <select class="js-example-basic-single" id="payment_type" name="payment_type">
+                    <select class="js-example-basic-single" id="payment_type" name="payment_type" required>
                         <option value="" selected disabled hidden>Pilih Tipe Pembayaran</option>
                         @foreach ($paymentTypes as $payment)
                             <option value="{{ $payment->id }}">{{ $payment->name }}</option>
@@ -112,23 +113,23 @@
                         class="bg-transparent border-transparent text-gray-900 text-xl font-semibold focus:ring-transparent focus:border-transparent block w-full p-0">
                 </div>
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1">
-                    <label for="customer_payment" class="text-sm font-semibold">Dibayarkan<span
+                    <label for="paid_amount" class="text-sm font-semibold">Dibayarkan<span
                             class="text-red-500">*</span> <span class="text-gray-500">[CTRL+ALT+G]</span></label>
                     <div class="flex items-center">
                         <p class="text-xl font-semibold">Rp</p>
-                        <input type="number" name="customer_payment" id="customer_payment" step="1"
-                            value="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                        <input type="number" name="paid_amount" id="paid_amount" step="1" value="0"
+                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                             class="bg-transparent border-transparent text-gray-900 text-xl font-semibold focus:ring-transparent focus:border-transparent block w-full p-0"
-                            required>
+                            required min="1">
                     </div>
                 </div>
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1 text-red-500">
                     <h2 class="text-sm font-semibold">Kembalian</h2>
-                    <p class="text-xl font-semibold mt-1">Rp0</p>
+                    <p class="text-xl font-semibold mt-1" id="change_amount">Rp0</p>
                 </div>
                 <div class="border p-2 rounded-md h-20 col-span-3 md:col-span-1 text-green-500">
                     <h2 class="text-sm font-semibold">Total</h2>
-                    <p class="text-xl font-semibold mt-1">Rp0</p>
+                    <p class="text-xl font-semibold mt-1" id="total_amount">Rp0</p>
                 </div>
             </div>
 
@@ -142,13 +143,14 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <span class="ms-2">Cari Transaksi</span><span class="text-gray-300">[CTRL+ALT+S]</span>
                 </x-button>
-                <x-button color="green" id="btn-save-transaction" class="w-full space-x-1" id="btn-payment">
+                <x-button color="green" id="btn-save-transaction" class="w-full space-x-1" id="btn-payment"
+                    type="submit">
                     <i class="fa-solid fa-floppy-disk"></i>
                     <span class="ms-2">Simpan Transaksi</span><span class="text-gray-300">[F9]</span>
                 </x-button>
             </div>
         </div>
-    </div>
+    </form>
 
     {{-- Modal --}}
     <x-pages.pos.modal-recipe :users="$users"></x-pages.pos.modal-recipe>
@@ -161,7 +163,6 @@
     const PER_PAGE = 999999;
 
     function resetForm() {
-        event.preventDefault();
         // Clear product list
         document.getElementById('table-body-product-pos').innerHTML = `
                         <tr>
@@ -172,26 +173,13 @@
         // Reset all form fields to 0
         document.getElementById('notes').value = '';
         document.getElementById('discount').value = '0';
-        document.getElementById('customer_payment').value = '0';
+        document.getElementById('paid_amount').value = '0';
         $('#payment_type').val(null).trigger('change.select2');
         $('#status_transaction').val('Terbayar').trigger('change.select2');
         document.querySelector('.text-red-500 p').innerText = 'Rp0';
         document.querySelector('.text-green-500 p').innerText = 'Rp0';
         document.getElementById('recipe').innerText = '-';
         document.getElementById('recipe').removeAttribute('data-id');
-    }
-
-    function formatDate(date) {
-        const pad = (num) => String(num).padStart(2, '0');
-
-        const day = pad(date.getDate());
-        const month = pad(date.getMonth() + 1);
-        const year = date.getFullYear();
-        const hours = pad(date.getHours());
-        const minutes = pad(date.getMinutes());
-        const seconds = pad(date.getSeconds());
-
-        return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
     }
 
     function printReceipt() {
@@ -203,7 +191,7 @@
             const invoiceNumber = document.getElementById('code').value;
             const total = document.querySelector('.text-green-500 p').innerText.replace('Rp', '');
             const discount = document.getElementById('discount').value;
-            const cashAmount = document.getElementById('customer_payment').value;
+            const cashAmount = document.getElementById('paid_amount').value;
             const changeAmount = document.querySelector('.text-red-500 p')?.innerText?.replace('Rp', '');
 
             // Get all products from the table
@@ -225,7 +213,7 @@
             // Update receipt content
             const doc = receiptWindow.document;
             doc.getElementById('invoice-number').innerText = invoiceNumber;
-            doc.getElementById('transaction-date').innerText = formatDate(new Date());
+            doc.getElementById('transaction-date').innerText = formatDatePrint(new Date());
             doc.getElementById('cashier-name').innerText = '{{ auth()->user()->name }}';
 
             // Update products table
@@ -250,8 +238,54 @@
                 receiptWindow.print();
                 // Close the window after printing (optional)
                 receiptWindow.close();
+                resetForm();
             }, 500);
         };
+    }
+
+    /**
+     * Data Fetching and Processing
+     */
+    const dataServicePos = {
+        /**
+         * Create a new transaction
+         */
+        createTransaction: (data) => {
+            uiManager.showScreenLoader();
+
+            $.ajax({
+                url: '/pos/transaction',
+                method: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: async (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
+                    }
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil menambahkan data",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
+                    // Print receipt
+                    printReceipt();
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                    uiManager.showError('Gagal mengambil data pajak. Silahkan coba lagi.');
+                },
+                complete: () => {
+                    uiManager.hideScreenLoader();
+                }
+            });
+        },
     }
 
     /**
@@ -262,10 +296,14 @@
             // Clear Form
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 'w') {
+                    event.preventDefault();
                     resetForm();
                 }
             });
-            $('body').on('click', '#btn-clear-form', resetForm);
+            $('body').on('click', '#btn-clear-form', function() {
+                event.preventDefault();
+                resetForm();
+            });
 
             // Open Recipe Modal
             document.addEventListener('keydown', function(event) {
@@ -328,8 +366,8 @@
             // Focus on input customer payment
             document.addEventListener('keydown', function(event) {
                 if (event.ctrlKey && event.altKey && event.key === 'g') {
-                    document.getElementById('customer_payment').value = '';
-                    document.getElementById('customer_payment').focus();
+                    document.getElementById('paid_amount').value = '';
+                    document.getElementById('paid_amount').focus();
                 }
             });
 
@@ -340,11 +378,12 @@
                     document.getElementById('btn-payment').click();
                 }
             });
-            $("body").on('click', '#btn-payment', function() {
-                // Your existing payment logic here
-
-                // After successful payment, print the receipt
-                printReceipt();
+            $("form").on('submit', function(event) {
+                event.preventDefault();
+                const data = formattedDataTransaction({
+                    created_by: '{{ auth()->user()->id }}'
+                });
+                dataServicePos.createTransaction(data);
             });
         },
     };
@@ -353,10 +392,6 @@
         debug.log('Ready', 'Document ready, initializing...');
         priceCalculationsPOS.init();
         eventHandlerPos.init();
-
-        $("body").on('click', '#btn-payment', function() {
-            const doctor_id = $('#doctor').attr('data-id');
-        });
 
         $('.js-example-basic-single').select2({
             width: '100%',
