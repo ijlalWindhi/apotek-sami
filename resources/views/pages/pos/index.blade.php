@@ -139,7 +139,8 @@
                     <i class="fa-solid fa-trash"></i>
                     <span class="ms-2">Bersihkan Form</span><span class="text-gray-300">[CTRL+ALT+W]</span>
                 </x-button>
-                <x-button color="gray" id="btn-search-transaction" class="w-full space-x-1">
+                <x-button color="gray" id="btn-search-transaction" class="w-full space-x-1"
+                    data-modal-target="modal-search-transaction" data-modal-toggle="modal-search-transaction">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <span class="ms-2">Cari Transaksi</span><span class="text-gray-300">[CTRL+ALT+S]</span>
                 </x-button>
@@ -154,6 +155,7 @@
     {{-- Modal --}}
     <x-pages.pos.modal-recipe :users="$users"></x-pages.pos.modal-recipe>
     <x-pages.pos.modal-select-product></x-pages.pos.modal-select-product>
+    <x-pages.pos.modal-search-transaction></x-pages.pos.modal-search-transaction>
 </x-layout>
 
 <script>
@@ -310,6 +312,14 @@
                 if (event.ctrlKey && event.altKey && event.key === 'r') {
                     event.preventDefault();
                     document.querySelector('[data-modal-target="modal-recipe"]').click();
+                }
+            });
+
+            // Open Search Transaction Modal
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.altKey && event.key === 's') {
+                    event.preventDefault();
+                    document.querySelector('[data-modal-target="modal-search-transaction"]').click();
                 }
             });
 
