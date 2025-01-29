@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -151,6 +152,15 @@ Route::prefix('pos')
                     Route::get('/list', 'getAll')->name('recipe.getAll');
                     Route::post('', 'store')->name('recipe.store');
                     Route::get('{recipe}', 'show')->name('recipe.show');
+                });
+            });
+
+            Route::prefix('transaction')->group(function () {
+                // Transaction
+                Route::controller(TransactionController::class)->group(function () {
+                    Route::get('/list', 'getAll')->name('transaction.getAll');
+                    Route::post('', 'store')->name('transaction.store');
+                    Route::get('{transaction}', 'show')->name('transaction.show');
                 });
             });
         });
