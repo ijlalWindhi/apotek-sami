@@ -16,39 +16,41 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <div class="flex justify-between items-center gap-2 py-3 px-4">
-                <form class="w-full flex gap-2 items-center justify-between" method="POST">
-                    @csrf
-                    <div class="w-full">
-                        <label for="search-transaction" class="text-xs">Cari</label>
-                        <input type="search" id="search-transaction" name="search-transaction"
-                            class="block px-2.5 py-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                            placeholder="Cari nomor invoice" />
+            <form class="w-full flex gap-2 items-end justify-between py-3 px-4" method="POST">
+                @csrf
+                <div class="w-full">
+                    <label for="search-transaction" class="text-xs">Nomor Invoice</label>
+                    <input type="search" id="search-transaction" name="search-transaction"
+                        class="block px-2.5 py-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+                        placeholder="Cari nomor invoice" />
+                </div>
+                <div class="w-full">
+                    <label for="date-range-picker" class="text-xs">Tanggal</label>
+                    <div id="date-range-picker" date-rangepicker datepicker-format="dd-mm-yyyy"
+                        class="flex items-center">
+                        <input id="start-date" name="start-date" type="text"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Pilih tanggal mulai">
+                        <span class="mx-1 text-xs text-gray-500">ke</span>
+                        <input id="end-date" name="end-date" type="text"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Pilih tanggal selesai">
                     </div>
-                    <div class="w-full">
-                        <label for="date-range-picker" class="text-xs">Tanggal</label>
-                        <div id="date-range-picker" date-rangepicker datepicker-format="dd-mm-yyyy"
-                            class="flex items-center">
-                            <input id="start-date" name="start-date" type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Pilih tanggal mulai">
-                            <span class="mx-1 text-xs text-gray-500">ke</span>
-                            <input id="end-date" name="end-date" type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Pilih tanggal selesai">
-                        </div>
-                    </div>
-                    <div class="select-small w-full">
-                        <label for="status-search-transaction" class="text-xs">Status
-                            <select class="js-example-basic-single" id="status-search-transaction"
-                                name="status-search-transaction">
-                                <option value="Semua" selected>Semua</option>
-                                <option value="Terbayar">Terbayar</option>
-                                <option value="Belum Lunas">Belum Lunas</option>
-                                <option value="Tertunda">Tertunda</option>
-                            </select>
-                    </div>
-            </div>
+                </div>
+                <div class="select-small w-full">
+                    <label for="status-search-transaction" class="text-xs">Status
+                        <select class="js-example-basic-single" id="status-search-transaction"
+                            name="status-search-transaction">
+                            <option value="Semua" selected>Semua</option>
+                            <option value="Terbayar">Terbayar</option>
+                            <option value="Belum Lunas">Belum Lunas</option>
+                            <option value="Tertunda">Tertunda</option>
+                        </select>
+                </div>
+                <x-button type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span class="sr-only">Search</span>
+                </x-button>
             </form>
             <div class="relative overflow-auto shadow-md sm:rounded-lg pb-6 max-h-[50vh]">
                 <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -177,33 +179,23 @@
      */
     const eventHandlersSearchTransaction = {
         init: () => {
-            // Debounce search with improved timeout handling
-            let searchTimeout;
+            // Search transaction
             $('#search-transaction').on('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    debug.log('Search', 'Triggering search...');
-                    const searchValue = $(this).val();
-                    SEARCH_TRANSACTION = searchValue;
-                    dataServiceSearchTransaction.fetchData();
-                }, DEBOUNCE_DELAY);
+                SEARCH_TRANSACTION = $(this).val();
             });
 
             // Date range picker
             $('#start-date').on('changeDate', function(e) {
                 START_DATE = $(this).val();
-                dataServiceSearchTransaction.fetchData();
             });
 
             $('#end-date').on('changeDate', function(e) {
                 END_DATE = $(this).val();
-                dataServiceSearchTransaction.fetchData();
             });
 
             // Status search
             $('#status-search-transaction').on('change', function() {
                 STATUS_SEARCH_TRANSACTION = $(this).val();
-                dataServiceSearchTransaction.fetchData();
             });
 
             // Modal open handler
@@ -214,6 +206,12 @@
                 END_DATE = '';
                 dataServiceSearchTransaction.fetchData();
                 $('#search-transaction').val('');
+            });
+
+            // Form submit handler
+            $('#modal-search-transaction form').on('submit', function(e) {
+                e.preventDefault();
+                dataServiceSearchTransaction.fetchData();
             });
 
             // Print transaction
