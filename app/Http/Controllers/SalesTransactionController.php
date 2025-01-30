@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\PaymentType;
 use App\Http\Resources\TransactionResource;
 use App\Services\TransactionService;
 use Illuminate\Http\JsonResponse;
@@ -27,18 +28,21 @@ class SalesTransactionController extends Controller
 
     public function detailview(): View
     {
+        $paymentTypes = PaymentType::all();
+
         return view('pages.inventory.transaction.sales-transaction.view', [
             'title' => 'Detail Transaksi Penjualan',
+            'paymentTypes' => $paymentTypes
         ]);
     }
 
-    public function show(Transaction $transaction): JsonResponse
+    public function show(Transaction $salesTransaction): JsonResponse
     {
-        $transaction->load(['createdBy', 'productTransactions.product', 'productTransactions.unit', 'paymentType', 'recipe']);
+        $salesTransaction->load(['createdBy', 'productTransactions.product', 'productTransactions.unit', 'paymentType', 'recipe']);
 
         return response()->json([
             'success' => true,
-            'data' => new TransactionResource($transaction)
+            'data' => new TransactionResource($salesTransaction)
         ]);
     }
 
