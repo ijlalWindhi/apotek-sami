@@ -51,9 +51,13 @@ class TransactionController extends Controller
         try {
             $filters = [
                 'search' => $request->input('search'),
-                'date' => $request->input('date')
-                    ? \Carbon\Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay()
+                'status' => $request->input('status'),
+                'start_date' => $request->input('start_date')
+                    ? \Carbon\Carbon::createFromFormat('d-m-Y', $request->input('start_date'))->startOfDay()
                     : null,
+                'end_date' => $request->input('end_date')
+                    ? \Carbon\Carbon::createFromFormat('d-m-Y', $request->input('end_date'))->endOfDay()
+                    : null
             ];
 
             $page = $request->input('page', 1);
