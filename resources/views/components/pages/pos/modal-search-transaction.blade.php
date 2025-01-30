@@ -199,6 +199,12 @@
                 dataServiceSearchTransaction.fetchData();
             });
 
+            // Status search
+            $('#status-search-transaction').on('change', function() {
+                STATUS_SEARCH_TRANSACTION = $(this).val();
+                dataServiceSearchTransaction.fetchData();
+            });
+
             // Modal open handler
             $('[data-modal-target="modal-search-transaction"]').on('click', () => {
                 SEARCH_TRANSACTION = '';
