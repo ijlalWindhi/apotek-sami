@@ -35,6 +35,9 @@ export const urlManager = {
         return {
             search: urlParams.get("search") || "",
             date: urlParams.get("date") || "",
+            status: urlParams.get("status") || "",
+            start_date: urlParams.get("start_date") || "",
+            end_date: urlParams.get("end_date") || "",
             page: parseInt(urlParams.get("page")) || 1,
         };
     },
