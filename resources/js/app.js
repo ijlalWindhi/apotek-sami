@@ -22,6 +22,7 @@ import {
     formatDatePrint,
     formattedDataTransaction,
 } from "./pos.js";
+import { salesTransactionUtils } from "./salesTransaction.js";
 import Swal from "sweetalert2";
 
 window.Alpine = Alpine;
@@ -53,5 +54,8 @@ window.productRecipeCalculations = productRecipeCalculations;
 window.priceCalculationsPOS = priceCalculationsPOS;
 window.formatDatePrint = formatDatePrint;
 window.formattedDataTransaction = formattedDataTransaction;
+
+// expose sales transaction related functions to the global scope
+window.salesTransactionUtils = salesTransactionUtils;
 
 Alpine.start();
