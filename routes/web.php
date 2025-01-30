@@ -13,6 +13,7 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SalesTransactionController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -132,6 +133,14 @@ Route::prefix('inventory')
                 Route::post('/purchase-order', 'store')->name('purchaseOrder.store');
                 Route::get('/purchase-order/{purchaseOrder}', 'show')->name('purchaseOrder.show');
                 Route::post('/purchase-order/{purchaseOrder}/payment', 'updatePaymentStatus')->name('purchaseOrder.updatePaymentStatus');
+            });
+
+            // Sales Transaction
+            Route::controller(SalesTransactionController::class)->group(function () {
+                Route::get('/sales-transaction', 'index')->name('salesTransaction.index');
+                Route::get('/sales-transaction/view/{salesTransaction}', 'detailview')->name('salesTransaction.detail');
+                Route::get('/sales-transaction/list', 'getAll')->name('salesTransaction.getAll');
+                Route::get('/sales-transaction/{salesTransaction}', 'show')->name('salesTransaction.show');
             });
         });
     });
