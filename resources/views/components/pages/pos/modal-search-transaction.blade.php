@@ -146,7 +146,7 @@
                     ${transaction?.invoice_number || '-'}
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    ${transaction?.created_at ? new Date(transaction.created_at).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-'}
+                    ${transaction?.created_at ? formatDatePrint(new Date(transaction.created_at)) : '-'}
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <span class="bg-${transaction?.status === "Terbayar" ? 'green' : transaction?.status === "Belum Lunas" ? 'yellow' : 'red'}-100 text-${transaction?.status === "Terbayar" ? 'green' : transaction?.status === "Belum Lunas" ? 'yellow' : 'red'}-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">${transaction.status || "-"}</span>
