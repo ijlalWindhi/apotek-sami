@@ -190,30 +190,40 @@
         receiptWindow.onload = function() {
             // Get all products from the table
             const products = [];
-            const productRows = $("#table-body-product-pos tr").not(
-                ":has(td[colspan])"
-            );
-            productRows.each(function() {
-                const row = $(this);
-                const productId = row.find('input[id^="product_pos_id_"]').val();
-
-                if (productId) {
-                    const name = row.find(`td[id^="product_pos_name_${productId}"]`).text();
-                    const quantity = row.find(`input[id^="product_pos_total_${productId}"]`).val()
-                    const subtotal = row.find(`input[id^="product_pos_subtotal_${productId}"]`).val()
-
+            if (data?.products) {
+                data.products.forEach(product => {
                     products.push({
-                        name,
-                        quantity,
-                        subtotal
+                        name: product.product.name,
+                        quantity: parseInt(product.qty),
+                        subtotal: UIManager.formatCurrency(parseInt(product.subtotal))
                     });
-                }
-            });
+                });
+            } else {
+                const productRows = $("#table-body-product-pos tr").not(
+                    ":has(td[colspan])"
+                );
+                productRows.each(function() {
+                    const row = $(this);
+                    const productId = row.find('input[id^="product_pos_id_"]').val();
+
+                    if (productId) {
+                        const name = row.find(`td[id^="product_pos_name_${productId}"]`).text();
+                        const quantity = row.find(`input[id^="product_pos_total_${productId}"]`).val()
+                        const subtotal = row.find(`input[id^="product_pos_subtotal_${productId}"]`).val()
+
+                        products.push({
+                            name,
+                            quantity,
+                            subtotal
+                        });
+                    }
+                });
+            }
 
             // Update receipt content
             const doc = receiptWindow.document;
             doc.getElementById('invoice-number').innerText = data?.invoice_number || '-';
-            doc.getElementById('transaction-date').innerText = formatDatePrint(new Date());
+            doc.getElementById('transaction-date').innerText = formatDatePrint(new Date(data.created_at));
             doc.getElementById('cashier-name').innerText = '{{ auth()->user()->name }}';
 
             // Update products table
