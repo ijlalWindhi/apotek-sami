@@ -68,8 +68,8 @@ export const uiManager = {
      * Shows error message
      * @param {string} message - Error message to display
      */
-    showError: (message) => {
-        $("#table-body").html(table.error(message));
+    showError: (message, id_table = "#table-body") => {
+        $(id_table).html(table.error(message));
     },
 
     /**
