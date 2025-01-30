@@ -91,10 +91,6 @@
      * Data Fetching and Processing
      */
     const dataServiceSearchTransaction = {
-        /**
-         * Fetches tax data from the server
-         * @param {string} search - Search term
-         */
         fetchData: () => {
             uiManager.showLoading("#table-body-search-transaction");
 
