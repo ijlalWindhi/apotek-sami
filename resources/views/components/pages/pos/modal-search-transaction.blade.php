@@ -214,6 +214,23 @@
                 dataServiceSearchTransaction.fetchData();
                 $('#search-transaction').val('');
             });
+
+            // Print transaction
+            $(document).on('click', '[id^="btn-print-transaction-"]', function() {
+                const transactionId = $(this).data('id');
+                const transaction = LIST_DATA_TRANSACTION.find((item) => item.id === transactionId);
+
+                if (!transaction) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal mencetak transaksi',
+                        text: 'Transaksi tidak ditemukan. Silahkan coba lagi.',
+                    })
+                    return;
+                }
+
+                printReceipt(transaction);
+            });
         },
     };
 
