@@ -27,12 +27,13 @@
                     </div>
                     <div class="w-full">
                         <label for="date-range-picker" class="text-xs">Tanggal</label>
-                        <div id="date-range-picker" date-rangepicker class="flex items-center">
-                            <input id="start-date" name="start-date" type="text" datepicker-format="dd-mm-yyyy"
+                        <div id="date-range-picker" date-rangepicker datepicker-format="dd-mm-yyyy"
+                            class="flex items-center">
+                            <input id="start-date" name="start-date" type="text"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Pilih tanggal mulai">
                             <span class="mx-1 text-xs text-gray-500">ke</span>
-                            <input id="end-date" name="end-date" type="text" datepicker-format="dd-mm-yyyy"
+                            <input id="end-date" name="end-date" type="text"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Pilih tanggal selesai">
                         </div>
