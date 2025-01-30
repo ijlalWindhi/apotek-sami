@@ -70,7 +70,7 @@ class TransactionService
         $query->orderBy('created_at', 'desc');
 
         // Include relationships
-        $query->with(['created_by', 'productTransactions.product', 'productTransactions.unit', 'paymentType', 'recipe']);
+        $query->with(['createdBy', 'productTransactions.product', 'productTransactions.unit', 'paymentType', 'recipe']);
 
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
