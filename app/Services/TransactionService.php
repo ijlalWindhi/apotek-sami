@@ -58,12 +58,17 @@ class TransactionService
             });
         }
 
-        // Filter berdasarkan tanggal
-        if (!empty($filters['date']) && $filters['date'] instanceof \Carbon\Carbon) {
-            $dateString = $filters['date']->format('Y-m-d');
-            $query->where(function ($q) use ($dateString) {
-                $q->whereDate('created_at', '=', $dateString);
-            });
+        // Filter berdasarkan status
+        if (!empty($filters['status']) && $filters['status'] !== 'Semua') {
+            $query->where('status', $filters['status']);
+        }
+
+        // Filter berdasarkan range tanggal
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $query->whereBetween('created_at', [
+                $filters['start_date'],
+                $filters['end_date']
+            ]);
         }
 
         // Tambahkan pengurutan default
