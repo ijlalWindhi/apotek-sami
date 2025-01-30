@@ -261,8 +261,8 @@ export const priceCalculationsPOS = {
             parseInt($("#paid_amount").val()?.replace(/[^\d]/g, "")) || 0;
         const change = Math.max(0, customerPayment - finalTotal);
 
-        $(".text-red-500 p").text(UIManager.formatCurrency(change));
-        $(".text-green-500 p").text(UIManager.formatCurrency(finalTotal));
+        $("#change_amount").text(UIManager.formatCurrency(change));
+        $("#total_amount").text(UIManager.formatCurrency(finalTotal));
     },
 
     calculateProductTotals: () => {
