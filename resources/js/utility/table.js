@@ -23,7 +23,7 @@ export const table = {
 
     error: (message) => `
         <tr>
-            <td colspan="4" class="px-6 py-4 text-center text-red-600">
+            <td colspan="100" class="px-6 py-4 text-center text-red-600">
                 <i class="fa-solid fa-triangle-exclamation mr-2"></i>
                 ${utils.escapeHtml(message)}
             </td>
