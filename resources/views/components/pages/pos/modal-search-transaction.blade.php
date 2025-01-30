@@ -161,14 +161,30 @@
                     ${transaction?.recipe?.name || '-'}
                 </td>
                 <td class="px-3 py-2 flex gap-2 items-center">
-                    <button
+                    <x-button
                         id="btn-print-transaction-${transaction.id}"
-                        class="font-medium text-xs text-white bg-yellow-500 hover:bg-yellow-600 h-8 w-8 rounded-md"
                         data-id="${transaction.id}"
-                        type="button"
+                        color="yellow"
+                        size="sm"
                     >
                         <i class="fa-solid fa-print"></i>
-                    </button>
+                    </x-button>
+                    <x-button
+                        id="btn-detail-transaction-${transaction.id}"
+                        data-id="${transaction.id}"
+                        color="blue"
+                        size="sm"
+                    >
+                        <i class="fa-solid fa-pencil"></i>
+                    </x-button>
+                    <x-button
+                        id="btn-return-transaction-${transaction.id}"
+                        data-id="${transaction.id}"
+                        color="red"
+                        size="sm"
+                    >
+                        <i class="fa-solid fa-rotate-left mr-2"></i> Return
+                    </x-button>
                 </td>
             </tr>
         `,
