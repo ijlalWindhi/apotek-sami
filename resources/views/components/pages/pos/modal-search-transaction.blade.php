@@ -43,7 +43,7 @@
                             name="status-search-transaction">
                             <option value="Semua" selected>Semua</option>
                             <option value="Terbayar">Terbayar</option>
-                            <option value="Belum Lunas">Belum Lunas</option>
+                            <option value="Proses">Proses</option>
                             <option value="Tertunda">Tertunda</option>
                         </select>
                 </div>
@@ -152,7 +152,7 @@
                     ${transaction?.created_at ? formatDatePrint(new Date(transaction.created_at)) : '-'}
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
-                    <span class="bg-${transaction?.status === "Terbayar" ? 'green' : transaction?.status === "Belum Lunas" ? 'yellow' : 'red'}-100 text-${transaction?.status === "Terbayar" ? 'green' : transaction?.status === "Belum Lunas" ? 'yellow' : 'red'}-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">${transaction.status || "-"}</span>
+                    <span class="bg-${transaction?.status === "Terbayar" ? 'green' : transaction?.status === "Proses" ? 'yellow' : 'red'}-100 text-${transaction?.status === "Terbayar" ? 'green' : transaction?.status === "Proses" ? 'yellow' : 'red'}-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">${transaction.status || "-"}</span>
                 </td>
                 <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${transaction?.customer_type || '-'}

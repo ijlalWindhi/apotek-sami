@@ -91,7 +91,7 @@
                             class="text-red-500">*</span> <span class="text-gray-500">[CTRL+ALT+T]</span></label>
                     <select class="js-example-basic-single" id="status_transaction" name="status_transaction">
                         <option value="Terbayar" selected>Terbayar</option>
-                        <option value="Belum Lunas">Belum Lunas</option>
+                        <option value="Proses">Proses</option>
                         <option value="Tertunda">Tertunda</option>
                     </select>
                 </div>

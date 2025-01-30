@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('recipe_id')->nullable()->constrained('m_recipe')->nullOnDelete();
             $table->text('notes')->nullable();
             $table->foreignId('payment_type_id')->constrained('m_payment_type')->onDelete('cascade');
-            $table->enum('status', ['Terbayar', 'Belum Lunas', 'Tertunda'])->default('Terbayar');
+            $table->enum('status', ['Terbayar', 'Proses', 'Tertunda'])->default('Terbayar');
             $table->string('invoice_number')->unique();
             $table->decimal('discount', 12, 2)->default(0);
             $table->enum('discount_type', ['Percentage', 'Nominal'])->default('Percentage');

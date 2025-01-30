@@ -22,7 +22,7 @@ class TransactionRequest extends FormRequest
             'recipe_id' => 'nullable|exists:m_recipe,id',
             'notes' => 'nullable|string',
             'payment_type_id' => 'required|exists:m_payment_type,id',
-            'status' => ['required', Rule::in(['Terbayar', 'Belum Lunas', 'Tertunda'])],
+            'status' => ['required', Rule::in(['Terbayar', 'Proses', 'Tertunda'])],
             'discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'discount_type' => ['required', Rule::in(['Percentage', 'Nominal'])],
             'nominal_discount' => self::NUMERIC_MIN_ZERO,
