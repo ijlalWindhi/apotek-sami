@@ -301,20 +301,15 @@
 
         setActionButtons: (status) => {
             const buttons = {
-                "Proses": `<x-button color="green" class="w-full md:w-32" id="btn-payment">Bayar</x-button>`,
-                "Tertunda": `
-                <x-button color="green" class="w-full md:w-32" id="btn-payment">Bayar</x-button>
-                <x-button color="yellow" class="w-full md:w-32" id="btn-process">Proses</x-button>
-            `
+                "Bayar": `<x-button color="green" class="w-full md:w-32" id="btn-payment">Bayar</x-button>`,
+                "Proses": `<x-button color="yellow" class="w-full md:w-32" id="btn-process">Proses</x-button>`
             };
 
-            if (buttons[status]) {
-                if (status === "Tertunda") {
-                    $('#placeholder-payment').html(buttons[status].split('\n')[0]);
-                    $('#placeholder-process').html(buttons[status].split('\n')[1]);
-                } else {
-                    $('#placeholder-payment').html(buttons[status]);
-                }
+            if (status === "Tertunda") {
+                $('#placeholder-payment').html(buttons["Bayar"]);
+                $('#placeholder-process').html(buttons["Proses"]);
+            } else {
+                $('#placeholder-payment').html(buttons["Bayar"]);
             }
         }
     };
