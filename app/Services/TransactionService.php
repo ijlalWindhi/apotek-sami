@@ -79,4 +79,12 @@ class TransactionService
 
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
+
+    public function updateStatusProsesToTerbayar(Transaction $salesTransaction): Transaction
+    {
+        $salesTransaction->status = "Terbayar";
+        $salesTransaction->save();
+
+        return $salesTransaction;
+    }
 }
