@@ -34,6 +34,7 @@ class TransactionRequest extends FormRequest
 
             // Validasi untuk products
             'products' => 'required|array|min:1',
+            'products.*.id' => 'nullable|exists:m_product_transaction,id',
             'products.*.product' => 'required|exists:m_product,id',
             'products.*.unit' => 'required|exists:m_unit,id',
             'products.*.qty' => 'required|integer|min:1',
