@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\PaymentType;
+use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Services\TransactionService;
 use Illuminate\Http\JsonResponse;
@@ -59,6 +60,24 @@ class SalesTransactionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update payment status',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateStatus(TransactionRequest $request, Transaction $salesTransaction): JsonResponse
+    {
+        try {
+            $transaction = $this->transactionSercive->updateStatus($salesTransaction, $request->validated());
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaction updated successfully',
+                'data' => new TransactionResource($transaction)
+            ], 200); // Changed to 200 for successful update
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update transaction',
                 'error' => $e->getMessage()
             ], 500);
         }
