@@ -66,7 +66,7 @@
                 <label for="status_transaction"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status
                     <span class="text-red-500">*</span></label>
-                <select class="js-example-basic-single" id="status_transaction" name="status_transaction">
+                <select class="js-example-basic-single" id="status_transaction" name="status_transaction" disabled>
                     <option value="Terbayar" selected>Terbayar</option>
                     <option value="Proses">Proses</option>
                     <option value="Tertunda">Tertunda</option>
