@@ -167,6 +167,7 @@
      */
     const url = window.location.pathname;
     const salesTransactionId = url.split('/').pop();
+    let resData = {};
 
     /**
      * Data Fetching and Processing
@@ -190,6 +191,7 @@
                     throw new Error('Invalid response format');
                 }
 
+                resData = response.data;
                 const data = response.data;
                 const form = $('form');
                 const isReadOnly = data.status === "Proses" || data.status === "Terbayar";
@@ -236,6 +238,48 @@
                 });
 
                 $('#btn-payment').remove();
+            } catch (error) {
+                handleFetchError(error);
+                uiManager.showError('Gagal melakukan pembayaran. Silahkan coba lagi.');
+            } finally {
+                $('#view-sales-transaction .fixed').remove();
+            }
+        },
+
+        updateStatus: async (data) => {
+            $("#view-sales-transaction").prepend(uiManager.showScreenLoader());
+
+            try {
+                const response = await $.ajax({
+                    url: `/inventory/transaction/sales-transaction/${salesTransactionId}/updateStatus`,
+                    method: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    processData: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'X-HTTP-Method-Override': 'PUT',
+                    }
+
+                });
+
+                if (!response?.success) {
+                    throw new Error('Invalid response format');
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: `Berhasil mengubah status menjadi ${data.status}`,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                if (data.status === "Terbayar") {
+                    $('#btn-payment').remove();
+                    $('#btn-process').remove();
+                } else if (data.status === "Proses") {
+                    $('#btn-process').remove();
+                }
             } catch (error) {
                 handleFetchError(error);
                 uiManager.showError('Gagal melakukan pembayaran. Silahkan coba lagi.');
@@ -358,7 +402,31 @@
          */
         init: () => {
             $('body').on('click', '#btn-payment', function() {
-                dataServiceTransaction.updateStatusProsesToTerbayar();
+                if (resData?.status === "Proses") {
+                    dataServiceTransaction.updateStatusProsesToTerbayar();
+                } else if (resData?.status === "Tertunda") {
+                    event.preventDefault();
+                    const data = formattedDataSalesTransaction({
+                        created_by: resData.created_by.id,
+                    });
+                    const payload = {
+                        ...data,
+                        status: "Terbayar"
+                    };
+                    dataServiceTransaction.updateStatus(payload);
+                }
+            });
+
+            $('body').on('click', '#btn-process', function() {
+                event.preventDefault();
+                const data = formattedDataSalesTransaction({
+                    created_by: resData.created_by.id,
+                });
+                const payload = {
+                    ...data,
+                    status: "Proses"
+                };
+                dataServiceTransaction.updateStatus(payload);
             });
         },
     };
