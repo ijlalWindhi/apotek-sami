@@ -279,15 +279,32 @@
                         throw new Error('Invalid response format');
                     }
 
-                    Swal.fire({
-                        icon: "success",
-                        title: "Berhasil menambahkan data",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-
-                    // Print receipt
-                    printReceipt(response?.data);
+                    if (response?.data?.status === 'Terbayar') {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Berhasil menambahkan data",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        // Print receipt
+                        printReceipt(response?.data);
+                    } else if (response?.data?.status === 'Proses' || response?.data?.status ===
+                        'Tertunda') {
+                        Swal.fire({
+                            title: 'Berhasil menambahkan data',
+                            html: '<p class="text-sm">Apakah anda ingin mencetak struk pembelian?</p>',
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya',
+                            cancelButtonText: 'Tidak',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                printReceipt(response?.data);
+                            } else {
+                                resetForm();
+                            }
+                        })
+                    }
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
