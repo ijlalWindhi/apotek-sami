@@ -21,6 +21,7 @@ import {
     priceCalculationsPOS,
     formatDatePrint,
     formattedDataTransaction,
+    formattedDataSalesTransaction,
 } from "./pos.js";
 import { salesTransactionUtils } from "./salesTransaction.js";
 import Swal from "sweetalert2";
@@ -54,6 +55,7 @@ window.productRecipeCalculations = productRecipeCalculations;
 window.priceCalculationsPOS = priceCalculationsPOS;
 window.formatDatePrint = formatDatePrint;
 window.formattedDataTransaction = formattedDataTransaction;
+window.formattedDataSalesTransaction = formattedDataSalesTransaction;
 
 // expose sales transaction related functions to the global scope
 window.salesTransactionUtils = salesTransactionUtils;
