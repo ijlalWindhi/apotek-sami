@@ -29,7 +29,7 @@
                     </button>
                 </div>
             </div>
-            <div class="relative overflow-x-auto shadow-md sm:rounded-lg pb-6">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg pb-6 max-h-[50vh]">
                 <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -60,7 +60,7 @@
     // Constants
     const PAGINATION_DISPLAY_RANGE = 2;
     const DEBOUNCE_DELAY = 500;
-    const PER_PAGE = 10;
+    const PER_PAGE = 99999;
     const TEXT_TRUNCATE_LENGTH = 40;
 
     /**
