@@ -343,7 +343,7 @@
             if (status === "Tertunda") {
                 $('#placeholder-payment').html(buttons["Bayar"]);
                 $('#placeholder-process').html(buttons["Proses"]);
-            } else {
+            } else if (status === "Proses") {
                 $('#placeholder-payment').html(buttons["Bayar"]);
             }
         }
