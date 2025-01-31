@@ -237,7 +237,9 @@
                     timer: 1500
                 });
 
-                $('#btn-payment').remove();
+                setTimeout(() => {
+                    window.location.href = '/inventory/transaction/sales-transaction';
+                }, 500);
             } catch (error) {
                 handleFetchError(error);
                 uiManager.showError('Gagal melakukan pembayaran. Silahkan coba lagi.');
@@ -274,12 +276,9 @@
                     timer: 1500
                 });
 
-                if (data.status === "Terbayar") {
-                    $('#btn-payment').remove();
-                    $('#btn-process').remove();
-                } else if (data.status === "Proses") {
-                    $('#btn-process').remove();
-                }
+                setTimeout(() => {
+                    window.location.href = '/inventory/transaction/sales-transaction';
+                }, 500);
             } catch (error) {
                 handleFetchError(error);
                 uiManager.showError('Gagal melakukan pembayaran. Silahkan coba lagi.');
