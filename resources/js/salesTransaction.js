@@ -88,6 +88,8 @@ export const salesTransactionUtils = {
             value="${product.product.smallest_stock}">
         <input type="hidden" name="product_pos_largest_stock_${product.product.id}" id="product_pos_largest_stock_${product.product.id}"
             value="${product.product.largest_stock}">
+        <input type="hidden" name="product_pos_sales_transaction_id_${product.product.id}" id="product_pos_sales_transaction_id_${product.product.id}"
+            value="${product.id}">
     `;
     },
 
