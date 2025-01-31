@@ -142,6 +142,7 @@ Route::prefix('inventory')
                 Route::get('/sales-transaction/list', 'getAll')->name('salesTransaction.getAll');
                 Route::get('/sales-transaction/{salesTransaction}', 'show')->name('salesTransaction.show');
                 Route::put('/sales-transaction/{salesTransaction}/updateStatusProsesToTerbayar', 'updateStatusProsesToTerbayar')->name('salesTransaction.updateStatusProsesToTerbayar');
+                Route::put('/sales-transaction/{salesTransaction}/updateStatus', 'updateStatus')->name('salesTransaction.updateStatus');
             });
         });
     });
