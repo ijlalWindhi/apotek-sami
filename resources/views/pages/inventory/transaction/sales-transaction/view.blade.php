@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <form id="view-purchase-order" class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full">
+    <form id="view-sales-transaction" class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start justify-between gap-4">
             <div>
@@ -173,7 +173,7 @@
      */
     const dataServiceTransaction = {
         fetchData: async () => {
-            $("#view-purchase-order").prepend(uiManager.showScreenLoader());
+            $("#view-sales-transaction").prepend(uiManager.showScreenLoader());
 
             try {
                 const response = await $.ajax({
@@ -205,7 +205,42 @@
                 handleFetchError(error);
                 uiManager.showError('Gagal mengambil data Sales Transaction. Silahkan coba lagi.');
             } finally {
-                $('#view-purchase-order .fixed').remove();
+                $('#view-sales-transaction .fixed').remove();
+            }
+        },
+
+        updateStatusProsesToTerbayar: async () => {
+            $("#view-sales-transaction").prepend(uiManager.showScreenLoader());
+
+            try {
+                const response = await $.ajax({
+                    url: `/inventory/transaction/sales-transaction/${salesTransactionId}/updateStatusProsesToTerbayar`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    processData: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'X-HTTP-Method-Override': 'PUT',
+                    }
+                });
+
+                if (!response?.success) {
+                    throw new Error('Invalid response format');
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Berhasil melakukan pembayaran",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                $('#btn-payment').remove();
+            } catch (error) {
+                handleFetchError(error);
+                uiManager.showError('Gagal melakukan pembayaran. Silahkan coba lagi.');
+            } finally {
+                $('#view-sales-transaction .fixed').remove();
             }
         },
 
@@ -317,13 +352,13 @@
     /**
      * Event Handlers
      */
-    const eventHandlersPurchaseOrder = {
+    const eventHandlersTransaction = {
         /**
          * Initializes all event handlers
          */
         init: () => {
             $('body').on('click', '#btn-payment', function() {
-                dataServiceTransaction.updateStatusPayment();
+                dataServiceTransaction.updateStatusProsesToTerbayar();
             });
         },
     };
@@ -331,7 +366,7 @@
     /**
      * Initialize the detail Sales Transaction page
      */
-    function initPurchaseOrderDetail() {
+    function initTransactionDetail() {
         debug.log('Init', 'Initializing Sales Transaction detail...');
 
         dataServiceTransaction.fetchData();
@@ -339,8 +374,8 @@
 
     $(document).ready(function() {
         debug.log('Ready', 'Document ready, initializing...');
-        initPurchaseOrderDetail();
-        eventHandlersPurchaseOrder.init();
+        initTransactionDetail();
+        eventHandlersTransaction.init();
         priceCalculationsPOS.init();
 
         // Initialize select2
