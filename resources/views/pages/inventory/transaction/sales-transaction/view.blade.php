@@ -138,13 +138,13 @@
             <div class="text-red-500">
                 <label for="change_amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
                     Kembalian</label>
-                <p class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                <p class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                     id="change_amount">0</p>
             </div>
             <div class="text-green-500">
                 <label for="total_amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
                     Tagihan</label>
-                <p class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                <p class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                     id="total_amount">0</p>
             </div>
         </div>
