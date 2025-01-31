@@ -449,3 +449,136 @@ export function formattedDataTransaction({ created_by }) {
 
     return requestData;
 }
+
+export function formattedDataSalesTransaction({ created_by }) {
+    const formDataObj = {};
+    let discount = 0;
+    let discountType = "Nominal";
+    let total_before_discount = 0;
+    let nominal_discount = 0;
+    const paid_amount =
+        parseInt($("#paid_amount").val()?.replace(/[^\d]/g, "")) || 0;
+    const change_amount =
+        parseInt(
+            $("#change_amount").text()?.replace("Rp", "")?.replace(/[^\d]/g, "")
+        ) || 0;
+    const total_amount =
+        parseInt(
+            $("#total_amount").text()?.replace("Rp", "")?.replace(/[^\d]/g, "")
+        ) || 0;
+
+    // Initialize products array
+    const products = [];
+    const productRows = $("#table-body-product-pos tr").not(
+        ":has(td[colspan])"
+    );
+
+    // Process each product row
+    productRows.each(function () {
+        const row = $(this);
+        const productId = row.find('input[id^="product_pos_id_"]').val();
+        const id = row
+            .find('input[id^="product_pos_sales_transaction_id_"]')
+            .val();
+
+        if (productId) {
+            const qty =
+                parseInt(
+                    row
+                        .find(`input[id^="product_pos_total_${productId}"]`)
+                        .val()
+                ) || 0;
+            const price =
+                parseInt(
+                    row
+                        .find(`input[id^="product_pos_price_${productId}"]`)
+                        .val()
+                        ?.replace(/[^\d]/g, "")
+                ) || 0;
+            const tuslah =
+                parseInt(
+                    row
+                        .find(`input[id^="product_pos_tuslah_${productId}"]`)
+                        .val()
+                        ?.replace(/[^\d]/g, "")
+                ) || 0;
+            const discountInput = row
+                .find(`input[id^="product_pos_discount_${productId}"]`)
+                .val();
+            const subtotal =
+                parseInt(
+                    row
+                        .find(`input[id^="product_pos_subtotal_${productId}"]`)
+                        .val()
+                        ?.replace(/[^\d]/g, "")
+                ) || 0;
+
+            let discount = 0;
+            let discountType = "Nominal";
+
+            if (discountInput) {
+                if (discountInput.endsWith("%")) {
+                    discount = parseFloat(discountInput || 0);
+                    discountType = "Percentage";
+                } else {
+                    discount = parseInt(
+                        discountInput?.replace(/[^\d]/g, "") || 0
+                    );
+                }
+            }
+
+            total_before_discount += subtotal;
+            products.push({
+                id: id,
+                product: productId,
+                qty: qty,
+                price: price,
+                tuslah: tuslah,
+                discount: discount,
+                discount_type: discountType,
+                subtotal: subtotal,
+                unit: row
+                    .find(`select[id^="product_pos_unit_${productId}"]`)
+                    .val(),
+            });
+        }
+    });
+
+    // Calculate discount and discount type
+    if ($("#discount").val()) {
+        if ($("#discount").val().endsWith("%")) {
+            discount = parseFloat($("#discount").val() || 0);
+            discountType = "Percentage";
+            nominal_discount = Math.round(
+                total_before_discount * (discount / 100)
+            );
+        } else {
+            discount = parseInt(
+                $("#discount").val()?.replace(/[^\d]/g, "") || 0
+            );
+            nominal_discount = discount;
+        }
+    }
+
+    formDataObj["customer_type"] = $("#customer_type").val();
+    formDataObj["recipe_id"] = $("#recipe").attr("data-id");
+    formDataObj["notes"] = $("#notes").val();
+    formDataObj["payment_type_id"] = $("#payment_type").val();
+    formDataObj["status"] = $("#status_transaction").val();
+    formDataObj["discount"] = discount;
+    formDataObj["discount_type"] = discountType;
+    formDataObj["nominal_discount"] = nominal_discount;
+    formDataObj["paid_amount"] = paid_amount;
+    formDataObj["change_amount"] = change_amount;
+    formDataObj["total_amount"] = total_amount;
+    formDataObj["total_before_discount"] = total_before_discount;
+    formDataObj["created_by"] = created_by;
+
+    // Build the final request object
+    const requestData = {
+        ...formDataObj,
+        products: products,
+    };
+
+    return requestData;
+}
