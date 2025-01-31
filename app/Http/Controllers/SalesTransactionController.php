@@ -46,6 +46,24 @@ class SalesTransactionController extends Controller
         ]);
     }
 
+    public function updateStatusProsesToTerbayar(Transaction $salesTransaction): JsonResponse
+    {
+        try {
+            $salesTransaction = $this->transactionSercive->updateStatusProsesToTerbayar($salesTransaction);
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment status updated successfully',
+                'data' => new TransactionResource($salesTransaction)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update payment status',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getAll(Request $request): JsonResponse
     {
         try {
