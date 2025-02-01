@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\ProductTransaction;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,9 @@ class TransactionService
                             'discount_type' => $product['discount_type'],
                             'subtotal' => $product['subtotal'],
                         ]);
+
+                        // Update stok produk
+                        $this->reduceProductStock($product);
                     }
                 }
 
@@ -45,6 +49,41 @@ class TransactionService
             Log::error('Failed to create transaction: ' . $e->getMessage());
             throw $e;
         }
+    }
+
+    private function reduceProductStock(array $productData): void
+    {
+        $product = Product::findOrFail($productData['product']);
+
+        if ($product->largest_unit == $productData['unit']) {
+            $this->reduceLargestUnitStock($product, $productData['qty']);
+        } else {
+            $this->reduceSmallestUnitStock($product, $productData['qty']);
+        }
+
+        $product->save();
+    }
+
+    private function reduceLargestUnitStock(Product $product, float $qty): void
+    {
+        // Pastikan stok mencukupi sebelum pengurangan
+        if ($product->largest_stock < $qty) {
+            throw new \Exception("Insufficient stock for product ID: {$product->id}");
+        }
+
+        $product->largest_stock -= $qty;
+        $product->smallest_stock -= ($qty * $product->conversion_value);
+    }
+
+    private function reduceSmallestUnitStock(Product $product, float $qty): void
+    {
+        // Pastikan stok mencukupi sebelum pengurangan
+        if ($product->smallest_stock < $qty) {
+            throw new \Exception("Insufficient stock for product ID: {$product->id}");
+        }
+
+        $product->smallest_stock -= $qty;
+        $product->largest_stock -= ($qty / $product->conversion_value);
     }
 
     public function getList(array $filters = [], int $page = 1, int $perPage = 10): LengthAwarePaginator
@@ -88,7 +127,6 @@ class TransactionService
         return $salesTransaction;
     }
 
-    // TransactionService.php
     public function updateStatus(Transaction $transaction, array $data): Transaction
     {
         try {
@@ -113,7 +151,7 @@ class TransactionService
                     // Get existing product transactions
                     $existingProducts = $transaction->productTransactions->keyBy('id');
 
-                    foreach ($data['products'] as $index => $productData) {
+                    foreach ($data['products'] as $productData) {
                         $productTransaction = null;
 
                         // If we have an ID in the product data, try to find existing record
@@ -122,6 +160,13 @@ class TransactionService
                         }
 
                         if ($productTransaction) {
+                            // Kembalikan stok lama
+                            $this->restoreProductStock([
+                                'product' => $productTransaction->product_id,
+                                'unit' => $productTransaction->unit_id,
+                                'qty' => $productTransaction->qty
+                            ]);
+
                             // Update existing product transaction
                             $productTransaction->update([
                                 'product_id' => $productData['product'],
@@ -133,6 +178,9 @@ class TransactionService
                                 'discount_type' => $productData['discount_type'],
                                 'subtotal' => $productData['subtotal'],
                             ]);
+
+                            // Kurangi stok baru
+                            $this->reduceProductStock($productData);
 
                             // Remove from existing products collection to track which ones to delete
                             $existingProducts->forget($productTransaction->id);
@@ -149,7 +197,19 @@ class TransactionService
                                 'discount_type' => $productData['discount_type'],
                                 'subtotal' => $productData['subtotal'],
                             ]);
+
+                            // Kurangi stok untuk produk baru
+                            $this->reduceProductStock($productData);
                         }
+                    }
+
+                    // Kembalikan stok untuk produk yang dihapus
+                    foreach ($existingProducts as $removedProduct) {
+                        $this->restoreProductStock([
+                            'product' => $removedProduct->product_id,
+                            'unit' => $removedProduct->unit_id,
+                            'qty' => $removedProduct->qty
+                        ]);
                     }
 
                     // Soft delete any remaining products that weren't in the update data
@@ -165,5 +225,20 @@ class TransactionService
             Log::error('Failed to update transaction: ' . $e->getMessage());
             throw $e;
         }
+    }
+
+    private function restoreProductStock(array $productData): void
+    {
+        $product = Product::findOrFail($productData['product']);
+
+        if ($product->largest_unit == $productData['unit']) {
+            $product->largest_stock += $productData['qty'];
+            $product->smallest_stock += ($productData['qty'] * $product->conversion_value);
+        } else {
+            $product->smallest_stock += $productData['qty'];
+            $product->largest_stock += ($productData['qty'] / $product->conversion_value);
+        }
+
+        $product->save();
     }
 }
