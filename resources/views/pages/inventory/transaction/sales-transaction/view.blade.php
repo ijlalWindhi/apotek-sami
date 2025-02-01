@@ -290,20 +290,20 @@
         setFormValues: (form, data, isReadOnly = false) => {
             // Separate regular form fields and display-only fields
             const formFields = {
-                'invoice_number': data.invoice_number,
-                'customer_type': data.customer_type,
-                'recipe': data.recipe.name || '-',
-                'created_at': data.created_at,
-                'created_by': data.created_by.name || '-',
-                'notes': data.notes,
-                'status': data.status,
-                'payment_type': data.payment_type.id,
-                'qty_total': data.qty_total,
-                'discount': data.discount_type === 'Percentage' ?
-                    parseInt(data.discount) + '%' : UIManager.formatCurrency(data.discount),
-                'nominal_discount': UIManager.formatCurrency(data.nominal_discount),
-                'total_before_discount': UIManager.formatCurrency(data.total_before_discount),
-                'paid_amount': UIManager.formatCurrency(data.paid_amount),
+                'invoice_number': data?.invoice_number || '-',
+                'customer_type': data?.customer_type || '-',
+                'recipe': data?.recipe?.name || '-',
+                'created_at': data?.created_at || '-',
+                'created_by': data?.created_by?.name || '-',
+                'notes': data?.notes,
+                'status': data?.status,
+                'payment_type': data?.payment_type?.id,
+                'qty_total': data?.qty_total || 0,
+                'discount': data?.discount_type === 'Percentage' ?
+                    parseInt(data?.discount || 0) + '%' : UIManager.formatCurrency(data?.discount || 0),
+                'nominal_discount': UIManager.formatCurrency(data?.nominal_discount || 0),
+                'total_before_discount': UIManager.formatCurrency(data?.total_before_discount || 0),
+                'paid_amount': UIManager.formatCurrency(data?.paid_amount || 0),
             };
 
             // Display-only fields that use <p> tags
