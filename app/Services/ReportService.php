@@ -79,10 +79,12 @@ class ReportService
             'penjualan' => $sales,
             'diskon_penjualan' => $salesDiscount,
             // 'retur_penjualan' => $salesReturns,
+            'retur_penjualan' => 0,
             'penjualan_bersih' => $netSales,
             'harga_pokok_pembelian' => $cogs,
             'laba_kotor' => $grossProfit,
             // 'penyesuaian_stock' => $stockAdjustments,
+            'penyesuaian_stock' => 0,
             'keuntungan_apotek' => $pharmacyProfit
         ];
     }
