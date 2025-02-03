@@ -67,14 +67,25 @@ class ReportService
         $netSales = ($totalSales + $totalTuslah) - $salesDiscount;
 
         // 5. Calculate COGS (Harga Pokok Pembelian)
-        $cogs = ProductPurchaseOrder::join('m_purchase_order', 'm_purchase_order.id', '=', 'm_product_purchase_order.purchase_order_id')
-            ->where('m_purchase_order.payment_status', 'Lunas')
-            ->whereBetween('m_purchase_order.order_date', $dateRange)
-            ->where($productId ? ['m_product_purchase_order.product_id' => $productId] : [])
-            ->sum(DB::raw('m_product_purchase_order.qty * m_product_purchase_order.price'));
+        $cogs = ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
+            ->join('m_product', 'm_product.id', '=', 'm_product_transaction.product_id')
+            ->where('m_transaction.status', 'Terbayar')
+            ->whereBetween('m_transaction.created_at', $dateRange)
+            ->where($productCondition)
+            ->select(DB::raw('
+                SUM(
+                    CASE 
+                        WHEN m_product_transaction.unit_id = m_product.smallest_unit 
+                        THEN (m_product_transaction.qty * m_product.purchase_price / m_product.conversion_value)
+                        ELSE (m_product_transaction.qty * m_product.purchase_price)
+                    END
+                ) as total_cogs
+            '))
+            ->first();
+        $totalCogs = $cogs->total_cogs ?? 0;
 
         // 6. Calculate Gross Profit (Laba Kotor)
-        $grossProfit = $netSales - $cogs;
+        $grossProfit = $netSales - $totalCogs;
 
         // 7. Calculate Stock Adjustments (Penyesuaian Stock)
         // $stockAdjustments = StockAdjustment::whereBetween('created_at', $dateRange)
@@ -95,7 +106,7 @@ class ReportService
             // 'retur_penjualan' => round($salesReturns, 2),
             'retur_penjualan' => 0,
             'penjualan_bersih' => round($netSales, 2),
-            'harga_pokok_pembelian' => round($cogs, 2),
+            'harga_pokok_pembelian' => round($totalCogs, 2),
             'laba_kotor' => round($grossProfit, 2),
             // 'penyesuaian_stock' => round($stockAdjustments, 2),
             'penyesuaian_stock' => 0,
