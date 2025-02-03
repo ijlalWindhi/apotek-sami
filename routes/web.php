@@ -150,6 +150,7 @@ Route::prefix('inventory')
             Route::controller(ReportController::class)->group(function () {
                 Route::get('/report', 'index')->name('report.index');
                 Route::get('/report/list', 'getAll')->name('report.getAll');
+                Route::get('/report/export', 'export')->name('report.export');
             });
         });
     });
