@@ -178,8 +178,8 @@
 
         // Initial data fetch with all parameters
         dataServiceReport.fetchData(
-            params.start_date || '',
-            params.end_date || '',
+            params.start_date || formattedDate,
+            params.end_date || formattedDate,
             params.product_id || '',
         );
     }
