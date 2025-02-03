@@ -14,6 +14,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SalesTransactionController;
+use App\Http\Controllers\ReportController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -143,6 +144,12 @@ Route::prefix('inventory')
                 Route::get('/sales-transaction/{salesTransaction}', 'show')->name('salesTransaction.show');
                 Route::put('/sales-transaction/{salesTransaction}/updateStatusProsesToTerbayar', 'updateStatusProsesToTerbayar')->name('salesTransaction.updateStatusProsesToTerbayar');
                 Route::put('/sales-transaction/{salesTransaction}/updateStatus', 'updateStatus')->name('salesTransaction.updateStatus');
+            });
+
+            // Report
+            Route::controller(ReportController::class)->group(function () {
+                Route::get('/report', 'index')->name('report.index');
+                Route::get('/report/list', 'getAll')->name('report.getAll');
             });
         });
     });
