@@ -27,6 +27,7 @@ return [
             'submenu' => [
                 ['title' => 'Faktur Pembelian', 'path' => '/inventory/transaction/purchase-order'],
                 ['title' => 'Transaksi Penjualan', 'path' => '/inventory/transaction/sales-transaction'],
+                ['title' => 'Laporan', 'path' => '/inventory/transaction/report'],
             ]
         ],
         [
