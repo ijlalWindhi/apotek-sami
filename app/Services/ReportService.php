@@ -4,8 +4,6 @@ namespace App\Services;
 
 use App\Models\Transaction;
 use App\Models\ProductTransaction;
-use App\Models\PurchaseOrder;
-use App\Models\ProductPurchaseOrder;
 use App\Models\SalesReturn;
 use App\Models\ProductSalesReturn;
 use App\Models\StockAdjustment;
