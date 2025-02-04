@@ -120,6 +120,7 @@ Route::prefix('inventory')
                 Route::get('/product/{product}', 'show')->name('product.show');
                 Route::put('/product/{product}', 'update')->name('product.update');
                 Route::delete('/product/{product}', 'destroy')->name('product.destroy');
+                Route::put('/product/{product}/updateStock', 'updateStock')->name('product.updateStock');
             });
         });
 
