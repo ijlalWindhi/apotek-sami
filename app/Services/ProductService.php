@@ -62,6 +62,15 @@ class ProductService
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
+    public function updateStock(Product $product, float $quantitySmallest, float $quantityLargest): Product
+    {
+        $product->smallest_stock = $quantitySmallest;
+        $product->largest_stock = $quantityLargest;
+        $product->save();
+
+        return $product->fresh(['supplier', 'largestUnit', 'smallestUnit']);
+    }
+
     private function calculateMargin(float $purchasePrice, float $sellingPrice): float
     {
         return (($sellingPrice - $purchasePrice) / $sellingPrice) * 100;
