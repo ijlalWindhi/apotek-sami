@@ -148,4 +148,25 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    public function updateStock(Product $product, Request $request): JsonResponse
+    {
+        try {
+            $quantityLargest = $request->input('qty_largest');
+            $quantitySmallest = $request->input('qty_smallest');
+            $updatedProduct = $this->productService->updateStock($product, $quantitySmallest, $quantityLargest);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Stock opname success',
+                'data' => new ProductResource($updatedProduct)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to stock opname',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
