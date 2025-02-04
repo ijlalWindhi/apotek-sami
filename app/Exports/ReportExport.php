@@ -48,10 +48,6 @@ class ReportExport implements FromArray, WithHeadings, WithStyles
                 'Rp ' . number_format($this->report['laba_kotor'], 2, ',', '.')
             ],
             [
-                'Penyesuaian Stock',
-                'Rp ' . number_format($this->report['penyesuaian_stock'], 2, ',', '.')
-            ],
-            [
                 'Keuntungan Apotek',
                 'Rp ' . number_format($this->report['keuntungan_apotek'], 2, ',', '.')
             ],
