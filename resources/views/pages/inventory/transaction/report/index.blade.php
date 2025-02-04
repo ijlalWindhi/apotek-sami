@@ -71,13 +71,9 @@
                         <td class="py-2 px-4">Harga Pokok Pembelian</td>
                         <td class="py-2 px-4 text-right" id="harga_pokok_pembelian">Rp0</td>
                     </tr>
-                    <tr class="border-b bg-blue-500 text-white font-bold">
+                    <tr class="bg-yellow-400 text-white font-bold">
                         <td class="py-2 px-4">Laba Kotor</td>
                         <td class="py-2 px-4 text-right" id="laba_kotor">Rp0</td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="py-2 px-4">Penyesuaian Stock</td>
-                        <td class="py-2 px-4 text-right" id="penyesuaian_stock">Rp0</td>
                     </tr>
                     <tr class="border-b bg-blue-500 text-white font-bold">
                         <td class="py-2 px-4">Keuntungan Apotek</td>
