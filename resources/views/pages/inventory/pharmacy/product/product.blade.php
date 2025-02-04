@@ -54,7 +54,9 @@
 
     {{-- Modals --}}
     <span data-modal-target="modal-delete" data-modal-toggle="modal-delete" class="hidden"></span>
+    <span data-modal-target="modal-stock-opname" data-modal-toggle="modal-stock-opname" class="hidden"></span>
     <x-global.modal-delete name="pajak" />
+    <x-pages.inventory.pharmacy.product.modal-stock-opname />
 </x-layout>
 
 <script>
@@ -99,8 +101,8 @@
                     setTimeout(() => {
                         const modalDelete = new Modal(document.getElementById(
                             'modal-delete'));
-                        // const modalEdit = new Modal(document.getElementById(
-                        //     'modal-edit-product'));
+                        const modalEdit = new Modal(document.getElementById(
+                            'modal-stock-opname'));
 
                         document.querySelectorAll('[data-modal-toggle="modal-delete"]')
                             .forEach(button => {
@@ -110,7 +112,7 @@
                             });
 
                         document.querySelectorAll(
-                                '[data-modal-toggle="modal-edit-product"]')
+                                '[data-modal-toggle="modal-stock-opname"]')
                             .forEach(button => {
                                 button.addEventListener('click', () => {
                                     modalEdit.show();
@@ -120,7 +122,7 @@
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
-                    uiManager.showError('Gagal mengambil data pajak. Silahkan coba lagi.');
+                    uiManager.showError('Gagal mengambil data produk. Silahkan coba lagi.');
                 },
             });
         },
@@ -153,7 +155,56 @@
                     $('#modal-delete').removeClass('flex').addClass('hidden');
                 }
             });
-        }
+        },
+
+        getDetail: (id) => {
+            $.ajax({
+                url: `/inventory/pharmacy/product/${id}`,
+                type: "GET",
+                cache: false,
+                success: function(response) {
+                    // Fill the modal with data
+                    $('#modal-stock-opname form').append(
+                        `<input type="hidden" id="product_id" name="product_id" value="${id}">`
+                    );
+                    $('#modal-stock-opname form').append(
+                        `<input type="hidden" id="conversion_value" name="conversion_value" value="${response.data.conversion_value}">`
+                    );
+                    $('#modal-stock-opname form').append(
+                        `<input type="hidden" id="current_largest_stock" name="current_largest_stock" value="${response.data.largest_stock}">`
+                    );
+                    $('#modal-stock-opname form').append(
+                        `<input type="hidden" id="current_smallest_stock" name="current_smallest_stock" value="${response.data.smallest_stock}">`
+                    );
+                    $('#modal-stock-opname #system_stock').val(response.data
+                        .largest_stock);
+                    $('#modal-stock-opname #real_stock').val(response.data.largest_stock);
+                    $('#modal-stock-opname #unit').empty();
+                    $('#modal-stock-opname #unit').append(
+                        `<option value="${response.data.largest_unit.id}" selected>${response.data.largest_unit.symbol}</option>`
+                    );
+                    $('#modal-stock-opname #unit').append(
+                        `<option value="${response.data.smallest_unit.id}">${response.data.smallest_unit.symbol}</option>`
+                    );
+
+                    $('#name_largest_stock_label').text(
+                        `${response.data.largest_unit.symbol}`);
+                    $('#current_largest_stock_label').text(response.data.largest_stock);
+                    $('#real_largest_stock_label').text(response.data.largest_stock);
+                    $('#name_smallest_stock_label').text(
+                        `${response.data.smallest_unit.symbol}`);
+                    $('#current_smallest_stock_label').text(response.data.smallest_stock);
+                    $('#real_smallest_stock_label').text(response.data.smallest_stock);
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                },
+                complete: function() {
+                    // Hide loading icon
+                    $('#modal-stock-opname form .absolute').remove();
+                }
+            });
+        },
     };
 
     /**
@@ -201,23 +252,35 @@
 
         actionButtons: (id) => `
             <a href="/inventory/pharmacy/product/view/${id}" id="btn-edit-supplier">
-                <button
+                <x-button
                     id="btn-edit-product"
-                    class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md"
+                    size="sm"
                 >
                     <i class="fa-solid fa-pencil"></i>
-                </button>
+                </x-button>
             </a>
             |
-            <button
+            <x-button
                 id="btn-delete-product"
-                class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
+                color="red"
+                size="sm"
                 data-id="${id}"
                 data-modal-target="modal-delete"
                 data-modal-toggle="modal-delete"
             >
                 <i class="fa-solid fa-trash"></i>
-            </button>
+            </x-button>
+            |
+            <x-button
+                id="btn-stock-opname"
+                color="green"
+                size="sm"
+                data-id="${id}"
+                data-modal-target="modal-stock-opname"
+                data-modal-toggle="modal-stock-opname"
+            >
+                <i class="fa-solid fa-box-open"></i>
+            </x-button>
         `,
 
         loadingModal: '<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90"><i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i></div>',
@@ -275,6 +338,20 @@
                 // Update onclick attribute of confirm delete button
                 $('#modal-delete button[data-modal-hide="modal-delete"].bg-red-600').attr('onclick',
                     `dataService.deleteProduct(${product_id})`);
+            });
+
+            // Stock opname handler
+            $('body').on('click', '#btn-stock-opname', function() {
+                let product_id = $(this).data('id');
+
+                // Reset form
+                $('#modal-stock-opname form').trigger('reset');
+
+                // Show loading icon
+                $('#modal-stock-opname form').prepend(templates.loadingModal);
+
+                // Fetch data
+                dataService.getDetail(product_id);
             });
 
             // Browser navigation handler
