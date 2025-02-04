@@ -177,16 +177,18 @@
                     >
                         <i class="fa-solid fa-pencil"></i>
                     </x-button>
-                    <a href="/pos/return/view/${transaction.id}">
-                        <x-button
-                            id="btn-return-transaction-${transaction.id}"
-                            data-id="${transaction.id}"
-                            color="red"
-                            size="sm"
-                        >
-                            <i class="fa-solid fa-rotate-left mr-2"></i> Return
-                        </x-button>
-                    </a>
+                    ${transaction.status === 'Terbayar' ?
+                        `<a href="/pos/return/view/${transaction.id}">
+                            <x-button
+                                id="btn-return-transaction-${transaction.id}"
+                                data-id="${transaction.id}"
+                                color="red"
+                                size="sm"
+                            >
+                                <i class="fa-solid fa-rotate-left mr-2"></i> Return
+                            </x-button>
+                        </a>`
+                    : ''}
                 </td>
             </tr>
         `,
