@@ -8,6 +8,7 @@ use App\Http\Resources\RecipeResource;
 use App\Services\RecipeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class RecipeController extends Controller
 {
@@ -16,6 +17,20 @@ class RecipeController extends Controller
     public function __construct(RecipeService $recipeService)
     {
         $this->recipeService = $recipeService;
+    }
+
+    public function list(): View
+    {
+        return view('pages.inventory.pharmacy.recipe.list', [
+            'title' => 'Resep'
+        ]);
+    }
+
+    public function detailview(): View
+    {
+        return view('pages.inventory.pharmacy.recipe.view', [
+            'title' => 'Detail Resep',
+        ]);
     }
 
     public function store(RecipeRequest $request): JsonResponse
@@ -74,6 +89,23 @@ class RecipeController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve recipe list',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy(Recipe $recipe): JsonResponse
+    {
+        try {
+            $this->recipeService->delete($recipe);
+            return response()->json([
+                'success' => true,
+                'message' => 'Recipe deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete recipe',
                 'error' => $e->getMessage()
             ], 500);
         }
