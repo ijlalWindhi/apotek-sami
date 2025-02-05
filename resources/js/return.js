@@ -1,4 +1,37 @@
 export const returnUtils = {
+    generateReadOnlyProductRow: (product) => {
+        const productTransaction = product.product_transaction;
+        const productMaster = product.product;
+        const discount =
+            productTransaction.discount_type === "Percentage"
+                ? productTransaction.discount + "%"
+                : UIManager.formatCurrency(productTransaction.discount);
+
+        return `
+        <tr id="list_product_${
+            product.id
+        }" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+            <td class="px-3 py-2">${productMaster?.name || "-"}</td>
+            <td class="px-3 py-2">${productTransaction?.qty || 0}</td>
+            <td class="px-3 py-2">${product?.unit?.symbol || "-"}</td>
+            <td class="px-3 py-2">${UIManager.formatCurrency(
+                productTransaction?.price || 0
+            )}</td>
+            <td class="px-3 py-2">${UIManager.formatCurrency(
+                productTransaction?.tuslah || 0
+            )}</td>
+            <td class="px-3 py-2">${discount}</td>
+            <td class="px-3 py-2">${UIManager.formatCurrency(
+                productTransaction?.subtotal || 0
+            )}</td>
+            <td class="px-3 py-2">${product?.qty_return || 0}</td>
+            <td class="px-3 py-2">${product?.unit?.symbol || "-"}</td>
+            <td class="px-3 py-2">${UIManager.formatCurrency(
+                product?.subtotal_return || 0
+            )}</td>
+        </tr>`;
+    },
+
     generateEditableProductRow: (product) => {
         return `
         <tr id="list_product_pos_${
