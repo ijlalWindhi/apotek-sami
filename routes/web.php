@@ -123,6 +123,15 @@ Route::prefix('inventory')
                 Route::delete('/product/{product}', 'destroy')->name('product.destroy');
                 Route::put('/product/{product}/updateStock', 'updateStock')->name('product.updateStock');
             });
+
+            // Recipe
+            Route::controller(RecipeController::class)->group(function () {
+                Route::get('/recipe', 'list')->name('recipe.list');
+                Route::get('/recipe/list', 'getAll')->name('recipe.getAll');
+                Route::get('/recipe/view/{recipe}', 'detailview')->name('recipe.detailview');
+                Route::get('/recipe/{recipe}', 'show')->name('recipe.show');
+                Route::delete('/recipe/{recipe}', 'destroy')->name('recipe.destroy');
+            });
         });
 
         // Transaksi
