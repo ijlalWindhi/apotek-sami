@@ -15,6 +15,10 @@ class TransactionService
     {
         try {
             return DB::transaction(function () use ($data) {
+                if ($data['paid_amount'] < $data['total_amount']) {
+                    throw new \Exception('Paid amount is less than total amount');
+                }
+
                 $today = date('dmY');
                 $latestTransaction = Transaction::withTrashed()->where('invoice_number', 'like', "ST-{$today}%")
                     ->orderBy('invoice_number', 'desc')
