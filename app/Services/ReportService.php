@@ -60,7 +60,6 @@ class ReportService
             'retur_penjualan' => round($totalReturns, 2),
             'penjualan_bersih' => round($netSales, 2),
             'harga_pokok_pembelian' => round($finalCogs, 2),
-            'laba_kotor' => round($grossProfit, 2),
             'keuntungan_apotek' => round($grossProfit, 2),
         ];
     }
