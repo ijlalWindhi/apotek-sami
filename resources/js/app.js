@@ -24,6 +24,7 @@ import {
     formattedDataSalesTransaction,
 } from "./pos.js";
 import { salesTransactionUtils } from "./salesTransaction.js";
+import { returnUtils, priceCalculationsReturn } from "./return.js";
 import Swal from "sweetalert2";
 
 window.Alpine = Alpine;
@@ -59,5 +60,9 @@ window.formattedDataSalesTransaction = formattedDataSalesTransaction;
 
 // expose sales transaction related functions to the global scope
 window.salesTransactionUtils = salesTransactionUtils;
+
+// expose return related functions to the global scope
+window.returnUtils = returnUtils;
+window.priceCalculationsReturn = priceCalculationsReturn;
 
 Alpine.start();
