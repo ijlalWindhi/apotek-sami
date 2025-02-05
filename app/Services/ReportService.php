@@ -4,9 +4,7 @@ namespace App\Services;
 
 use App\Models\Transaction;
 use App\Models\ProductTransaction;
-use App\Models\SalesReturn;
-use App\Models\ProductSalesReturn;
-use App\Models\StockAdjustment;
+use App\Models\Retur;
 use Illuminate\Support\Facades\DB;
 
 class ReportService
@@ -22,31 +20,67 @@ class ReportService
         }
 
         // Base query conditions
-        $dateRange = [
-            $startDate,
-            $endDate
-        ];
-
-        $productCondition = [];
-        if ($productId) {
-            $productCondition = ['m_product_transaction.product_id' => $productId];
-        }
+        $dateRange = [$startDate, $endDate];
+        $productCondition = $productId ? ['product_id' => $productId] : [];
 
         // 1. Calculate Sales (Penjualan + Tuslah)
-        $sales = ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
-            ->where('m_transaction.status', 'Terbayar')
-            ->whereBetween('m_transaction.created_at', $dateRange)
-            ->where($productCondition)
-            ->select(DB::raw('
-        SUM(m_product_transaction.qty * m_product_transaction.price) as total_sales,
-        SUM(m_product_transaction.qty * m_product_transaction.tuslah) as total_tuslah
-    '))
-            ->first();
+        $sales = $this->calculateSales($dateRange, $productCondition);
         $totalSales = $sales->total_sales ?? 0;
         $totalTuslah = $sales->total_tuslah ?? 0;
 
         // 2. Calculate Sales Discount (Diskon Penjualan)
-        $salesDiscount = Transaction::where('status', 'Terbayar')
+        $salesDiscount = $this->calculateSalesDiscount($dateRange, $productId);
+
+        // 3. Calculate Sales Returns (Retur Penjualan)
+        $salesReturns = $this->calculateSalesReturns($dateRange, $productId);
+        $totalReturns = $salesReturns->total_return ?? 0;
+
+        // 4. Calculate Net Sales (Penjualan Bersih)
+        // Net Sales = (Total Sales + Tuslah) - (Sales Discount + Returns)
+        $netSales = ($totalSales + $totalTuslah) - ($salesDiscount + $totalReturns);
+
+        // 5. Calculate COGS (Harga Pokok Pembelian)
+        $cogs = $this->calculateCOGS($dateRange, $productCondition);
+        $totalCogs = $cogs->total_cogs ?? 0;
+
+        // 6. Calculate COGS for Returns
+        $cogsReturns = $this->calculateCOGSReturns($dateRange, $productCondition);
+        $totalCogsReturns = $cogsReturns->total_cogs_returns ?? 0;
+
+        // 7. Calculate Final COGS
+        $finalCogs = $totalCogs - $totalCogsReturns;
+
+        // 8. Calculate Gross Profit (Laba Kotor)
+        $grossProfit = $netSales - $finalCogs;
+
+        return [
+            'penjualan' => round($totalSales, 2),
+            'tuslah' => round($totalTuslah, 2),
+            'diskon_penjualan' => round($salesDiscount, 2),
+            'retur_penjualan' => round($totalReturns, 2),
+            'penjualan_bersih' => round($netSales, 2),
+            'harga_pokok_pembelian' => round($finalCogs, 2),
+            'laba_kotor' => round($grossProfit, 2),
+            'keuntungan_apotek' => round($grossProfit, 2), // Same as gross profit if no other deductions
+        ];
+    }
+
+    private function calculateSales(array $dateRange, array $productCondition)
+    {
+        return ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
+            ->where('m_transaction.status', 'Terbayar')
+            ->whereBetween('m_transaction.created_at', $dateRange)
+            ->where($productCondition)
+            ->select(DB::raw('
+                SUM(m_product_transaction.qty * m_product_transaction.price) as total_sales,
+                SUM(m_product_transaction.qty * m_product_transaction.tuslah) as total_tuslah
+            '))
+            ->first();
+    }
+
+    private function calculateSalesDiscount(array $dateRange, ?string $productId)
+    {
+        return Transaction::where('status', 'Terbayar')
             ->whereBetween('created_at', $dateRange)
             ->when($productId, function ($query) use ($productId) {
                 return $query->whereHas('productTransactions', function ($q) use ($productId) {
@@ -54,18 +88,23 @@ class ReportService
                 });
             })
             ->sum('nominal_discount');
+    }
 
-        // 3. Calculate Sales Returns (Retur Penjualan)
-        // $salesReturns = ProductSalesReturn::join('m_sales_return', 'm_sales_return.id', '=', 'm_product_sales_return.sales_return_id')
-        //     ->whereBetween('m_sales_return.created_at', $dateRange)
-        //     ->where($productCondition)
-        //     ->sum(DB::raw('m_product_sales_return.qty * m_product_sales_return.price'));
+    private function calculateSalesReturns(array $dateRange, ?string $productId)
+    {
+        return Retur::join('m_product_return', 'm_return.id', '=', 'm_product_return.return_id')
+            ->join('m_transaction', 'm_transaction.id', '=', 'm_return.transaction_id')
+            ->when($productId, function ($query) use ($productId) {
+                return $query->where('m_product_return.product_id', $productId);
+            })
+            ->whereBetween('m_return.created_at', $dateRange)
+            ->select(DB::raw('SUM(m_product_return.subtotal_return) as total_return'))
+            ->first();
+    }
 
-        // 4. Calculate Net Sales (Penjualan Bersih)
-        $netSales = ($totalSales + $totalTuslah) - $salesDiscount;
-
-        // 5. Calculate COGS (Harga Pokok Pembelian)
-        $cogs = ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
+    private function calculateCOGS(array $dateRange, array $productCondition)
+    {
+        return ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
             ->join('m_product', 'm_product.id', '=', 'm_product_transaction.product_id')
             ->where('m_transaction.status', 'Terbayar')
             ->whereBetween('m_transaction.created_at', $dateRange)
@@ -80,35 +119,23 @@ class ReportService
                 ) as total_cogs
             '))
             ->first();
-        $totalCogs = $cogs->total_cogs ?? 0;
+    }
 
-        // 6. Calculate Gross Profit (Laba Kotor)
-        $grossProfit = $netSales - $totalCogs;
-
-        // 7. Calculate Stock Adjustments (Penyesuaian Stock)
-        // $stockAdjustments = StockAdjustment::whereBetween('created_at', $dateRange)
-        //     ->where($productCondition)
-        //     ->get()
-        //     ->reduce(function ($carry, $adjustment) {
-        //         $value = $adjustment->qty * $adjustment->product->purchase_price;
-        //         return $carry + ($adjustment->type === 'Addition' ? $value : -$value);
-        //     }, 0);
-
-        // 9. Calculate Pharmacy Profit (Keuntungan Apotek)
-        $pharmacyProfit = $grossProfit /* + $stockAdjustments */;
-
-        return [
-            'penjualan' => round($totalSales, 2),
-            'tuslah' => round($totalTuslah, 2),
-            'diskon_penjualan' => round($salesDiscount, 2),
-            // 'retur_penjualan' => round($salesReturns, 2),
-            'retur_penjualan' => 0,
-            'penjualan_bersih' => round($netSales, 2),
-            'harga_pokok_pembelian' => round($totalCogs, 2),
-            'laba_kotor' => round($grossProfit, 2),
-            // 'penyesuaian_stock' => round($stockAdjustments, 2),
-            'penyesuaian_stock' => 0,
-            'keuntungan_apotek' => round($pharmacyProfit, 2),
-        ];
+    private function calculateCOGSReturns(array $dateRange, array $productCondition)
+    {
+        return Retur::join('m_product_return', 'm_return.id', '=', 'm_product_return.return_id')
+            ->join('m_product', 'm_product.id', '=', 'm_product_return.product_id')
+            ->whereBetween('m_return.created_at', $dateRange)
+            ->where($productCondition)
+            ->select(DB::raw('
+                SUM(
+                    CASE 
+                        WHEN m_product_return.unit_id = m_product.smallest_unit 
+                        THEN (m_product_return.qty_return * m_product.purchase_price / m_product.conversion_value)
+                        ELSE (m_product_return.qty_return * m_product.purchase_price)
+                    END
+                ) as total_cogs_returns
+            '))
+            ->first();
     }
 }
