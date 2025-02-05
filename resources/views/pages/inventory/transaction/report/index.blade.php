@@ -71,10 +71,6 @@
                         <td class="py-2 px-4">Harga Pokok Pembelian</td>
                         <td class="py-2 px-4 text-right" id="harga_pokok_pembelian">Rp0</td>
                     </tr>
-                    <tr class="bg-yellow-400 text-white font-bold">
-                        <td class="py-2 px-4">Laba Kotor</td>
-                        <td class="py-2 px-4 text-right" id="laba_kotor">Rp0</td>
-                    </tr>
                     <tr class="border-b bg-blue-500 text-white font-bold">
                         <td class="py-2 px-4">Keuntungan Apotek</td>
                         <td class="py-2 px-4 text-right" id="keuntungan_apotek">Rp0</td>
@@ -117,9 +113,6 @@
                         `Rp${UIManager.formatCurrency(data.penjualan_bersih)}`);
                     $('#harga_pokok_pembelian').text(
                         `Rp${UIManager.formatCurrency(data.harga_pokok_pembelian)}`);
-                    $('#laba_kotor').text(`Rp${UIManager.formatCurrency(data.laba_kotor)}`);
-                    $('#penyesuaian_stock').text(
-                        `Rp${UIManager.formatCurrency(data.penyesuaian_stock)}`);
                     $('#keuntungan_apotek').text(
                         `Rp${UIManager.formatCurrency(data.keuntungan_apotek)}`);
                 },
