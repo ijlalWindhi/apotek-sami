@@ -30,6 +30,13 @@ class ReturnController extends Controller
         ]);
     }
 
+    public function list(): View
+    {
+        return view('pages.inventory.transaction.return.list', [
+            'title' => 'Retur Transaction'
+        ]);
+    }
+
     public function store(ReturnRequest $request): JsonResponse
     {
         try {
