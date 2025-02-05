@@ -27,6 +27,7 @@
                     <option value="Terbayar">Terbayar</option>
                     <option value="Proses">Proses</option>
                     <option value="Tertunda">Tertunda</option>
+                    <option value="Retur">Retur</option>
                 </select>
             </div>
         </form>
