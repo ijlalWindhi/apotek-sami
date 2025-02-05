@@ -30,6 +30,7 @@ class ProductTransaction extends Model
         'price' => self::DECIMAL_FORMAT,
         'tuslah' => self::DECIMAL_FORMAT,
         'discount' => self::DECIMAL_FORMAT,
+        'nominal_discount' => self::DECIMAL_FORMAT,
         'subtotal' => self::DECIMAL_FORMAT
     ];
 
