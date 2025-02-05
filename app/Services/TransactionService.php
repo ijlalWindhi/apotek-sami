@@ -34,6 +34,7 @@ class TransactionService
                             'price' => $product['price'],
                             'tuslah' => $product['tuslah'],
                             'discount' => $product['discount'],
+                            'nominal_discount' => $product['nominal_discount'],
                             'discount_type' => $product['discount_type'],
                             'subtotal' => $product['subtotal'],
                         ]);
