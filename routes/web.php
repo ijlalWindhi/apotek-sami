@@ -15,6 +15,7 @@ use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReturnController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\KasirMiddleware;
 
@@ -181,6 +182,16 @@ Route::prefix('pos')
                     Route::get('/list', 'getAll')->name('transaction.getAll');
                     Route::post('', 'store')->name('transaction.store');
                     Route::get('{transaction}', 'show')->name('transaction.show');
+                });
+            });
+
+            Route::prefix('return')->group(function () {
+                // Return
+                Route::controller(ReturnController::class)->group(function () {
+                    Route::get('/view/{transaction}', 'index')->name('return.index');
+                    Route::get('/list', 'getAll')->name('return.getAll');
+                    Route::post('', 'store')->name('return.store');
+                    Route::get('{return}', 'show')->name('return.show');
                 });
             });
         });
