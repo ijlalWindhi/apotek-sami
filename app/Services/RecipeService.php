@@ -63,4 +63,9 @@ class RecipeService
 
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
+
+    public function delete(Recipe $recipe): bool
+    {
+        return $recipe->delete();
+    }
 }
