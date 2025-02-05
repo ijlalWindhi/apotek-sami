@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Transaction;
 use App\Models\ProductTransaction;
 use App\Models\Retur;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +28,8 @@ class ReportService
         $totalTuslah = $sales->total_tuslah ?? 0;
 
         // 2. Calculate Sales Discount (Diskon Penjualan)
-        $salesDiscount = $this->calculateSalesDiscount($dateRange, $productId);
+        $discount = $this->calculateSalesDiscount($dateRange, $productCondition);
+        $salesDiscount = $discount->total_sales_discount ?? 0;
 
         // 3. Calculate Sales Returns (Retur Penjualan)
         $salesReturns = $this->calculateSalesReturns($dateRange, $productId);
@@ -61,14 +61,14 @@ class ReportService
             'penjualan_bersih' => round($netSales, 2),
             'harga_pokok_pembelian' => round($finalCogs, 2),
             'laba_kotor' => round($grossProfit, 2),
-            'keuntungan_apotek' => round($grossProfit, 2), // Same as gross profit if no other deductions
+            'keuntungan_apotek' => round($grossProfit, 2),
         ];
     }
 
     private function calculateSales(array $dateRange, array $productCondition)
     {
         return ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
-            ->where('m_transaction.status', 'Terbayar')
+            ->whereIn('m_transaction.status', ['Terbayar', 'Retur'])
             ->whereBetween('m_transaction.created_at', $dateRange)
             ->where($productCondition)
             ->select(DB::raw('
@@ -78,16 +78,14 @@ class ReportService
             ->first();
     }
 
-    private function calculateSalesDiscount(array $dateRange, ?string $productId)
+    private function calculateSalesDiscount(array $dateRange, array $productCondition)
     {
-        return Transaction::where('status', 'Terbayar')
-            ->whereBetween('created_at', $dateRange)
-            ->when($productId, function ($query) use ($productId) {
-                return $query->whereHas('productTransactions', function ($q) use ($productId) {
-                    $q->where('product_id', $productId);
-                });
-            })
-            ->sum('nominal_discount');
+        return ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
+            ->whereIn('m_transaction.status', ['Terbayar', 'Retur'])
+            ->whereBetween('m_transaction.created_at', $dateRange)
+            ->where($productCondition)
+            ->select(DB::raw('COALESCE(SUM(m_product_transaction.nominal_discount), 0) as total_sales_discount'))
+            ->first();
     }
 
     private function calculateSalesReturns(array $dateRange, ?string $productId)
@@ -106,7 +104,7 @@ class ReportService
     {
         return ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
             ->join('m_product', 'm_product.id', '=', 'm_product_transaction.product_id')
-            ->where('m_transaction.status', 'Terbayar')
+            ->where('m_transaction.status', ['Terbayar', 'Retur'])
             ->whereBetween('m_transaction.created_at', $dateRange)
             ->where($productCondition)
             ->select(DB::raw('
