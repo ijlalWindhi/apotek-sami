@@ -14,9 +14,9 @@ return [
             'icon' => '<i class="fa-solid fa-mortar-pestle"></i>',
             'isDropdown' => true,
             'submenu' => [
-                ['title' => 'Data Pegawai', 'path' => '/inventory/pharmacy/employee'],
-                ['title' => 'Data Produk', 'path' => '/inventory/pharmacy/product'],
-                ['title' => 'Data Resep', 'path' => '/inventory/pharmacy/recipe'],
+                ['title' => 'Pegawai', 'path' => '/inventory/pharmacy/employee'],
+                ['title' => 'Produk', 'path' => '/inventory/pharmacy/product'],
+                ['title' => 'Resep', 'path' => '/inventory/pharmacy/recipe'],
             ]
         ],
         [
@@ -27,8 +27,8 @@ return [
             'submenu' => [
                 ['title' => 'Faktur Pembelian', 'path' => '/inventory/transaction/purchase-order'],
                 ['title' => 'Transaksi Penjualan', 'path' => '/inventory/transaction/sales-transaction'],
-                ['title' => 'Retur', 'path' => '/inventory/transaction/return'],
-                ['title' => 'Laporan', 'path' => '/inventory/transaction/report'],
+                ['title' => 'Retur Penjualan', 'path' => '/inventory/transaction/return'],
+                ['title' => 'Laporan Penjualan', 'path' => '/inventory/transaction/report'],
             ]
         ],
         [
