@@ -104,7 +104,7 @@ class ReportService
     {
         return ProductTransaction::join('m_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
             ->join('m_product', 'm_product.id', '=', 'm_product_transaction.product_id')
-            ->where('m_transaction.status', ['Terbayar', 'Retur'])
+            ->whereIn('m_transaction.status', ['Terbayar', 'Retur'])
             ->whereBetween('m_transaction.created_at', $dateRange)
             ->where($productCondition)
             ->select(DB::raw('
