@@ -157,7 +157,6 @@ export const priceCalculationsReturn = {
         const discount = this.extractDiscountValue(
             $(`#product_pos_discount_${productId}`).val()
         );
-        console.log(qtyReturn, originalQty, basePrice, tuslah, discount);
 
         // Calculate unit price including tuslah
         const unitPriceWithTuslah = basePrice + tuslah / originalQty;
