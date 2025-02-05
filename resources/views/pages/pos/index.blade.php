@@ -420,6 +420,14 @@
                 const data = formattedDataTransaction({
                     created_by: '{{ auth()->user()->id }}'
                 });
+                if (data.paid_amount < data.total_amount) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Jumlah yang dibayarkan kurang dari total transaksi!',
+                    });
+                    return;
+                }
                 dataServicePos.createTransaction(data);
             });
         },
