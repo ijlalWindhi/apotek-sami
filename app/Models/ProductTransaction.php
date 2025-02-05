@@ -20,6 +20,7 @@ class ProductTransaction extends Model
         'price',
         'tuslah',
         'discount',
+        'nominal_discount',
         'discount_type',
         'subtotal',
     ];
