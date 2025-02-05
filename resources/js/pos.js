@@ -382,16 +382,19 @@ export function formattedDataTransaction({ created_by }) {
                 ) || 0;
 
             let discount = 0;
+            let nominal_discount = 0;
             let discountType = "Nominal";
 
             if (discountInput) {
                 if (discountInput.endsWith("%")) {
                     discount = parseFloat(discountInput || 0);
                     discountType = "Percentage";
+                    nominal_discount = Math.round(subtotal * (discount / 100));
                 } else {
                     discount = parseInt(
                         discountInput?.replace(/[^\d]/g, "") || 0
                     );
+                    nominal_discount = discount;
                 }
             }
 
@@ -402,6 +405,7 @@ export function formattedDataTransaction({ created_by }) {
                 price: price,
                 tuslah: tuslah,
                 discount: discount,
+                nominal_discount: nominal_discount,
                 discount_type: discountType,
                 subtotal: subtotal,
                 unit: row
