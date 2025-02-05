@@ -139,7 +139,7 @@
             <a href="{{ route('pos.index') }}" class="w-full md:w-32">
                 <x-button color="blue" class="w-full md:w-32">Kembali</x-button>
             </a>
-            <x-button color="green" class="w-full md:w-32">Simpan</x-button>
+            <x-button color="green" class="w-full md:w-32" id="btn-submit" type="submit">Simpan</x-button>
         </div>
     </form>
 </x-layout>
@@ -152,6 +152,55 @@
     const url = window.location.pathname;
     const transactionId = url.split('/').pop();
     let resData = {};
+
+    function formattedData(formData) {
+        // Convert formData array to object for easier handling
+        const formObject = {};
+        formData.forEach(item => {
+            formObject[item.name] = item.value;
+        });
+
+        // Get all product rows
+        const productRows = $('#table-body-product-pos tr');
+        const products = [];
+
+        // Process each product row
+        productRows.each((index, row) => {
+            const productId = $(row).attr('id').split('_').pop();
+
+            // Only include products with qty_return > 0
+            const qtyReturn = parseFloat($(`#product_pos_qty_return_${productId}`).val()) || 0;
+            if (qtyReturn > 0) {
+                products.push({
+                    product_transaction_id: $(`#product_pos_sales_transaction_id_${productId}`).val(),
+                    product_id: productId,
+                    unit_id: $(`#product_pos_unit_${productId}`).val(),
+                    qty_return: qtyReturn,
+                    subtotal_return: extractNumericValue($(`#product_pos_subtotal_return_${productId}`)
+                        .val())
+                });
+            }
+        });
+
+        // Helper function to extract numeric value from formatted currency
+        function extractNumericValue(value) {
+            if (typeof value === 'number') return value;
+            return parseFloat(value?.replace(/[^\d]/g, '')) || 0;
+        }
+
+        // Construct the final formatted data object
+        const formatted = {
+            transaction_id: transactionId, // From global variable
+            return_reason: formObject.reason || null,
+            qty_total: parseFloat($('#qty_total_return').val()) || 0,
+            total_before_discount: extractNumericValue($('#total_before_discount').val()),
+            total_return: extractNumericValue($('#total').val()),
+            created_by: resData.created_by.id, // From global resData
+            products: products
+        };
+
+        return formatted;
+    }
 
     /**
      * Data Fetching and Processing
@@ -300,32 +349,11 @@
          * Initializes all event handlers
          */
         init: () => {
-            $('body').on('click', '#btn-payment', function() {
-                if (resData?.status === "Proses") {
-                    dataServiceReturn.updateStatusProsesToTerbayar();
-                } else if (resData?.status === "Tertunda") {
-                    event.preventDefault();
-                    const data = formattedDataSalesTransaction({
-                        created_by: resData.created_by.id,
-                    });
-                    const payload = {
-                        ...data,
-                        status: "Terbayar"
-                    };
-                    dataServiceReturn.updateStatus(payload);
-                }
-            });
-
-            $('body').on('click', '#btn-process', function() {
-                event.preventDefault();
-                const data = formattedDataSalesTransaction({
-                    created_by: resData.created_by.id,
-                });
-                const payload = {
-                    ...data,
-                    status: "Proses"
-                };
-                dataServiceReturn.updateStatus(payload);
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                const formData = $(this).serializeArray();
+                const data = formattedData(formData);
+                dataServiceReturn.createReturn(data);
             });
         },
     };
