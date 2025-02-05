@@ -23,7 +23,7 @@
             </div>
             <div class="w-full">
                 <label for="product_id"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Produk</label>
                 <select class="js-example-basic-single" id="product_id" name="product_id">
                     <option value="Semua" selected>Semua</option>
                     @foreach ($products as $product)
