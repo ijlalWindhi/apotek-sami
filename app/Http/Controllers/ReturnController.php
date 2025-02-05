@@ -37,6 +37,16 @@ class ReturnController extends Controller
         ]);
     }
 
+    public function detailview(): View
+    {
+        $paymentTypes = PaymentType::all();
+
+        return view('pages.inventory.transaction.return.view', [
+            'title' => 'Detail Retur',
+            'paymentTypes' => $paymentTypes
+        ]);
+    }
+
     public function store(ReturnRequest $request): JsonResponse
     {
         try {
