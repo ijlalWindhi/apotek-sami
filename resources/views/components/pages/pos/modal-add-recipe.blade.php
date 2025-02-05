@@ -39,14 +39,6 @@
                                     placeholder="Nama resep" required>
                             </div>
                             <div class="w-full select-small">
-                                <label for="status" class="block text-xs  text-gray-900 dark:text-white">Status
-                                    <span class="text-red-500">*</span></label>
-                                <select class="js-example-basic-single" id="status" name="status">
-                                    <option value="Proses" selected>Proses</option>
-                                    <option value="Tunda">Tunda</option>
-                                </select>
-                            </div>
-                            <div class="w-full select-small">
                                 <label for="staff_id" class="block text-xs  text-gray-900 dark:text-white">Karyawan
                                     <span class="text-red-500">*</span></label>
                                 <select class="js-example-basic-single" id="staff_id" name="staff_id">
