@@ -11,7 +11,7 @@ class ProductReturnResource extends JsonResource
         return [
             'id' => $this->id,
             'return' => new ReturnResource($this->whenLoaded('retur')),
-            'product_transaction' => new ProductTransactionResource($this->whenLoaded('productTransaction')),
+            'product_transaction' => $this->whenLoaded('productTransaction') ? new ProductTransactionResource($this->productTransaction) : null,
             'product' => new ProductResource($this->whenLoaded('product')),
             'unit' => new UnitResource($this->whenLoaded('unit')),
             'qty_return' => $this->qty_return,
