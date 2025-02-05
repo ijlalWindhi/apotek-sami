@@ -258,13 +258,14 @@
                 }
 
                 const products = selectedData?.products || [];
-                const unit = selectedData?.unit?.id;
 
                 const invalidProducts = products.filter(product => {
-                    if (product?.largest_unit === unit) {
+                    if (product?.unit?.id === product.product.largest_unit.id) {
+                        console.log("MASUK SINI ATAS")
                         return product.qty > product.product.largest_stock;
                     } else {
-                        return product.qty > product.product.stock;
+                        console.log("MASUK SINI BAWAH")
+                        return product.qty > product.product.smallest_stock;
                     }
                 });
 
