@@ -16,7 +16,7 @@ class TransactionService
         try {
             return DB::transaction(function () use ($data) {
                 $today = date('dmY');
-                $latestTransaction = Transaction::where('invoice_number', 'like', "ST-{$today}%")
+                $latestTransaction = Transaction::withTrashed()->where('invoice_number', 'like', "ST-{$today}%")
                     ->orderBy('invoice_number', 'desc')
                     ->first();
                 $nextNumber = $latestTransaction ? intval(substr($latestTransaction->invoice_number, -3)) + 1 : 1;
