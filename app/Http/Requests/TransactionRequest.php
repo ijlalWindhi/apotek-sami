@@ -41,6 +41,7 @@ class TransactionRequest extends FormRequest
             'products.*.price' => self::NUMERIC_MIN_ZERO,
             'products.*.tuslah' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'products.*.discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
+            'products.*.nominal_discount' => self::NUMERIC_MIN_ZERO_NULLABLE,
             'products.*.discount_type' => ['required', Rule::in(['Percentage', 'Nominal'])],
             'products.*.subtotal' => self::NUMERIC_MIN_ZERO,
         ];
