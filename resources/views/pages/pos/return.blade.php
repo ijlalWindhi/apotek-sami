@@ -182,10 +182,6 @@
                 // Set form values and handle products
                 dataServiceReturn.setFormValues(form, data);
                 dataServiceReturn.setProducts(data.products);
-
-                // Handle button display based on status
-                dataServiceReturn.setActionButtons(data.status);
-
             } catch (error) {
                 handleFetchError(error);
                 uiManager.showError('Gagal mengambil data Return. Silahkan coba lagi.');
@@ -326,20 +322,6 @@
             // Set total products
             $('input[name="qty_total"]').val(qtyTotal);
         },
-
-        setActionButtons: (status) => {
-            const buttons = {
-                "Bayar": `<x-button color="green" class="w-full md:w-32" id="btn-payment">Bayar</x-button>`,
-                "Proses": `<x-button color="yellow" class="w-full md:w-32" id="btn-process">Proses</x-button>`
-            };
-
-            if (status === "Tertunda") {
-                $('#placeholder-payment').html(buttons["Bayar"]);
-                $('#placeholder-process').html(buttons["Proses"]);
-            } else if (status === "Proses") {
-                $('#placeholder-payment').html(buttons["Bayar"]);
-            }
-        }
     };
 
     /**
