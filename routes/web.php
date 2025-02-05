@@ -154,6 +154,14 @@ Route::prefix('inventory')
                 Route::get('/report/list', 'getAll')->name('report.getAll');
                 Route::get('/report/export', 'export')->name('report.export');
             });
+
+            // Return
+            Route::controller(ReturnController::class)->group(function () {
+                Route::get('/return', 'list')->name('return.list');
+                Route::get('/return/view/{return}', 'detailview')->name('return.detail');
+                Route::get('/return/list', 'getAll')->name('return.getAll');
+                Route::get('/return/{return}', 'show')->name('return.show');
+            });
         });
     });
 
