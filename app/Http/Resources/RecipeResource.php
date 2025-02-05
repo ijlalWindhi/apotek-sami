@@ -11,7 +11,6 @@ class RecipeResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'status' => $this->status,
             'staff' => new UserResource($this->whenLoaded('staff')),
             'customer_name' => $this->customer_name,
             'customer_age' => $this->customer_age,
