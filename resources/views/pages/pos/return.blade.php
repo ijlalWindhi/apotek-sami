@@ -190,80 +190,48 @@
             }
         },
 
-        updateStatusProsesToTerbayar: async () => {
-            $("#view-return").prepend(uiManager.showScreenLoader());
+        createReturn: (data) => {
+            uiManager.showScreenLoader();
 
-            try {
-                const response = await $.ajax({
-                    url: `/inventory/transaction/sales-transaction/${transactionId}/updateStatusProsesToTerbayar`,
-                    method: 'POST',
-                    contentType: 'application/json',
-                    processData: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        'X-HTTP-Method-Override': 'PUT',
-                    }
-                });
-
-                if (!response?.success) {
-                    throw new Error('Invalid response format');
-                }
-
-                Swal.fire({
-                    icon: "success",
-                    title: "Berhasil melakukan pembayaran",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-
-                setTimeout(() => {
-                    window.location.href = '/inventory/transaction/sales-transaction';
-                }, 500);
-            } catch (error) {
-                handleFetchError(error);
-                uiManager.showError('Gagal melakukan pembayaran. Silahkan coba lagi.');
-            } finally {
-                $('#view-return .fixed').remove();
-            }
-        },
-
-        updateStatus: async (data) => {
-            $("#view-return").prepend(uiManager.showScreenLoader());
-
-            try {
-                const response = await $.ajax({
-                    url: `/inventory/transaction/sales-transaction/${transactionId}/updateStatus`,
-                    method: 'POST',
-                    data: JSON.stringify(data),
-                    contentType: 'application/json',
-                    processData: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        'X-HTTP-Method-Override': 'PUT',
+            $.ajax({
+                url: '/pos/return',
+                method: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: async (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
                     }
 
-                });
 
-                if (!response?.success) {
-                    throw new Error('Invalid response format');
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil menambahkan data",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
+                    setTimeout(() => {
+                        // Redirect based on URL
+                        if (url.includes('/pos/return/view/')) {
+                            window.location.href = '/pos';
+                        } else {
+                            window.location.href = '/inventory/transaction/return';
+                        }
+                    }, 500);
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                    uiManager.showError('Gagal membuat retur. Silahkan coba lagi.');
+                },
+                complete: () => {
+                    uiManager.hideScreenLoader();
                 }
-
-                Swal.fire({
-                    icon: "success",
-                    title: `Berhasil mengubah status menjadi ${data.status}`,
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-
-                setTimeout(() => {
-                    window.location.href = '/inventory/transaction/sales-transaction';
-                }, 500);
-            } catch (error) {
-                handleFetchError(error);
-                uiManager.showError('Gagal melakukan pembayaran. Silahkan coba lagi.');
-            } finally {
-                $('#view-return .fixed').remove();
-            }
+            });
         },
 
         setFormValues: (form, data) => {
