@@ -195,7 +195,7 @@
             qty_total: parseFloat($('#qty_total_return').val()) || 0,
             total_before_discount: extractNumericValue($('#total_before_discount').val()),
             total_return: extractNumericValue($('#total').val()),
-            created_by: resData.created_by.id, // From global resData
+            created_by: '{{ auth()->user()->id }}',
             products: products
         };
 
