@@ -19,7 +19,6 @@ class RecipeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:100',
-            'status' => ['required', Rule::in(['Proses', 'Tunda'])],
             'staff_id' => 'required|exists:users,id',
             'customer_name' => 'required|string|max:100',
             'customer_age' => 'required|integer|min:0',
@@ -46,8 +45,6 @@ class RecipeRequest extends FormRequest
             'name.required' => 'Nama resep wajib diisi.',
             'name.string' => 'Nama resep harus berupa teks.',
             'name.max' => 'Nama resep maksimal 100 karakter.',
-            'status.required' => 'Status resep wajib dipilih.',
-            'status.in' => 'Status resep tidak valid.',
             'staff_id.required' => 'Staff wajib dipilih.',
             'staff_id.exists' => 'Staff yang dipilih tidak valid.',
             'customer_name.required' => 'Nama pelanggan wajib diisi.',
