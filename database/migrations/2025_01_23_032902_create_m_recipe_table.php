@@ -16,7 +16,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->string('name');
-            $table->enum('status', ['Proses', 'Tunda']);
             $table->foreignId('staff_id')->constrained('users')->onDelete('cascade');
             $table->string('customer_name');
             $table->integer('customer_age');
