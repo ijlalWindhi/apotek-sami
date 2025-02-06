@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\TaxController;
@@ -53,6 +54,13 @@ Route::prefix('inventory')
         Route::get('/', function () {
             return view('pages.inventory.dashboard', ['title' => 'Dashboard']);
         })->name('inventory.dashboard');
+        Route::prefix('dashboard')->group(function () {
+            Route::controller(DashboardController::class)->group(function () {
+                Route::get('/total-sales', 'getTotalSales')->name('dashboard.getTotalSales');
+                Route::get('/due-purchase-orders', 'getDuePurchaseOrders')->name('dashboard.getDuePurchaseOrders');
+                Route::get('/low-stock-items', 'getLowStockItems')->name('dashboard.getLowStockItems');
+            });
+        });
 
         // Master
         Route::prefix('master')->group(function () {
