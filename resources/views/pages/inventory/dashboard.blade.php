@@ -82,11 +82,11 @@
                     <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr class="uppercase">
-                                <th scope="col" class="p-1">Nomor Invoice</th>
-                                <th scope="col" class="p-1">Pelanggan</th>
-                                <th scope="col" class="p-1">Pembayaran</th>
-                                <th scope="col" class="p-1">Status</th>
-                                <th scope="col" class="p-1 text-right">Total</th>
+                                <th scope="col" class="p-1.5">Nomor Invoice</th>
+                                <th scope="col" class="p-1.5">Pelanggan</th>
+                                <th scope="col" class="p-1.5">Pembayaran</th>
+                                <th scope="col" class="p-1.5">Status</th>
+                                <th scope="col" class="p-1.5 text-right">Total</th>
                             </tr>
                         </thead>
                         <tbody id="po_table_body" class="divide-y divide-gray-200 bg-white">
@@ -107,10 +107,7 @@
                 <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-0 items-start sm:items-center justify-between">
                     <h2 class="text-sm font-medium">Ringkasan Total Tagihan Per Supplier</h2>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <select class="w-full sm:w-auto rounded-md border border-gray-200 px-3 py-1 text-xs">
-                            <option>Harian</option>
-                        </select>
-                        <button class="rounded-full p-1 hover:bg-gray-100">
+                        <button id="supplier_refresh" class="rounded-full p-1 hover:bg-gray-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -119,26 +116,25 @@
                         </button>
                     </div>
                 </div>
-                <div class="overflow-x-auto -mx-4 sm:mx-0">
-                    <div class="inline-block min-w-full align-middle">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr class="text-xs uppercase">
-                                    <th class="px-3 py-2 text-left">Supplier</th>
-                                    <th class="px-3 py-2 text-center">Faktur</th>
-                                    <th class="px-3 py-2 text-right">Total Nilai Faktur</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 bg-white text-xs sm:text-sm">
-                                <tr class="hover:bg-gray-50">
-                                    <td class="whitespace-nowrap px-3 py-2">PT. MUTIARA MASA MEDIKA</td>
-                                    <td class="whitespace-nowrap px-3 py-2 text-center">30</td>
-                                    <td class="whitespace-nowrap px-3 py-2 text-right">10.877.856</td>
-                                </tr>
-                                <!-- Add more rows as needed -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="relative overflow-x-auto sm:rounded-lg">
+                    <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr class="uppercase">
+                                <th scope="col" class="p-1.5">Supplier</th>
+                                <th scope="col" class="p-1.5">Total Faktur</th>
+                                <th scope="col" class="p-1.5 text-right">Total Nilai Faktur</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplier_table_body" class="divide-y divide-gray-200 bg-white">
+                            {{-- Table content will be inserted here --}}
+                            <tr>
+                                <td id="supplier_label_empty_data" colspan="4"
+                                    class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    Tidak ada data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -277,6 +273,31 @@
                 },
             });
         },
+        getSupplierSummary: () => {
+            $('#dashboard').prepend(uiManager.showScreenLoader());
+
+            const date = new Date();
+            const formattedDate =
+                `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            $.ajax({
+                url: '/inventory/dashboard/supplier-billing-summary',
+                method: 'GET',
+                success: async (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
+                    }
+
+                    templatesDashboard.updateTableListItem(response.data, 'supplier_table_body',
+                        'supplier_label_empty_data', templatesDashboard.tableRowSupplier);
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                },
+                complete: () => {
+                    uiManager.hideScreenLoader();
+                },
+            });
+        },
     };
 
     /**
@@ -323,10 +344,10 @@
 
         tableRowPo: (data) => {
             return `<tr class="hover:bg-gray-50">
-                <td class="whitespace-nowrap p-1">${data?.invoice_number}</td>
-                <td class="whitespace-nowrap p-1">${data?.customer_type}</td>
-                <td class="whitespace-nowrap p-1">${data?.payment_type?.name}</td>
-                <td class="whitespace-nowrap p-1">
+                <td class="whitespace-nowrap p-1.5">${data?.invoice_number}</td>
+                <td class="whitespace-nowrap p-1.5">${data?.customer_type}</td>
+                <td class="whitespace-nowrap p-1.5">${data?.payment_type?.name}</td>
+                <td class="whitespace-nowrap p-1.5">
                     <span class="px-1 rounded-full text-xs font-medium ${
                         data?.status === 'Terbayar' ? 'bg-green-100 text-green-700' :
                         data?.status === 'Tertunda' ? 'bg-yellow-100 text-yellow-700' :
@@ -334,6 +355,14 @@
                     }">${data?.status}</span>
                 </td>
                 <td class="whitespace-nowrap p-1 text-right">Rp${UIManager.formatCurrency(data?.total_amount)}</td>
+            </tr>`;
+        },
+
+        tableRowSupplier: (data) => {
+            return `<tr class="hover:bg-gray-50">
+                <td class="whitespace-nowrap p-1.5">${data?.supplier_name}</td>
+                <td class="whitespace-nowrap p-1.5">${data?.total_invoices}</td>
+                <td class="whitespace-nowrap p-1 text-right">Rp${UIManager.formatCurrency(data?.total_billing)}</td>
             </tr>`;
         }
     }
@@ -348,6 +377,7 @@
         dataServiceDashboard.getDuePO();
         dataServiceDashboard.getLowStock();
         dataServiceDashboard.getPO();
+        dataServiceDashboard.getSupplierSummary();
     }
 
     // Initialize when document is ready
