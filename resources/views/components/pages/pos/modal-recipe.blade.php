@@ -261,10 +261,8 @@
 
                 const invalidProducts = products.filter(product => {
                     if (product?.unit?.id === product.product.largest_unit.id) {
-                        console.log("MASUK SINI ATAS")
                         return product.qty > product.product.largest_stock;
                     } else {
-                        console.log("MASUK SINI BAWAH")
                         return product.qty > product.product.smallest_stock;
                     }
                 });
@@ -280,7 +278,7 @@
                         html: `
                         <p class="text-sm">Beberapa produk pada resep ini melebihi stok yang ada.</p>
                         <ul class="text-left text-xs my-1">
-                            ${invalidProducts.map(product => `<li>- ${product.product.name} (${product.qty} ${product.unit.name})</li>`).join('')}
+                            ${invalidProducts.map(product => `<li>- ${product.product.name} (${product.qty} ${product.unit.name}); stock tersedia ${product.unit.id === product.product.largest_unit.id ? product.product.largest_stock : product.product.smallest_stock} ${product.unit.symbol}</li>`).join('')}
                         </ul>
                         <p class="text-sm">Silahkan anda membuat resep baru!</p>
                     `,
