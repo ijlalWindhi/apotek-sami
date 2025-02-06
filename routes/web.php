@@ -59,6 +59,7 @@ Route::prefix('inventory')
                 Route::get('/total-sales', 'getTotalSales')->name('dashboard.getTotalSales');
                 Route::get('/due-purchase-orders', 'getDuePurchaseOrders')->name('dashboard.getDuePurchaseOrders');
                 Route::get('/low-stock-items', 'getLowStockItems')->name('dashboard.getLowStockItems');
+                Route::get('/supplier-billing-summary', 'getSupplierBillingSummary')->name('dashboard.getSupplierBillingSummary');
             });
         });
 
