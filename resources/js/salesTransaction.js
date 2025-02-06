@@ -43,7 +43,7 @@ export const salesTransactionUtils = {
                     <input type="number" name="product_pos_total_${
                         product.product.id
                     }" id="product_pos_total_${product.product.id}"
-                        required min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                        required min="1" step="1" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Jumlah" value="${product.qty}">
                     <i class="fa-solid fa-plus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-plus-product-${
