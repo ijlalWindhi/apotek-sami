@@ -131,6 +131,7 @@ Route::prefix('inventory')
                 Route::get('/recipe/view/{recipe}', 'detailview')->name('recipe.detailview');
                 Route::get('/recipe/{recipe}', 'show')->name('recipe.show');
                 Route::delete('/recipe/{recipe}', 'destroy')->name('recipe.destroy');
+                Route::put('/recipe/{recipe}', 'update')->name('recipe.update');
             });
         });
 
