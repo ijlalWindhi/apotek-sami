@@ -36,9 +36,11 @@
             <div id="pembelian_alert"
                 class="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-md bg-green-100 text-green-700 px-3 sm:px-4 py-3">
                 <div class="flex items-center gap-2">
-                    ●
-                    <p class="text-xs sm:text-sm">Ada <span id="pembelian_qty">0</span> Faktur Pembelian
-                        Jatuh Tempo</p>
+                    ● <div>
+                        <p class="text-xs sm:text-sm">Ada <span id="pembelian_qty">0</span> Faktur Pembelian Jatuh Tempo
+                        </p>
+                        <p class="text-xs">Dalam waktu 7 Hari Dari Sekarang</p>
+                    </div>
                 </div>
                 <a href="/inventory/transaction/purchase-order">
                     <button class="mt-2 sm:mt-0 text-xs sm:text-sm font-medium">LIHAT</button>
@@ -48,8 +50,11 @@
                 class="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-md bg-green-100 text-green-700 px-3 sm:px-4 py-3">
                 <div class="flex items-center gap-2">
                     ●
-                    <p class="text-xs sm:text-sm">Ada <span id="stock_qty">0</span> Item Kurang Dari
-                        Minimal Stock</p>
+                    <div>
+                        <p class="text-xs sm:text-sm">Ada <span id="stock_qty">0</span> Item Kurang Dari
+                            Minimal Stock</p>
+                        <p class="text-xs">Kurang dari Minimum Stok</p>
+                    </div>
                 </div>
                 <a href="/inventory/pharmacy/product">
                     <button class="mt-2 sm:mt-0 text-xs sm:text-sm font-medium">LIHAT</button>
@@ -62,12 +67,8 @@
             <!-- Recent Transactions -->
             <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                 <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-0 items-start sm:items-center justify-between">
-                    <h2 class="text-sm font-medium">Ringkasan Transaksi Penjualan Terakhir</h2>
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <select class="w-full sm:w-auto rounded-md border border-gray-200 px-3 py-1 text-xs">
-                            <option value="harian">Harian</option>
-                            <option value="mingguan">Mingguan</option>
-                        </select>
+                    <h2 class="text-sm font-medium">Ringkasan Transaksi Penjualan Hari Ini</h2>
+                    <div id="po_refresh" class="flex items-center gap-2 w-full sm:w-auto">
                         <button class="rounded-full p-1 hover:bg-gray-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor">
@@ -77,28 +78,27 @@
                         </button>
                     </div>
                 </div>
-                <div class="overflow-x-auto -mx-4 sm:mx-0">
-                    <div class="inline-block min-w-full align-middle">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr class="text-xs uppercase">
-                                    <th class="px-3 py-2 text-left">Transaksi ID</th>
-                                    <th class="px-3 py-2 text-left">Tanggal</th>
-                                    <th class="px-3 py-2 text-left">Pembayaran</th>
-                                    <th class="px-3 py-2 text-right">Nilai Faktur</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 bg-white text-xs sm:text-sm">
-                                <tr class="hover:bg-gray-50">
-                                    <td class="whitespace-nowrap px-3 py-2">SI-GPOS-02/2025/00185</td>
-                                    <td class="whitespace-nowrap px-3 py-2">06/02/25</td>
-                                    <td class="whitespace-nowrap px-3 py-2">CASH</td>
-                                    <td class="whitespace-nowrap px-3 py-2 text-right">75.500</td>
-                                </tr>
-                                <!-- Add more rows as needed -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="relative overflow-x-auto sm:rounded-lg">
+                    <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr class="uppercase">
+                                <th scope="col" class="p-1">Nomor Invoice</th>
+                                <th scope="col" class="p-1">Pelanggan</th>
+                                <th scope="col" class="p-1">Pembayaran</th>
+                                <th scope="col" class="p-1">Status</th>
+                                <th scope="col" class="p-1 text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="po_table_body" class="divide-y divide-gray-200 bg-white">
+                            {{-- Table content will be inserted here --}}
+                            <tr>
+                                <td id="po_label_empty_data" colspan="4"
+                                    class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    Tidak ada data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -245,6 +245,38 @@
                 },
             });
         },
+        getPO: () => {
+            $('#dashboard').prepend(uiManager.showScreenLoader());
+
+            const date = new Date();
+            const formattedDate =
+                `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            $.ajax({
+                url: '/inventory/transaction/sales-transaction/list',
+                method: 'GET',
+                data: {
+                    start_date: formattedDate,
+                    end_date: formattedDate,
+                    status: "",
+                    page: 1,
+                    per_page: 99999
+                },
+                success: async (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
+                    }
+
+                    templatesDashboard.updateTableListItem(response.data, 'po_table_body',
+                        'po_label_empty_data', templatesDashboard.tableRowPo);
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                },
+                complete: () => {
+                    uiManager.hideScreenLoader();
+                },
+            });
+        },
     };
 
     /**
@@ -258,12 +290,53 @@
                 dataServiceDashboard.getTotalSales(period);
             });
 
-            // Refresh button handler
+            // Refresh button handler for total sales
             $('#penjualan_refresh').on('click', function(e) {
                 dataServiceDashboard.getTotalSales(PENJUALAN_PERIOD);
             });
+
+            // Refresh button handler for PO
+            $('#po_refresh').on('click', function(e) {
+                dataServiceDashboard.getPO();
+            });
         },
     };
+
+    /**
+     * HTML Templates
+     */
+    const templatesDashboard = {
+        updateTableListItem: (datas, id_body, id_empty, tableRow) => {
+            debug.log("UpdateTableListItem", "Starting table update");
+            const tbody = $(`#${id_body}`);
+            tbody.empty();
+
+            if (!Array.isArray(datas) || datas.length === 0) {
+                tbody.html(table.emptyTable());
+                return;
+            }
+
+            document?.getElementById(id_empty)?.remove();
+            tbody.append(datas.map((data) => tableRow(data)).join(""));
+            debug.log("UpdateTable", "Table updated successfully");
+        },
+
+        tableRowPo: (data) => {
+            return `<tr class="hover:bg-gray-50">
+                <td class="whitespace-nowrap p-1">${data?.invoice_number}</td>
+                <td class="whitespace-nowrap p-1">${data?.customer_type}</td>
+                <td class="whitespace-nowrap p-1">${data?.payment_type?.name}</td>
+                <td class="whitespace-nowrap p-1">
+                    <span class="px-1 rounded-full text-xs font-medium ${
+                        data?.status === 'Terbayar' ? 'bg-green-100 text-green-700' :
+                        data?.status === 'Tertunda' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-red-100 text-red-700'
+                    }">${data?.status}</span>
+                </td>
+                <td class="whitespace-nowrap p-1 text-right">Rp${UIManager.formatCurrency(data?.total_amount)}</td>
+            </tr>`;
+        }
+    }
 
     /**
      * Initialize the dashboard module
@@ -274,6 +347,7 @@
         dataServiceDashboard.getTotalSales();
         dataServiceDashboard.getDuePO();
         dataServiceDashboard.getLowStock();
+        dataServiceDashboard.getPO();
     }
 
     // Initialize when document is ready
