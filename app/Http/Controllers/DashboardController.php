@@ -69,4 +69,22 @@ class DashboardController extends Controller
             ], 500);
         }
     }
+
+    public function getSupplierBillingSummary(): JsonResponse
+    {
+        try {
+            $billingData = $this->dashboardService->getSupplierBillingSummary();
+
+            return response()->json([
+                'success' => true,
+                'data' => $billingData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve supplier billing summary',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
