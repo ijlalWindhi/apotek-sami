@@ -6,6 +6,7 @@ use App\Models\Transaction;
 use App\Models\PurchaseOrder;
 use App\Models\Product;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
@@ -92,5 +93,28 @@ class DashboardService
             ->with('supplier:id,name')
             ->get()
             ->toArray();
+    }
+
+    public function getSupplierBillingSummary()
+    {
+        return PurchaseOrder::select(
+            'supplier_id',
+            DB::raw('SUM(total) as total_billing'),
+            DB::raw('COUNT(*) as total_invoices')
+        )
+            ->where('payment_status', 'Belum Terbayar')
+            ->groupBy('supplier_id')
+            ->with('supplier:id,name,code')
+            ->orderByDesc('total_billing')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'supplier_id' => $item->supplier_id,
+                    'supplier_name' => $item->supplier->name,
+                    'supplier_code' => $item->supplier->code,
+                    'total_billing' => $item->total_billing,
+                    'total_invoices' => $item->total_invoices
+                ];
+            });
     }
 }
