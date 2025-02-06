@@ -37,7 +37,7 @@ class ProductExport implements FromCollection, WithHeadings, WithMapping, WithSt
     {
         $this->rowNumber++;
 
-        $isbelowMinimum = $product->smallest_stock < $product->minimum_smallest_stock;
+        $isbelowMinimum = $product->smallest_stock <= $product->minimum_smallest_stock;
         if ($isbelowMinimum) {
             $this->belowMinimumRows[] = $this->rowNumber + 1; // +1 karena header ada di baris 1
         }
