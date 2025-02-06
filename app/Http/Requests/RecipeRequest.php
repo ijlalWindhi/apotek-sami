@@ -28,6 +28,7 @@ class RecipeRequest extends FormRequest
 
             // Validasi untuk products
             'products' => 'required|array|min:1',
+            'products.*.id' => 'nullable|exists:m_product_recipe,id',
             'products.*.product' => 'required|exists:m_product,id',
             'products.*.unit' => 'required|exists:m_unit,id',
             'products.*.qty' => 'required|integer|min:1',
@@ -61,6 +62,9 @@ class RecipeRequest extends FormRequest
             'doctor_sip.max' => 'Nomor SIP dokter maksimal 100 karakter.',
 
             'products.required' => 'Minimal harus ada 1 produk.',
+            'products.array' => 'Produk harus berupa array.',
+            'products.min' => 'Minimal harus ada 1 produk.',
+            'products.*.id.exists' => 'ID produk yang dipilih tidak valid.',
             'products.*.product.required' => 'Produk wajib dipilih.',
             'products.*.product.exists' => 'Produk yang dipilih tidak valid.',
             'products.*.unit.required' => 'Satuan wajib dipilih.',
