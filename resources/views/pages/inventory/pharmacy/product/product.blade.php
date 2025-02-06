@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <div class="flex flex-col gap-4 w-full">
+    <div id="list-product" class="flex flex-col gap-4 w-full">
         {{-- Search & Add Button --}}
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div class="relative sm:w-full md:w-1/2 lg:w-2/6">
@@ -15,12 +15,18 @@
                 </button>
             </div>
 
-            <a href="{{ route('product.create') }}">
-                <x-button color="blue">
-                    <i class="fa-solid fa-plus"></i>
-                    <span class="ms-2">Tambah</span>
+            <div class="flex gap-2">
+                <x-button color="green" id="btn-export">
+                    <i class="fa-solid mr-1 fa-table"></i>
+                    <span class="ms-2">Export</span>
                 </x-button>
-            </a>
+                <a href="{{ route('product.create') }}">
+                    <x-button color="blue">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="ms-2">Tambah</span>
+                    </x-button>
+                </a>
+            </div>
         </div>
 
         {{-- Table --}}
@@ -205,6 +211,48 @@
                 }
             });
         },
+
+        export: () => {
+            $("#list-product").prepend(uiManager.showScreenLoader());
+
+            $.ajax({
+                url: '/inventory/pharmacy/product/export',
+                method: 'GET',
+                success: (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
+                    }
+
+                    // Convert base64 to blob
+                    const byteCharacters = atob(response.data.file);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    });
+
+                    // Create download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = response.data.filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                    uiManager.showError('Gagal export data product. Silahkan coba lagi.');
+                },
+                complete: () => {
+                    $('#list-product .fixed').remove();
+                },
+            });
+        }
     };
 
     /**
@@ -352,6 +400,12 @@
 
                 // Fetch data
                 dataService.getDetail(product_id);
+            });
+
+            // Event handler for datepicker change
+            $('#btn-export').on('click', (e) => {
+                e.preventDefault();
+                dataService.export();
             });
 
             // Browser navigation handler
