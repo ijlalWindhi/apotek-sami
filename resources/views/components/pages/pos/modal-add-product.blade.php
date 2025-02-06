@@ -188,7 +188,7 @@
                     <div class="flex justify-center items-center gap-1">
                         <i class="fa-solid fa-minus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-minus-product-${product.id}"></i>
                         <input type="number" name="product_recipe_total_${product.id}" id="product_recipe_total_${product.id}"
-                            required min="1" step="1" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46"
+                            required min="0.1" step="any" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Jumlah">
                         <i class="fa-solid fa-plus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-plus-product-${product.id}"></i>
