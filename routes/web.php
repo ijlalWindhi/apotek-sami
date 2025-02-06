@@ -117,6 +117,7 @@ Route::prefix('inventory')
                 Route::get('/product/create', 'createview')->name('product.create');
                 Route::get('/product/view/{product}', 'detailview')->name('product.edit');
                 Route::get('/product/list', 'getAll')->name('product.getAll');
+                Route::get('/product/export', 'export')->name('product.export');
                 Route::post('/product', 'store')->name('product.store');
                 Route::get('/product/{product}', 'show')->name('product.show');
                 Route::put('/product/{product}', 'update')->name('product.update');
