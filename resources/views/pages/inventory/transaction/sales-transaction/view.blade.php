@@ -194,7 +194,7 @@
                 resData = response.data;
                 const data = response.data;
                 const form = $('form');
-                const isReadOnly = data.status === "Proses" || data.status === "Terbayar";
+                const isReadOnly = data?.status ? ["Proses", "Terbayar", "Retur"].includes(data.status) : false;
 
                 // Set form values and handle products
                 dataServiceTransaction.setFormValues(form, data, isReadOnly);
