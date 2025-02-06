@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\PaymentType;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Services\TransactionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class TransactionController extends Controller
 {
@@ -16,6 +18,16 @@ class TransactionController extends Controller
     public function __construct(TransactionService $transactionSercive)
     {
         $this->transactionSercive = $transactionSercive;
+    }
+
+    public function detailview(): View
+    {
+        $paymentTypes = PaymentType::all();
+
+        return view('pages.inventory.transaction.sales-transaction.view', [
+            'title' => 'Detail Transaksi Penjualan',
+            'paymentTypes' => $paymentTypes
+        ]);
     }
 
     public function store(TransactionRequest $request): JsonResponse
