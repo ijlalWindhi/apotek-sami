@@ -198,6 +198,7 @@ Route::prefix('pos')
                 // Transaction
                 Route::controller(TransactionController::class)->group(function () {
                     Route::get('/list', 'getAll')->name('transaction.getAll');
+                    Route::get('/view/{transaction}', 'detailview')->name('transaction.detail');
                     Route::post('', 'store')->name('transaction.store');
                     Route::get('{transaction}', 'show')->name('transaction.show');
                 });
