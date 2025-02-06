@@ -37,6 +37,7 @@
                         <th scope="col" class="px-6 py-3 min-w-40">Nama</th>
                         <th scope="col" class="px-6 py-3 min-w-36">SKU</th>
                         <th scope="col" class="px-6 py-3">Stok</th>
+                        <th scope="col" class="px-6 py-3 min-w-52">Status Stock</th>
                         <th scope="col" class="px-6 py-3">Konversi</th>
                         <th scope="col" class="px-6 py-3 min-w-40">Harga Pokok</th>
                         <th scope="col" class="px-6 py-3 min-w-36">Harga Jual</th>
@@ -276,6 +277,9 @@
                         ${product.smallest_stock || 0}
                         <p class="w-20">${product.smallest_unit.symbol}</p>
                     </div>
+                </td>
+                <td class="px-6 py-4">
+                    ${product.smallest_stock >= product.minimum_smallest_stock ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Stok aman</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Di bawah minimum</span>'}
                 </td>
                 <td class="px-6 py-4">
                     ${product.conversion_value || 0}
