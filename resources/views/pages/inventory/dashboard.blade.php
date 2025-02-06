@@ -63,36 +63,45 @@
         </div>
 
         <!-- Transaction Tables -->
-        <div class="grid gap-4 lg:grid-cols-2">
-            <!-- Recent Transactions -->
+        <div class="grid gap-4 lg:grid-cols-2 mb-4">
+            <!-- Product Summary -->
             <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                 <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-0 items-start sm:items-center justify-between">
-                    <h2 class="text-sm font-medium">Ringkasan Transaksi Penjualan Hari Ini</h2>
-                    <div id="po_refresh" class="flex items-center gap-2 w-full sm:w-auto">
-                        <button class="rounded-full p-1 hover:bg-gray-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                        </button>
+                    <div>
+                        <h2 class="text-sm font-medium">Ringkasan Penjualan Item</h2>
+                        <p class="text-xs mt-2">Tanggal: <span id="product_range">-</span></p>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <div class="flex items-center gap-2">
+                            <select id="product_input_range"
+                                class="w-full rounded-md border border-gray-200 px-3 py-1 text-sm sm:w-auto">
+                                <option value="daily">Harian</option>
+                                <option value="weekly">Mingguan</option>
+                                <option value="monthly">Bulanan</option>
+                            </select>
+                            <button id="product_refresh" class="rounded-full p-1 hover:bg-gray-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="relative overflow-x-auto sm:rounded-lg max-h-44">
+                <div class="relative overflow-x-auto sm:rounded-lg max-h-56">
                     <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr class="uppercase">
-                                <th scope="col" class="p-1.5">Nomor Invoice</th>
-                                <th scope="col" class="p-1.5">Pelanggan</th>
-                                <th scope="col" class="p-1.5">Pembayaran</th>
-                                <th scope="col" class="p-1.5">Status</th>
-                                <th scope="col" class="p-1.5 text-right">Total</th>
+                                <th scope="col" class="p-1.5">SKU</th>
+                                <th scope="col" class="p-1.5">Item</th>
+                                <th scope="col" class="p-1.5 text-right">Total (Satuan Terkecil)</th>
                             </tr>
                         </thead>
-                        <tbody id="po_table_body" class="divide-y divide-gray-200 bg-white">
+                        <tbody id="product_table_body" class="divide-y divide-gray-200 bg-white">
                             {{-- Table content will be inserted here --}}
                             <tr>
-                                <td id="po_label_empty_data" colspan="4"
+                                <td id="product_label_empty_data" colspan="4"
                                     class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                     Tidak ada data
                                 </td>
@@ -139,44 +148,35 @@
             </div>
         </div>
 
-        <!-- Product Tables -->
+        <!-- Recent Transactions -->
         <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
             <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-0 items-start sm:items-center justify-between">
-                <div>
-                    <h2 class="text-sm font-medium">Ringkasan Penjualan Item</h2>
-                    <p class="text-xs mt-2">Tanggal: <span id="product_range">-</span></p>
-                </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <div class="flex items-center gap-2">
-                        <select id="product_input_range"
-                            class="w-full rounded-md border border-gray-200 px-3 py-1 text-sm sm:w-auto">
-                            <option value="daily">Harian</option>
-                            <option value="weekly">Mingguan</option>
-                            <option value="monthly">Bulanan</option>
-                        </select>
-                        <button id="product_refresh" class="rounded-full p-1 hover:bg-gray-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                        </button>
-                    </div>
+                <h2 class="text-sm font-medium">Ringkasan Transaksi Penjualan Hari Ini</h2>
+                <div id="po_refresh" class="flex items-center gap-2 w-full sm:w-auto">
+                    <button class="rounded-full p-1 hover:bg-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
                 </div>
             </div>
-            <div class="relative overflow-x-auto sm:rounded-lg max-h-56">
+            <div class="relative overflow-x-auto sm:rounded-lg max-h-44">
                 <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr class="uppercase">
-                            <th scope="col" class="p-1.5">SKU</th>
-                            <th scope="col" class="p-1.5">Item</th>
-                            <th scope="col" class="p-1.5 text-right">Total Item Terjual (Satuan Terkecil)</th>
+                            <th scope="col" class="p-1.5">Nomor Invoice</th>
+                            <th scope="col" class="p-1.5">Pelanggan</th>
+                            <th scope="col" class="p-1.5">Pembayaran</th>
+                            <th scope="col" class="p-1.5">Status</th>
+                            <th scope="col" class="p-1.5 text-right">Total</th>
                         </tr>
                     </thead>
-                    <tbody id="product_table_body" class="divide-y divide-gray-200 bg-white">
+                    <tbody id="po_table_body" class="divide-y divide-gray-200 bg-white">
                         {{-- Table content will be inserted here --}}
                         <tr>
-                            <td id="product_label_empty_data" colspan="4"
+                            <td id="po_label_empty_data" colspan="4"
                                 class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                 Tidak ada data
                             </td>
