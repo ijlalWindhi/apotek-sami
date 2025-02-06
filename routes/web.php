@@ -60,6 +60,7 @@ Route::prefix('inventory')
                 Route::get('/due-purchase-orders', 'getDuePurchaseOrders')->name('dashboard.getDuePurchaseOrders');
                 Route::get('/low-stock-items', 'getLowStockItems')->name('dashboard.getLowStockItems');
                 Route::get('/supplier-billing-summary', 'getSupplierBillingSummary')->name('dashboard.getSupplierBillingSummary');
+                Route::get('/product-summary', 'getProductSalesSummary')->name('dashboard.getProductSalesSummary');
             });
         });
 
