@@ -117,4 +117,79 @@ class DashboardService
                 ];
             });
     }
+
+    public function getProductSalesSummary(string $period = 'daily'): array
+    {
+        $startDate = Carbon::now();
+        $endDate = $startDate->copy();
+
+        // Adjust date range based on period
+        switch ($period) {
+            case 'weekly':
+                $startDate = $startDate->startOfWeek();
+                $endDate = $startDate->copy()->endOfWeek();
+                break;
+            case 'monthly':
+                $startDate = $startDate->startOfMonth();
+                $endDate = $startDate->copy()->endOfMonth();
+                break;
+            default:
+                $startDate = $startDate->startOfDay();
+                $endDate = $startDate->copy()->endOfDay();
+                break;
+        }
+
+        // Get product sales with conversion to smallest unit
+        $productSales = Transaction::join('m_product_transaction', 'm_transaction.id', '=', 'm_product_transaction.transaction_id')
+            ->join('m_product', 'm_product_transaction.product_id', '=', 'm_product.id')
+            ->join('m_unit as smallest_unit', 'm_product.smallest_unit', '=', 'smallest_unit.id')
+            ->whereBetween('m_transaction.created_at', [$startDate, $endDate])
+            ->where('m_transaction.status', 'Terbayar')
+            ->select(
+                'm_product.id',
+                'm_product.name',
+                'm_product.sku',
+                'm_product.conversion_value',
+                'm_product.drug_group',
+                'm_product.largest_unit',
+                'm_product.smallest_unit',
+                'smallest_unit.symbol as smallest_unit_name',
+                DB::raw('SUM(m_product_transaction.qty *
+                    CASE
+                        WHEN m_product_transaction.unit_id = m_product.largest_unit
+                        THEN m_product.conversion_value
+                        ELSE 1
+                    END
+                ) as total_qty_sold'),
+                DB::raw('SUM(m_product_transaction.subtotal) as total_sales')
+            )
+            ->groupBy(
+                'm_product.id',
+                'm_product.name',
+                'm_product.sku',
+                'm_product.conversion_value',
+                'm_product.drug_group',
+                'm_product.largest_unit',
+                'm_product.smallest_unit',
+                'smallest_unit.name'
+            )
+            ->orderByDesc('total_qty_sold')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'product_id' => $item->id,
+                    'name' => $item->name,
+                    'sku' => $item->sku,
+                    'drug_group' => $item->drug_group,
+                    'smallest_unit' => $item->smallest_unit_name,
+                    'total_qty_sold' => $item->total_qty_sold,
+                    'total_sales' => $item->total_sales
+                ];
+            });
+
+        return [
+            'products' => $productSales,
+            'range' => $startDate->format('d/m/Y') . ' - ' . $endDate->format('d/m/Y')
+        ];
+    }
 }
