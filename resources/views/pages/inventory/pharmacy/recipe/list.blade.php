@@ -161,7 +161,7 @@
                 <td class="px-6 py-4 flex gap-2 items-center">
                     <a href="/inventory/pharmacy/recipe/view/${recipe?.id}">
                         <x-button type="button">
-                            <i class="fa-solid fa-info"></i>
+                            <i class="fa-solid fa-pencil"></i>
                         </x-button>
                     </a>
                     <x-button
