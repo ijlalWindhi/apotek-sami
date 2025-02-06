@@ -190,11 +190,6 @@
             ...formDataObj,
             products: products,
         };
-        console.log({
-            requestData,
-            formDataObj,
-            products
-        })
 
         return requestData;
     }
