@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductExport;
 use App\Models\Product;
 use App\Models\Unit;
 use App\Models\Supplier;
@@ -11,6 +12,7 @@ use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -166,6 +168,40 @@ class ProductController extends Controller
                 'success' => false,
                 'message' => 'Failed to stock opname',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function export()
+    {
+        try {
+            $fileName = 'daftar_produk_' . date('Y-m-d') . '.xlsx';
+
+            // Cek data sebelum export
+            $products = Product::with(['supplier', 'largestUnit', 'smallestUnit'])->get();
+            if ($products->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data produk untuk diexport'
+                ], 404);
+            }
+
+            $excelFile = Excel::raw(new ProductExport(), \Maatwebsite\Excel\Excel::XLSX);
+            $base64File = base64_encode($excelFile);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'file' => $base64File,
+                    'filename' => $fileName
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengexport data produk',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString() // Untuk debugging
             ], 500);
         }
     }
