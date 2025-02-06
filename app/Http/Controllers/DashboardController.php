@@ -87,4 +87,23 @@ class DashboardController extends Controller
             ], 500);
         }
     }
+
+    public function getProductSalesSummary(Request $request): JsonResponse
+    {
+        try {
+            $period = $request->input('period', 'daily');
+            $data = $this->dashboardService->getProductSalesSummary($period);
+
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve product sales summary',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
