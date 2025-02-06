@@ -169,14 +169,16 @@
                     >
                         <i class="fa-solid fa-print"></i>
                     </x-button>
-                    <x-button
-                        id="btn-detail-transaction-${transaction.id}"
-                        data-id="${transaction.id}"
-                        color="blue"
-                        size="sm"
-                    >
-                        <i class="fa-solid fa-pencil"></i>
-                    </x-button>
+                    <a href="/pos/transaction/view/${transaction.id}">
+                        <x-button
+                            id="btn-detail-transaction-${transaction.id}"
+                            data-id="${transaction.id}"
+                            color="blue"
+                            size="sm"
+                        >
+                            <i class="fa-solid fa-info"></i>
+                        </x-button>
+                    </a>
                     ${transaction.status === 'Terbayar' ?
                         `<a href="/pos/return/view/${transaction.id}">
                             <x-button
