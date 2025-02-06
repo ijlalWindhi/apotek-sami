@@ -151,7 +151,11 @@
         <!-- Recent Transactions -->
         <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
             <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-0 items-start sm:items-center justify-between">
-                <h2 class="text-sm font-medium">Ringkasan Transaksi Penjualan Hari Ini</h2>
+                <div>
+                    <h2 class="text-sm font-medium">Ringkasan Transaksi Penjualan Hari Ini</h2>
+                    <p class="text-xs mt-2">Tanggal: {{ \Carbon\Carbon::now()->format('d/m/Y') }} -
+                        {{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
+                </div>
                 <div id="po_refresh" class="flex items-center gap-2 w-full sm:w-auto">
                     <button class="rounded-full p-1 hover:bg-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
