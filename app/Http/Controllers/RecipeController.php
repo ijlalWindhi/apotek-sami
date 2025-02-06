@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recipe;
+use App\Models\User;
 use App\Http\Requests\RecipeRequest;
 use App\Http\Resources\RecipeResource;
 use App\Services\RecipeService;
@@ -28,8 +29,10 @@ class RecipeController extends Controller
 
     public function detailview(): View
     {
+        $users = User::all();
         return view('pages.inventory.pharmacy.recipe.view', [
             'title' => 'Detail Resep',
+            'users' => $users,
         ]);
     }
 
@@ -106,6 +109,24 @@ class RecipeController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete recipe',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(RecipeRequest $request, Recipe $recipe): JsonResponse
+    {
+        try {
+            $updatedRecipe = $this->recipeService->update($recipe, $request->validated());
+            return response()->json([
+                'success' => true,
+                'message' => 'Recipe updated successfully',
+                'data' => new RecipeResource($updatedRecipe)
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update recipe',
                 'error' => $e->getMessage()
             ], 500);
         }
