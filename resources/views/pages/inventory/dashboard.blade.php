@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <div id="dashboard" class="min-h-screen bg-gray-50 p-2 sm:p-4">
+    <div id="dashboard" class="min-h-screen bg-gray-50 p-2">
         <!-- Total Sales Card -->
         <div class="mb-4 rounded-lg bg-white p-4 shadow-sm sm:p-6">
             <div class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -26,7 +26,7 @@
                 <span class="text-sm text-red-500"><span id="penjualan_indicator">↓</span><span
                         id="penjualan_percentage">0%</span></span>
             </div>
-            <p class="text-xs mt-2">Tanggal: <span id="penjualan_range"></span></p>
+            <p class="text-xs mt-2">Tanggal: <span id="penjualan_range">-</span></p>
             <p class="mt-2 text-xs text-gray-500">Total penjualan adalah laporan ringkasan dari transaksi dengan kondisi
                 faktur penjualan lunas</p>
         </div>
@@ -78,7 +78,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="relative overflow-x-auto sm:rounded-lg">
+                <div class="relative overflow-x-auto sm:rounded-lg max-h-44">
                     <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr class="uppercase">
@@ -116,7 +116,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="relative overflow-x-auto sm:rounded-lg">
+                <div class="relative overflow-x-auto sm:rounded-lg max-h-44">
                     <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr class="uppercase">
@@ -138,6 +138,53 @@
                 </div>
             </div>
         </div>
+
+        <!-- Product Tables -->
+        <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
+            <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-0 items-start sm:items-center justify-between">
+                <div>
+                    <h2 class="text-sm font-medium">Ringkasan Penjualan Item</h2>
+                    <p class="text-xs mt-2">Tanggal: <span id="product_range">-</span></p>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <div class="flex items-center gap-2">
+                        <select id="product_input_range"
+                            class="w-full rounded-md border border-gray-200 px-3 py-1 text-sm sm:w-auto">
+                            <option value="daily">Harian</option>
+                            <option value="weekly">Mingguan</option>
+                            <option value="monthly">Bulanan</option>
+                        </select>
+                        <button id="product_refresh" class="rounded-full p-1 hover:bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="relative overflow-x-auto sm:rounded-lg max-h-56">
+                <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr class="uppercase">
+                            <th scope="col" class="p-1.5">SKU</th>
+                            <th scope="col" class="p-1.5">Item</th>
+                            <th scope="col" class="p-1.5 text-right">Total Item Terjual (Satuan Terkecil)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product_table_body" class="divide-y divide-gray-200 bg-white">
+                        {{-- Table content will be inserted here --}}
+                        <tr>
+                            <td id="product_label_empty_data" colspan="4"
+                                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                Tidak ada data
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </x-layout>
 
@@ -146,6 +193,7 @@
      * Dashboard Module
      */
     let PENJUALAN_PERIOD = 'daily';
+    let PRODUCT_PERIOD = 'daily';
 
     /**
      * Data Fetching and Processing
@@ -298,6 +346,34 @@
                 },
             });
         },
+        getProduct: (period = 'daily') => {
+            $('#dashboard').prepend(uiManager.showScreenLoader());
+            PRODUCT_PERIOD = period;
+
+            $.ajax({
+                url: '/inventory/dashboard/product-summary',
+                method: 'GET',
+                data: {
+                    period,
+                },
+                success: async (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
+                    }
+
+                    templatesDashboard.updateTableListItem(response.data?.products,
+                        'product_table_body',
+                        'product_label_empty_data', templatesDashboard.tableRowProduct);
+                    $('#product_range').text(response?.data?.range || '-');
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                },
+                complete: () => {
+                    uiManager.hideScreenLoader();
+                },
+            });
+        },
     };
 
     /**
@@ -319,6 +395,22 @@
             // Refresh button handler for PO
             $('#po_refresh').on('click', function(e) {
                 dataServiceDashboard.getPO();
+            });
+
+            // Refresh button handler for supplier summary
+            $('#supplier_refresh').on('click', function(e) {
+                dataServiceDashboard.getSupplierSummary();
+            });
+
+            // Refresh button handler for product
+            $('#product_refresh').on('click', function(e) {
+                dataServiceDashboard.getProduct(PRODUCT_PERIOD);
+            });
+
+            // Period select handler for product
+            $('#product_input_range').on('change', function(e) {
+                const period = $(this).val();
+                dataServiceDashboard.getProduct(period);
             });
         },
     };
@@ -364,7 +456,20 @@
                 <td class="whitespace-nowrap p-1.5">${data?.total_invoices}</td>
                 <td class="whitespace-nowrap p-1 text-right">Rp${UIManager.formatCurrency(data?.total_billing)}</td>
             </tr>`;
-        }
+        },
+
+        tableRowProduct: (data) => {
+            return `<tr class="hover:bg-gray-50">
+                <td class="whitespace-nowrap p-1.5">${data?.sku || "-"}</td>
+                <td class="whitespace-nowrap p-1.5">
+                    <div class="space-y-1">
+                        <p>${data?.name || "-"}</p>
+                        <p class="text-gray-500">${data?.drug_group || "-"}</p>
+                    </div>
+                </td>
+                <td class="whitespace-nowrap p-1.5 text-right">${data?.total_qty_sold || "-"} <span>${data?.smallest_unit || "-"}</span></td>
+            </tr>`;
+        },
     }
 
     /**
@@ -378,6 +483,7 @@
         dataServiceDashboard.getLowStock();
         dataServiceDashboard.getPO();
         dataServiceDashboard.getSupplierSummary();
+        dataServiceDashboard.getProduct();
     }
 
     // Initialize when document is ready
