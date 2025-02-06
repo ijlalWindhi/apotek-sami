@@ -1,114 +1,110 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <form id="view-return" class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full p-4">
+    <form id="view-recipe" class="flex flex-col gap-4 justify-between w-full h-full p-4">
         @csrf
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start justify-between gap-4">
-            <div>
-                <label for="return_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor
-                    Retur
-                    <span class="text-red-500">*</span></label>
-                <input type="text" name="return_number" id="return_number" disabled
-                    class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
-                    placeholder="Terisi otomatis">
+        <div class="grid grid-cols-2 gap-2 items-center justify-between">
+            <div class="col-span-2 md:col-span-1 p-2 border rounded-md shadow-sm">
+                <h2 class="font-semibold text-sm mb-1.5">Informasi</h2>
+                <div class="flex gap-2 w-full items-end">
+                    <div class="w-full">
+                        <label for="name" class="block text-xs  text-gray-900 dark:text-white">Nama
+                            Resep <span class="text-red-500">*</span></label>
+                        <input name="name" id="name"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Nama resep" required>
+                    </div>
+                    <div class="w-full select-small">
+                        <label for="staff_id" class="block text-xs  text-gray-900 dark:text-white">Karyawan
+                            <span class="text-red-500">*</span></label>
+                        <select class="js-example-basic-single" id="staff_id" name="staff_id">
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div>
-                <label for="invoice_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor
-                    Invoice
-                    <span class="text-red-500">*</span></label>
-                <input type="text" name="invoice_number" id="invoice_number" disabled
-                    class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
-                    placeholder="Terisi otomatis">
+            <div class="col-span-2 md:col-span-1 p-2 border rounded-md shadow-sm">
+                <h2 class="font-semibold text-sm mb-1.5">Dokter</h2>
+                <div class="flex gap-2 w-full items-end">
+                    <div class="w-full">
+                        <label for="doctor_name" class="block text-xs  text-gray-900 dark:text-white">Nama
+                            <span class="text-red-500">*</span></label>
+                        <input type="text" name="doctor_name" id="doctor_name"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Nama dokter" required>
+                    </div>
+                    <div class="w-full">
+                        <label for="doctor_sip" class="block text-xs  text-gray-900 dark:text-white">Nomor
+                            SIP</label>
+                        <input name="doctor_sip" id="doctor_sip"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Nomor SIP">
+                    </div>
+                </div>
             </div>
-            <div>
-                <label for="customer_type"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pelanggan
-                    <span class="text-red-500">*</span></label>
-                <select class="js-example-basic-single" id="customer_type" name="customer_type">
-                    <option value="Umum" selected>Umum</option>
-                    <option value="Rutin">Rutin</option>
-                    <option value="Karyawan">Karyawan</option>
-                </select>
-            </div>
-            <div>
-                <label for="recipe" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Resep</label>
-                <input id="recipe" name="recipe" type="text"
-                    class="bg-gray-200 border border-gray-300 cursor-not-allowed text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Resep" disabled>
-            </div>
-            <div>
-                <label for="created_at" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal
-                    Retur
-                </label>
-                <input id="created_at" name="created_at" datepicker datepicker-autohide datepicker-format="dd-mm-yyyy"
-                    type="text"
-                    class="bg-gray-200 border border-gray-300 cursor-not-allowed text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Tanggal Retur" disabled>
-            </div>
-            <div>
-                <label for="created_by" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Dibuat
-                    Oleh</label>
-                <input id="created_by" name="created_by" type="text"
-                    class="bg-gray-200 border border-gray-300 cursor-not-allowed text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Dibuat Oleh" disabled>
-            </div>
-            <div>
-                <label for="return_reason" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alasan
-                    Retur</label>
-                <input id="return_reason" name="return_reason" type="text"
-                    class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed"
-                    placeholder="Alasan retur" readonly>
+            <div class="col-span-2 p-2 border rounded-md shadow-sm">
+                <h2 class="font-semibold text-sm mb-1.5">Pelanggan</h2>
+                <div class="flex gap-2 w-full items-end">
+                    <div class="w-full">
+                        <label for="customer_name" class="block text-xs  text-gray-900 dark:text-white">Nama
+                            <span class="text-red-500">*</span></label>
+                        <input type="text" name="customer_name" id="customer_name"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Nama pelanggan" required>
+                    </div>
+                    <div class="w-full">
+                        <label for="customer_age" class="block text-xs  text-gray-900 dark:text-white">Usia
+                            <span class="text-red-500">*</span></label>
+                        <input type="number" name="customer_age" id="customer_age" min="1" step="1"
+                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Usia pelanggan" required>
+                    </div>
+                    <div class="w-full">
+                        <label for="customer_address"
+                            class="block text-xs  text-gray-900 dark:text-white">Alamat</label>
+                        <input type="text" name="customer_address" id="customer_address"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Alamat pelanggan">
+                    </div>
+                </div>
             </div>
         </div>
 
         {{-- List Item --}}
         <div class="flex flex-col gap-3">
-            <h2 class="w-full bg-gray-100 p-4 rounded-md text-center font-semibold">Daftar Item</h2>
+            <h2 class="text-sm w-full bg-gray-100 py-1 rounded-md text-center font-semibold">Daftar Item</h2>
+            <x-button color="blue" size="sm" data-modal-target="modal-add-product"
+                data-modal-toggle="modal-add-product" class="w-full">
+                <i class="fa-solid fa-plus"></i>
+                <span class="ms-2">Tambah</span>
+            </x-button>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-3 py-1 min-w-48">Nama</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Jumlah</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Satuan</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Harga</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Tuslah</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Diskon<br />(Rp / %)</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Sub Total</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Jumlah Ret.</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Satuan Ret.</th>
-                            <th scope="col" class="px-3 py-1 min-w-24">Sub Total Ret.</th>
+                            <th scope="col" class="px-3 py-1 min-w-32">Jumlah</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Satuan</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Harga</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Tuslah</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Diskon<br />(Rp / %)</th>
+                            <th scope="col" class="px-3 py-1 min-w-28">Sub Total</th>
+                            <th scope="col" class="px-3 py-1">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body-product-pos">
+                    <tbody id="table-body">
+                        <tr>
+                            <td id="label_empty_data" colspan="8"
+                                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                Tidak ada produk yang dipilih
+                            </td>
+                        </tr>
                         {{-- Table content will be inserted here --}}
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        {{-- Price Information --}}
-        <div class="flex flex-col gap-4 self-end w-1/4">
-            <div>
-                <label for="qty_total_return" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
-                    Produk Return</label>
-                <input type="text" name="qty_total_return" id="qty_total_return" required
-                    class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
-                    placeholder="Total Produk" disabled>
-            </div>
-            <div>
-                <label for="total_before_discount"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total Sebelum
-                    Diskon</label>
-                <input type="text" name="total_before_discount" id="total_before_discount" required
-                    class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
-                    placeholder="Total Sebelum Diskon" disabled>
-            </div>
-            <div>
-                <label for="total" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total</label>
-                <input type="text" name="total" id="total" required
-                    class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-not-allowed"
-                    placeholder="Total" readonly>
             </div>
         </div>
 
@@ -117,29 +113,102 @@
             <a href="{{ route('return.list') }}" class="w-full md:w-32">
                 <x-button color="blue" class="w-full md:w-32">Kembali</x-button>
             </a>
+            <x-button type="submit" color="green" class="w-full md:w-32" id="btn-update-recipe">Simpan</x-button>
         </div>
     </form>
+    <x-pages.pos.modal-add-product></x-pages.pos.modal-add-product>
 </x-layout>
 
 <script>
     /**
-     * Detail Return Module
-     * Handles the detail Return page
+     * Detail Recipe Module
+     * Handles the detail Recipe page
      */
     const url = window.location.pathname;
-    const transactionId = url.split('/').pop();
+    const recipeId = url.split('/').pop();
     let resData = {};
+    const PER_PAGE = 999999;
+    const DEBOUNCE_DELAY = 500;
+    const TEXT_TRUNCATE_LENGTH = 40;
+
+    function formattedData(formData) {
+        // Convert formData array to object
+        const formDataObj = {};
+        formData.forEach(item => {
+            formDataObj[item.name] = item.value;
+        });
+
+        // Initialize products array
+        const products = [];
+        const productRows = $('#table-body tr').not(':has(td[colspan])');
+
+        // Process each product row
+        productRows.each(function() {
+            const row = $(this);
+            const productId = row.find('input[id^="product_recipe_id_"]').val();
+            const productRecipeId = row.find('input[id^="id_recipe_product_"]')
+                .val(); // Ambil ID dari m_product_recipe
+
+            if (productId) {
+                const qty = parseInt(row.find(`input[id^="product_recipe_total_${productId}"]`).val()) || 0;
+                const price = parseInt(row.find(`input[id^="product_recipe_price_${productId}"]`).val()
+                    ?.replace(/[^\d]/g, '')) || 0;
+                const tuslah = parseInt(row.find(`input[id^="product_recipe_tuslah_${productId}"]`).val()
+                    ?.replace(/[^\d]/g, '')) || 0;
+                const discountInput = row.find(`input[id^="product_recipe_discount_${productId}"]`).val();
+                const subtotal = parseInt(row.find(`input[id^="product_recipe_subtotal_${productId}"]`).val()
+                    ?.replace(/[^\d]/g, '')) || 0;
+
+                let discount = 0;
+                let discountType = 'Nominal';
+
+                if (discountInput) {
+                    if (discountInput.endsWith('%')) {
+                        discount = parseFloat(discountInput || 0);
+                        discountType = 'Percentage';
+                    } else {
+                        discount = parseInt(discountInput?.replace(/[^\d]/g, '') || 0);
+                    }
+                }
+
+                products.push({
+                    id: productRecipeId,
+                    product: productId,
+                    qty: qty,
+                    price: price,
+                    tuslah: tuslah,
+                    discount: discount,
+                    discount_type: discountType,
+                    subtotal: subtotal,
+                    unit: row.find(`select[id^="product_recipe_unit_${productId}"]`).val(),
+                });
+            }
+        });
+
+        // Build the final request object
+        const requestData = {
+            ...formDataObj,
+            products: products,
+        };
+        console.log({
+            requestData,
+            formDataObj,
+            products
+        })
+
+        return requestData;
+    }
 
     /**
      * Data Fetching and Processing
      */
-    const dataServiceReturn = {
+    const dataServiceRecipe = {
         fetchData: async () => {
-            $("#view-return").prepend(uiManager.showScreenLoader());
+            $("#view-recipe").prepend(uiManager.showScreenLoader());
 
             try {
                 const response = await $.ajax({
-                    url: `/inventory/transaction/return/${transactionId}`,
+                    url: `/inventory/pharmacy/recipe/${recipeId}`,
                     method: 'GET',
                     contentType: 'application/json',
                     processData: false,
@@ -157,29 +226,63 @@
                 const form = $('form');
 
                 // Set form values and handle products
-                dataServiceReturn.setFormValues(form, data);
-                dataServiceReturn.setProducts(data.product_returns);
+                dataServiceRecipe.setFormValues(form, data);
+                dataServiceRecipe.setProducts(data.products);
             } catch (error) {
                 handleFetchError(error);
-                uiManager.showError('Gagal mengambil data Return. Silahkan coba lagi.');
+                uiManager.showError('Gagal mengambil data Recipe. Silahkan coba lagi.');
             } finally {
-                $('#view-return .fixed').remove();
+                uiManager.hideScreenLoader();
             }
+        },
+
+        updateRecipe: (data) => {
+            $("#view-recipe").prepend(uiManager.showScreenLoader());
+
+            $.ajax({
+                url: `/inventory/pharmacy/recipe/${recipeId}`,
+                method: 'PUT',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: async (response) => {
+                    if (!response?.success) {
+                        throw new Error('Invalid response format');
+                    }
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil memperbarui data",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = '/inventory/pharmacy/recipe';
+                    }, 1500);
+                },
+                error: (xhr, status, error) => {
+                    handleFetchError(xhr, status, error);
+                },
+                complete: () => {
+                    uiManager.hideScreenLoader();
+                }
+            });
         },
 
         setFormValues: (form, data) => {
             // Separate regular form fields and display-only fields
             const formFields = {
-                'return_number': data?.return_number || '-',
-                'invoice_number': data?.transaction?.invoice_number || '-',
-                'customer_type': data?.transaction?.customer_type || '-',
-                'recipe': data?.transaction?.recipe?.name || '-',
-                'created_at': data?.created_at || '-',
-                'created_by': data?.created_by?.name || '-',
-                'return_reason': data?.return_reason,
-                'qty_total_return': data?.qty_total || 0,
-                'total_before_discount': UIManager.formatCurrency(data?.total_before_discount || 0),
-                'total': UIManager.formatCurrency(data?.total_return || 0),
+                name: data?.name,
+                staff_id: data?.staff?.id,
+                doctor_name: data?.doctor_name,
+                doctor_sip: data?.doctor_sip,
+                customer_name: data?.customer_name,
+                customer_age: data?.customer_age,
+                customer_address: data?.customer_address,
             };
 
             // Set values for form fields
@@ -192,54 +295,132 @@
                     element.trigger('change');
                 }
             });
-
-            // Disable all form fields
-            form.find('input, select').attr('disabled', true);
-
-            // un-disable field reason
-            form.find('input[name="reason"]').attr('disabled', false);
         },
 
-        setProducts: (products) => {
-            if (!products || products.length === 0) {
-                $('#table-body-product-pos').html(`
-                <tr>
-                    <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                        Tidak ada produk yang dipilih
-                    </td>
-                </tr>`);
+        setProducts: (data) => {
+            debug.log("UpdateTableListItem", "Starting table update");
+            const tbody = $("#table-body");
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tbody.html(table.emptyTable());
                 return;
             }
 
-            // Clear table body
-            $('#table-body-product-pos').empty();
-
-            // Add products to table
-            let qtyTotal = 0;
-            products.forEach(product => {
-                qtyTotal += product.qty;
-                const row = returnUtils.generateReadOnlyProductRow(product);
-                $('#table-body-product-pos').append(row);
-            });
-
-            // Set total products
-            $('input[name="qty_total"]').val(qtyTotal);
+            document?.getElementById("label_empty_data")?.remove();
+            tbody.append(data.map((product) => templatesRecipe.tableRowProduct(product)).join(""));
+            debug.log("UpdateTable", "Table updated successfully");
         },
     };
 
     /**
-     * Initialize the detail Return page
+     * HTML Templates
+     */
+    const templatesRecipe = {
+        tableRowProduct: (product) => `
+            <tr id="list_product_recipe_${product?.product?.id}" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <th scope="row" class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    ${utils.escapeHtml(product?.product?.name || '-')}
+                </th>
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    <div class="flex justify-center items-center gap-1">
+                        <i class="fa-solid fa-minus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-minus-product-${product?.product?.id}"></i>
+                        <input type="number" name="product_recipe_total_${product?.product?.id}" id="product_recipe_total_${product?.product?.id}"
+                            required min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Jumlah" value="${product?.qty}">
+                        <i class="fa-solid fa-plus p-1 bg-orange-500 text-white rounded-full cursor-pointer" id="btn-plus-product-${product?.product?.id}"></i>
+                    </div>
+                    <input type="hidden" name="product_recipe_id_${product?.product?.id}" id="product_recipe_id_${product?.product?.id}"
+                        value="${product?.product?.id}">
+                    <input type="hidden" name="id_recipe_product_${product?.id}" id="id_recipe_product_${product?.id}"
+                        value="${product?.id}">
+                </td>
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    <select name="product_recipe_unit_${product?.product?.id}" id="product_recipe_unit_${product?.product?.id}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <option value="${product?.product?.largest_unit?.id}" selected>${product?.product?.largest_unit?.symbol}</option>
+                        <option value="${product?.product?.smallest_unit?.id}">${product?.product?.smallest_unit?.symbol}</option>
+                    </select>
+                    <input type="hidden" name="product_recipe_conversion_${product?.product?.id}" id="product_recipe_conversion_${product?.product?.id}"
+                        value="${product?.product?.conversion_value}">
+                </td>
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    <input type="text" name="product_recipe_price_${product?.product?.id}" id="product_recipe_price_${product?.product?.id}"
+                        required readonly
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Harga" value="${UIManager.formatCurrency(product?.product?.selling_price)}">
+                </td>
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    <input type="text" name="product_recipe_tuslah_${product?.product?.id}" id="product_recipe_tuslah_${product?.product?.id}"
+                        required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Tuslah" value="${UIManager.formatCurrency(product?.tuslah)}">
+                </td>
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    <input type="text" name="product_recipe_discount_${product?.product?.id}" id="product_recipe_discount_${product?.product?.id}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Diskon" value="${
+                            product?.discount_type === 'Nominal'
+                                ? UIManager.formatCurrency(product?.discount)
+                                : `${product?.discount}%`
+                        }">
+                </td>
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                    <input type="text" name="product_recipe_subtotal_${product?.product?.id}" id="product_recipe_subtotal_${product?.product?.id}" required
+                        class="bg-gray-200 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full px-2.5 py-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Sub Total" readonly value="${UIManager.formatCurrency(product?.subtotal)}">
+                </td>
+                <td class="px-3 py-2 flex gap-2 items-center">
+                    <button
+                        id="btn-delete-product-${product?.product?.id}"
+                        class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
+                        data-id="${product?.product?.id}"
+                        type="button"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `,
+    }
+
+    /**
+     * Event Handlers
+     */
+    const eventHandlerRecipe = {
+        init: () => {
+            // Submit form for create
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                const formData = $(this).serializeArray();
+                const data = formattedData(formData);
+                dataServiceRecipe.createRecipe(data);
+            });
+
+            // Submit form for update
+            $('#btn-update-recipe').on('click', function(e) {
+                e.preventDefault();
+                const formData = $('form').serializeArray();
+                const data = formattedData(formData);
+                dataServiceRecipe.updateRecipe(data);
+            });
+        },
+    };
+
+    /**
+     * Initialize the detail Recipe page
      */
     function initTransactionDetail() {
-        debug.log('Init', 'Initializing Return detail...');
+        debug.log('Init', 'Initializing Recipe detail...');
 
-        dataServiceReturn.fetchData();
+        dataServiceRecipe.fetchData();
     }
 
     $(document).ready(function() {
         debug.log('Ready', 'Document ready, initializing...');
         initTransactionDetail();
-        priceCalculationsReturn.init();
+        eventHandlerRecipe.init();
+        productRecipeCalculations.init();
 
         // Initialize select2
         $('.js-example-basic-single').select2({
