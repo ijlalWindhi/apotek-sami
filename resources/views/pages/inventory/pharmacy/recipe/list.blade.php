@@ -82,6 +82,7 @@
                     }
                     await uiManager.refreshUI(response);
 
+                    // Handle reinitialization of modals
                     setTimeout(() => {
                         const modalDelete = new Modal(document.getElementById(
                             'modal-delete'));
@@ -92,6 +93,13 @@
                                     modalDelete.show();
                                 });
                             });
+
+                        document.querySelectorAll('[data-modal-hide="modal-delete"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalDelete.hide();
+                                });
+                            });
                     }, 100);
                 },
                 error: (xhr, status, error) => {
@@ -99,6 +107,10 @@
                     uiManager.showError(
                         'Gagal mengambil data recipe. Silahkan coba lagi.');
                 },
+                complete: () => {
+                    // Hide modal
+                    $('#modal-delete').removeClass('flex').addClass('hidden');
+                }
             });
         },
 
@@ -160,20 +172,19 @@
                 </td>
                 <td class="px-6 py-4 flex gap-2 items-center">
                     <a href="/inventory/pharmacy/recipe/view/${recipe?.id}">
-                        <x-button type="button">
+                        <x-button type="button" class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md">
                             <i class="fa-solid fa-pencil"></i>
                         </x-button>
                     </a>
-                    <x-button
-                        type="button"
+                    <button
                         id="btn-delete-recipe"
+                        class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
                         data-id="${recipe?.id}"
-                        color="red"
                         data-modal-target="modal-delete"
                         data-modal-toggle="modal-delete"
                     >
                         <i class="fa-solid fa-trash"></i>
-                    </x-button>
+                    </button>
                 </td>
             </tr>`,
     };
