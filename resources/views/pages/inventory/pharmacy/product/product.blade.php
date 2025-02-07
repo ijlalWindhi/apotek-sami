@@ -62,7 +62,7 @@
     {{-- Modals --}}
     <span data-modal-target="modal-delete" data-modal-toggle="modal-delete" class="hidden"></span>
     <span data-modal-target="modal-stock-opname" data-modal-toggle="modal-stock-opname" class="hidden"></span>
-    <x-global.modal-delete name="pajak" />
+    <x-global.modal-delete name="produk" />
     <x-pages.inventory.pharmacy.product.modal-stock-opname />
 </x-layout>
 
@@ -118,11 +118,26 @@
                                 });
                             });
 
+                        document.querySelectorAll('[data-modal-hide="modal-delete"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalDelete.hide();
+                                });
+                            });
+
                         document.querySelectorAll(
                                 '[data-modal-toggle="modal-stock-opname"]')
                             .forEach(button => {
                                 button.addEventListener('click', () => {
                                     modalEdit.show();
+                                });
+                            });
+
+                        document.querySelectorAll(
+                                '[data-modal-hide="modal-stock-opname"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalEdit.hide();
                                 });
                             });
                     }, 100);
@@ -304,35 +319,30 @@
 
         actionButtons: (id) => `
             <a href="/inventory/pharmacy/product/view/${id}" id="btn-edit-supplier">
-                <x-button
-                    id="btn-edit-product"
-                    size="sm"
-                >
+                <x-button type="button" class="font-medium text-xs text-white bg-blue-500 hover:bg-blue-600 h-8 w-8 rounded-md">
                     <i class="fa-solid fa-pencil"></i>
                 </x-button>
             </a>
             |
-            <x-button
+            <button
                 id="btn-delete-product"
-                color="red"
-                size="sm"
+                class="font-medium text-xs text-white bg-red-500 hover:bg-red-600 h-8 w-8 rounded-md"
                 data-id="${id}"
                 data-modal-target="modal-delete"
                 data-modal-toggle="modal-delete"
             >
                 <i class="fa-solid fa-trash"></i>
-            </x-button>
+            </button>
             |
-            <x-button
+            <button
                 id="btn-stock-opname"
-                color="green"
-                size="sm"
+                class="font-medium text-xs text-white bg-green-500 hover:bg-green-600 h-8 w-8 rounded-md"
                 data-id="${id}"
                 data-modal-target="modal-stock-opname"
                 data-modal-toggle="modal-stock-opname"
             >
                 <i class="fa-solid fa-box-open"></i>
-            </x-button>
+            </button>
         `,
 
         loadingModal: '<div class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-90"><i class="fa-solid fa-spinner animate-spin text-blue-700 dark:text-blue-600"></i></div>',
