@@ -46,7 +46,7 @@
     <span data-modal-target="modal-delete" data-modal-toggle="modal-delete" class="hidden"></span>
     <span data-modal-target="modal-edit-employee" data-modal-toggle="modal-edit-employee" class="hidden"></span>
     <x-pages.inventory.pharmacy.employee.modal-edit />
-    <x-global.modal-delete name="pajak" />
+    <x-global.modal-delete name="pengguna" />
 </x-layout>
 
 <script>
@@ -98,6 +98,13 @@
                             .forEach(button => {
                                 button.addEventListener('click', () => {
                                     modalDelete.show();
+                                });
+                            });
+
+                        document.querySelectorAll('[data-modal-hide="modal-delete"]')
+                            .forEach(button => {
+                                button.addEventListener('click', () => {
+                                    modalDelete.hide();
                                 });
                             });
 
