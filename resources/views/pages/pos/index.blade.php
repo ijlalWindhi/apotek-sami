@@ -263,7 +263,7 @@
          * Create a new transaction
          */
         createTransaction: (data) => {
-            uiManager.showScreenLoader();
+            $('#form-transaction').prepend(uiManager.showScreenLoader());
 
             $.ajax({
                 url: '/pos/transaction',
