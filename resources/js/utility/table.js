@@ -1,7 +1,7 @@
 export const table = {
     emptyTable: () => `
         <tr>
-            <td colspan="100" class="px-6 py-4">
+            <td id="label_no_data" colspan="100" class="px-6 py-4">
                 <div class="text-red-600 flex items-center justify-center">
                     <i class="fa-solid fa-triangle-exclamation mr-2"></i>
                     <p class="text-sm text-center">Tidak ada data</p>
