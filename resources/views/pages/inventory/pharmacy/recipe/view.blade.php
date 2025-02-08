@@ -110,7 +110,7 @@
 
         <!-- Submit Button -->
         <div class="flex justify-end items-center gap-3 flex-col sm:flex-row">
-            <a href="{{ route('return.list') }}" class="w-full md:w-32">
+            <a href="{{ route('recipe.list') }}" class="w-full md:w-32">
                 <x-button color="blue" class="w-full md:w-32">Kembali</x-button>
             </a>
             <x-button type="submit" color="green" class="w-full md:w-32" id="btn-update-recipe">Simpan</x-button>
