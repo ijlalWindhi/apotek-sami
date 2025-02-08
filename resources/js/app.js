@@ -7,6 +7,7 @@ import { uiManager } from "./utility/ui-manager.js";
 import { table } from "./utility/table.js";
 import { utils, debug, urlManager } from "./utility/utils.js";
 import { handleFetchError } from "./utility/handleFetchError.js";
+import { handleResponsePagination } from "./utility/paginationManager.js";
 import {
     SELECTORS,
     PriceCalculator,
@@ -37,6 +38,7 @@ window.utils = utils;
 window.table = table;
 window.handleFetchError = handleFetchError;
 window.Swal = Swal;
+window.handleResponsePagination = handleResponsePagination;
 
 // expose product related classes to the global scope
 window.PriceCalculator = PriceCalculator;
