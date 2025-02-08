@@ -29,7 +29,7 @@
                     </button>
                 </div>
             </div>
-            <div class="relative overflow-auto shadow-md sm:rounded-lg pb-6 max-h-[50vh]">
+            <div class="relative overflow-auto sm:rounded-lg max-h-[50vh]">
                 <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -46,6 +46,11 @@
                         {{-- Table content will be inserted here --}}
                     </tbody>
                 </table>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm p-4">
+                <div id="data-info-add-product"></div>
+                <div id="pagination-container-add-product"></div>
             </div>
         </div>
     </div>
@@ -75,13 +80,15 @@
                 data: {
                     search,
                     page,
-                    per_page: PER_PAGE
+                    per_page: 5,
                 },
                 success: async (response) => {
                     if (!response?.success) {
                         throw new Error('Invalid response format');
                     }
                     await uiManager.refreshUI(response, "#table-body-product");
+                    await handleResponsePagination(response, dataServiceProduct.fetchData,
+                        'pagination-container-add-product', 'data-info-add-product');
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
@@ -133,6 +140,7 @@
             }
 
             document?.getElementById("label_empty_data")?.remove();
+            document?.getElementById("label_no_data")?.remove();
             tbody.append(data.map((product) => templates.tableRowProduct(product)).join(""));
             debug.log("UpdateTable", "Table updated successfully");
         },
