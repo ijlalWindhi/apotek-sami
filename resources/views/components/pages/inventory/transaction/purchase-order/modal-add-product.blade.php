@@ -29,14 +29,14 @@
                     </button>
                 </div>
             </div>
-            <div class="relative overflow-x-auto shadow-md sm:rounded-lg pb-6 max-h-[50vh]">
+            <div class="relative overflow-x-auto sm:rounded-lg max-h-[50vh]">
                 <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-3 py-1">Nama</th>
                             <th scope="col" class="px-3 py-1">Tipe</th>
                             <th scope="col" class="px-3 py-1">SKU</th>
-                            <th scope="col" class="px-3 py-1 min-w-48">Harga</th>
+                            <th scope="col" class="px-3 py-1">Harga</th>
                             <th scope="col" class="px-3 py-1">Stok</th>
                             <th scope="col" class="px-3 py-1">Status</th>
                             <th scope="col" class="px-3 py-1">Aksi</th>
@@ -46,6 +46,11 @@
                         {{-- Table content will be inserted here --}}
                     </tbody>
                 </table>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm p-4">
+                <div id="data-info"></div>
+                <div id="pagination-container"></div>
             </div>
         </div>
     </div>
@@ -60,7 +65,7 @@
     // Constants
     const PAGINATION_DISPLAY_RANGE = 2;
     const DEBOUNCE_DELAY = 500;
-    const PER_PAGE = 99999;
+    const PER_PAGE = 5;
     const TEXT_TRUNCATE_LENGTH = 40;
 
     /**
@@ -89,6 +94,8 @@
                         throw new Error('Invalid response format');
                     }
                     await uiManager.refreshUI(response, "#table-body-product");
+                    await handleResponsePagination(response, dataServiceProduct.fetchData,
+                        'pagination-container', 'data-info');
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
@@ -146,16 +153,16 @@
 
         tableRow: (product) => `
             <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <th scope="row" class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     ${utils.escapeHtml(product.name || '-')}
                 </th>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${utils.escapeHtml(product.type || '-')}
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${utils.escapeHtml(product.sku || '-')}
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <div class="flex flex-col justify-start items-start">
                         <div class="flex gap-2">
                             <p class="w-20">Harga Beli</p>
@@ -167,7 +174,7 @@
                         </div>
                     </div>
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     <div class="flex gap-1">
                         ${product.largest_stock || 0}
                         <p class="w-20">${product.largest_unit.symbol}</p>
@@ -177,10 +184,10 @@
                         <p class="w-20">${product.smallest_unit.symbol}</p>
                     </div>
                 </td>
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                <td class="px-3 py-2 text-gray-500 dark:text-gray-400">
                     ${product.is_active ? '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Dijual</span>' : '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Dijual</span>'}
                 </td>
-                <td class="px-6 py-4 flex gap-2 items-center">
+                <td class="px-3 py-2 flex gap-2 items-center">
                     ${templates.actionButtons(product.id)}
                 </td>
             </tr>
