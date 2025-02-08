@@ -28,7 +28,7 @@
                     </button>
                 </div>
             </div>
-            <div class="relative overflow-auto shadow-md sm:rounded-lg pb-6 max-h-[50vh]">
+            <div class="relative overflow-auto sm:rounded-lg pb-6 max-h-[50vh]">
                 <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -45,6 +45,11 @@
                         {{-- Table content will be inserted here --}}
                     </tbody>
                 </table>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm p-4">
+                <div id="data-info-select-product"></div>
+                <div id="pagination-container-select-product"></div>
             </div>
         </div>
     </div>
@@ -64,7 +69,7 @@
          * Fetches tax data from the server
          * @param {string} search - Search term
          */
-        fetchData: (search = '') => {
+        fetchData: (page = 1, search = '') => {
             uiManager.showLoading("#table-body-select-product");
 
             $.ajax({
@@ -72,8 +77,8 @@
                 method: 'GET',
                 data: {
                     search,
-                    page: 1,
-                    per_page: PER_PAGE
+                    page,
+                    per_page: 5,
                 },
                 success: async (response) => {
                     if (!response?.success) {
@@ -81,6 +86,8 @@
                     }
 
                     await templatesSelectedProduct.processAndRenderProducts(response.data);
+                    await handleResponsePagination(response, dataServiceSelectedProduct.fetchData,
+                        'pagination-container-select-product', 'data-info-select-product');
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
