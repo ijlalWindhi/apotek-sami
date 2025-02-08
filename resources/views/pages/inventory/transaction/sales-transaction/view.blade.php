@@ -1,7 +1,8 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
-    <form id="view-sales-transaction" class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full {{ request()->is('inventory*') ? '' : 'p-4' }}">
+    <form id="view-sales-transaction"
+        class="flex flex-col gap-4 md:gap-10 justify-between w-full h-full {{ request()->is('inventory*') ? '' : 'p-4' }}">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start justify-between gap-4">
             <div>
