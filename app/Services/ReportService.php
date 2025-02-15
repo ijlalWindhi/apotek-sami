@@ -53,6 +53,13 @@ class ReportService
         // 8. Calculate Gross Profit (Laba Kotor)
         $grossProfit = $netSales - $finalCogs;
 
+        // Get payment type breakdown
+        $paymentTypes = $this->getTransactionsByPaymentType($dateRange, $productId);
+
+        // Calculate total across all payment types
+        $totalTransactions = $paymentTypes->sum('transaction_count');
+        $totalAmount = $paymentTypes->sum('total_amount');
+
         return [
             'penjualan' => round($totalSales, 2),
             'tuslah' => round($totalTuslah, 2),
@@ -61,7 +68,32 @@ class ReportService
             'penjualan_bersih' => round($netSales, 2),
             'harga_pokok_pembelian' => round($finalCogs, 2),
             'keuntungan_apotek' => round($grossProfit, 2),
+            'payment_types' => $paymentTypes,
+            'total_transactions' => $totalTransactions,
+            'total_amount' => round($totalAmount, 2),
         ];
+    }
+
+    public function getTransactionsByPaymentType(array $dateRange, ?string $productId)
+    {
+        $query = DB::table('m_transaction')
+            ->join('m_payment_type', 'm_payment_type.id', '=', 'm_transaction.payment_type_id')
+            ->whereBetween('m_transaction.created_at', $dateRange)
+            ->whereIn('m_transaction.status', ['Terbayar', 'Retur']);
+
+        if ($productId && $productId !== 'Semua') {
+            $query->join('m_product_transaction', 'm_product_transaction.transaction_id', '=', 'm_transaction.id')
+                ->where('m_product_transaction.product_id', $productId);
+        }
+
+        return $query->select(
+            'm_payment_type.name',
+            DB::raw('COUNT(m_transaction.id) as transaction_count'),
+            DB::raw('SUM(m_transaction.total_amount) as total_amount')
+        )
+            ->groupBy('m_payment_type.name')
+            ->orderBy('total_amount', 'desc')
+            ->get();
     }
 
     private function calculateSales(array $dateRange, array $productCondition)
