@@ -60,6 +60,9 @@ class ReportService
         $totalTransactions = $paymentTypes->sum('transaction_count');
         $totalAmount = $paymentTypes->sum('total_amount');
 
+        // Get all transaction details
+        $transactionDetails = $this->getAllTransactionDetails($dateRange, $productId);
+
         return [
             'penjualan' => round($totalSales, 2),
             'tuslah' => round($totalTuslah, 2),
@@ -71,7 +74,36 @@ class ReportService
             'payment_types' => $paymentTypes,
             'total_transactions' => $totalTransactions,
             'total_amount' => round($totalAmount, 2),
+            'transaction_details' => $transactionDetails,
         ];
+    }
+
+    public function getAllTransactionDetails(array $dateRange, ?string $productId)
+    {
+        $query = DB::table('m_transaction')
+            ->join('m_payment_type', 'm_payment_type.id', '=', 'm_transaction.payment_type_id')
+            ->join('users', 'users.id', '=', 'm_transaction.created_by')
+            ->whereBetween('m_transaction.created_at', $dateRange)
+            ->whereIn('m_transaction.status', ['Terbayar', 'Retur']);
+
+        if ($productId && $productId !== 'Semua') {
+            $query->join('m_product_transaction', 'm_product_transaction.transaction_id', '=', 'm_transaction.id')
+                ->where('m_product_transaction.product_id', $productId);
+        }
+
+        return $query->select(
+            'm_transaction.id',
+            'm_transaction.invoice_number',
+            'm_transaction.created_at',
+            'm_transaction.customer_type',
+            'm_transaction.status',
+            'm_payment_type.name as payment_type',
+            'm_transaction.total_amount',
+            'm_transaction.nominal_discount as transaction_discount',
+            'users.name as cashier_name'
+        )
+            ->orderBy('m_transaction.created_at', 'asc')
+            ->get();
     }
 
     public function getTransactionsByPaymentType(array $dateRange, ?string $productId)
