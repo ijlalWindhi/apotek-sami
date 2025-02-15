@@ -35,6 +35,8 @@
     <x-layout.header></x-layout.header>
 
     <main class="mt-14 sm:mt-16 md:mt-[4.5rem] {{ request()->is('inventory*') ? 'sm:ml-64 p-4' : '' }}">
+        <h1 class="text-blue-500 font-semibold text-lg md:text-xl lg:text-2xl mb-4">
+            {{ $title }}</h1>
         {{ $slot }}
     </main>
 
