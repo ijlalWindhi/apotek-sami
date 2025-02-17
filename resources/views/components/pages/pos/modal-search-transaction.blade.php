@@ -52,7 +52,7 @@
                     <span class="sr-only">Search</span>
                 </x-button>
             </form>
-            <div class="relative overflow-auto shadow-md sm:rounded-lg pb-6 max-h-[50vh]">
+            <div class="relative overflow-auto sm:rounded-lg max-h-[50vh]">
                 <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -75,6 +75,11 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm p-4">
+                <div id="data-info"></div>
+                <div id="pagination-container"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -94,7 +99,7 @@
      * Data Fetching and Processing
      */
     const dataServiceSearchTransaction = {
-        fetchData: () => {
+        fetchData: (page = 1) => {
             uiManager.showLoading("#table-body-search-transaction");
 
             $.ajax({
@@ -105,8 +110,8 @@
                     status: STATUS_SEARCH_TRANSACTION,
                     start_date: START_DATE,
                     end_date: END_DATE,
-                    page: 1,
-                    per_page: PER_PAGE
+                    page,
+                    per_page: 5
                 },
                 success: async (response) => {
                     if (!response?.success) {
@@ -115,6 +120,8 @@
 
                     LIST_DATA_TRANSACTION = response.data;
                     templatesTransaction.updateTableListItem(response.data);
+                    await handleResponsePagination(response, dataServiceSearchTransaction.fetchData,
+                        'pagination-container', 'data-info');
                 },
                 error: (xhr, status, error) => {
                     handleFetchError(xhr, status, error);
@@ -226,14 +233,14 @@
                 STATUS_SEARCH_TRANSACTION = 'Semua';
                 START_DATE = '';
                 END_DATE = '';
-                dataServiceSearchTransaction.fetchData();
+                dataServiceSearchTransaction.fetchData(1);
                 $('#search-transaction').val('');
             });
 
             // Form submit handler
             $('#modal-search-transaction form').on('submit', function(e) {
                 e.preventDefault();
-                dataServiceSearchTransaction.fetchData();
+                dataServiceSearchTransaction.fetchData(1);
             });
 
             // Print transaction
