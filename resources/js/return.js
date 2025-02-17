@@ -164,9 +164,10 @@ export const priceCalculationsReturn = {
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: "Qty return cannot be greater than original qty!",
+                    text: "Jumlah retur tidak boleh lebih besar dari jumlah penjualan!",
                 });
                 e.target.value = originalQty;
+                this.calculateSubtotalReturn(productId);
                 return;
             }
             this.calculateSubtotalReturn(productId);
